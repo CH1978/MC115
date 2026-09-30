@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Minecraft 遊戲說明 ｜ Minecraft Game Guide</title>
+<style>
+:root{
+  --bg:#0e1420; --panel:#151d2c; --elev:#1e283c; --border:#2a3852;
+  --text:#e6edf6; --muted:#93a2b8; --dim:#5b6b85;
+  --green:#4a8f3c; --green-d:#356a2b; --accent:#4a90e2; --warm:#f0c840;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:14px;line-height:1.6;}
+img{max-width:100%;display:block;}
+
+/* 頂部 */
+.topbar{background:linear-gradient(135deg,#0e1420,#1a2844);
+  border-bottom:1px solid var(--border);padding:8px 16px;
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.topbar .logo{width:34px;height:34px;background:var(--green);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.topbar .title{flex:1;min-width:0;}
+.topbar .title h1{margin:0;font-size:.92rem;font-weight:700;}
+.topbar .title .en{font-size:.72rem;color:var(--muted);font-weight:500;}
+.voice-mode{display:flex;background:var(--elev);border:1px solid var(--border);
+  border-radius:7px;padding:2px;gap:1px;flex-shrink:0;}
+.voice-mode button{background:transparent;border:none;color:var(--muted);
+  padding:5px 10px;border-radius:5px;cursor:pointer;font-family:inherit;
+  font-size:.72rem;font-weight:600;}
+.voice-mode button.active{background:var(--accent);color:#fff;}
+#startBtn{background:var(--green);border:none;color:#fff;
+  padding:7px 14px;border-radius:7px;font-weight:700;font-size:.78rem;
+  cursor:pointer;font-family:inherit;flex-shrink:0;}
+#startBtn.on{background:#a04a4a;}
+
+/* 版面 */
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 52px);}
+.sidebar{background:var(--panel);border-right:1px solid var(--border);
+  padding:16px 12px;overflow-y:auto;position:sticky;top:52px;
+  height:calc(100vh - 52px);}
+.sidebar-group-title{font-size:.7rem;color:var(--dim);letter-spacing:1.5px;
+  text-transform:uppercase;font-weight:700;padding:10px 10px 6px;}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:9px 12px;
+  border-radius:8px;cursor:pointer;font-family:inherit;
+  font-size:.83rem;font-weight:600;color:var(--muted);
+  background:transparent;border:none;width:100%;text-align:left;
+  margin-bottom:2px;transition:.15s;}
+.sidebar-item:hover{background:var(--elev);color:var(--text);}
+.sidebar-item.active{background:var(--accent);color:#fff;}
+.sidebar-item .ico{font-size:1rem;flex-shrink:0;width:20px;text-align:center;}
+.sidebar-item .num{display:inline-flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:50%;background:var(--border);
+  color:var(--text);font-size:.7rem;font-weight:800;flex-shrink:0;}
+.sidebar-item.active .num{background:rgba(255,255,255,.3);color:#fff;}
+.sidebar-sub{padding-left:30px;font-size:.8rem;padding:7px 12px 7px 30px;}
+.sidebar-sub .num{width:20px;height:20px;font-size:.65rem;}
+
+/* 內容 */
+.main-content{padding:24px 28px 180px;max-width:1100px;scroll-behavior:smooth;}
+.unit-header{margin-bottom:18px;}
+.unit-header .badge{display:inline-block;background:var(--accent);color:#fff;
+  padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;margin-bottom:8px;}
+.unit-header h2{margin:0 0 6px;font-size:1.35rem;font-weight:800;color:var(--warm);}
+
+.section{background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:20px;margin-bottom:14px;
+  transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;}
+.section.focused{
+  border-color:var(--accent);
+  box-shadow:0 0 0 2px var(--accent), 0 0 32px rgba(74,144,226,.35);
+  transform:scale(1.008);
+}
+.section.focused h3::before{
+  background:var(--warm);
+  animation:pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{ box-shadow:0 0 0 0 rgba(240,200,64,.6); }
+  50%{ box-shadow:0 0 0 8px rgba(240,200,64,0); }
+}
+
+.section h3{margin:0 0 12px;font-size:1rem;color:var(--accent);
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.section h3::before{content:"";width:4px;height:18px;background:var(--accent);
+  border-radius:2px;transition:.3s;}
+.section p{margin:8px 0;font-size:.9rem;}
+.section .tip{background:var(--elev);border-left:3px solid var(--green);
+  padding:10px 14px;border-radius:6px;margin:12px 0;font-size:.85rem;}
+.section .warn{background:#3a2020;border-left:3px solid #c0392b;
+  padding:10px 14px;border-radius:6px;margin:12px 0;font-size:.85rem;color:#ffcccc;}
+
+.data-table{width:100%;border-collapse:collapse;background:var(--elev);
+  border-radius:8px;overflow:hidden;margin:12px 0;font-size:.85rem;}
+.data-table th{background:var(--border);color:var(--text);padding:8px 10px;
+  text-align:left;font-size:.78rem;font-weight:700;}
+.data-table td{padding:8px 10px;border-bottom:1px solid var(--border);}
+.data-table .key{background:var(--bg);color:var(--warm);font-family:monospace;
+  font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block;font-size:.8rem;}
+
+.kb-vis{display:inline-grid;gap:3px;margin:12px 0;}
+.kb-row{display:flex;gap:3px;justify-content:center;}
+.kb-key{background:var(--elev);border:1px solid var(--border);
+  border-radius:4px;padding:6px 10px;font-size:.75rem;font-weight:700;
+  color:var(--text);min-width:32px;text-align:center;}
+.kb-key.hl{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+.mouse-vis{display:inline-block;margin:14px 0;text-align:center;}
+.mouse-body{width:80px;height:130px;background:var(--elev);
+  border:2px solid var(--border);border-radius:40px 40px 30px 30px;
+  position:relative;margin:0 auto;}
+.mouse-btn-l,.mouse-btn-r{position:absolute;top:0;width:38px;height:50px;
+  border-bottom:1px solid var(--border);}
+.mouse-btn-l{left:0;border-right:1px solid var(--border);
+  border-radius:40px 0 0 0;background:rgba(74,144,226,.3);}
+.mouse-btn-r{right:0;border-radius:0 40px 0 0;background:rgba(74,143,60,.3);}
+.mouse-wheel{position:absolute;top:20px;left:50%;transform:translateX(-50%);
+  width:8px;height:24px;background:var(--warm);border-radius:4px;}
+.mouse-label{margin-top:10px;font-size:.8rem;color:var(--muted);}
+.mouse-label span{display:inline-block;margin:0 4px;padding:2px 8px;
+  border-radius:4px;font-size:.72rem;font-weight:700;}
+.mouse-label .l{background:rgba(74,144,226,.3);color:#9cc4f0;}
+.mouse-label .r{background:rgba(74,143,60,.3);color:#a0d090;}
+.mouse-label .w{background:rgba(240,200,64,.3);color:#f0d070;}
+
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:10px;margin:12px 0;}
+.mini-card{background:var(--elev);border:1px solid var(--border);
+  border-radius:8px;padding:12px;text-align:center;}
+.mini-card .ico{font-size:1.8rem;}
+.mini-card .t{font-weight:700;font-size:.8rem;margin-top:4px;}
+.mini-card .s{font-size:.7rem;color:var(--muted);margin-top:2px;}
+
+.img-block{margin:14px 0;}
+.img-block img{width:100%; border-radius:10px; display:block; margin-bottom:10px;}
+.img-slot{background:linear-gradient(135deg,#1a1f2e,#131a28);
+  border:2px dashed #4a5878;border-radius:10px;padding:16px 18px;position:relative;}
+.img-slot .img-num{position:absolute;top:-10px;left:14px;
+  background:var(--warm);color:#1a1a1a;padding:2px 10px;border-radius:12px;
+  font-size:.72rem;font-weight:800;}
+.img-slot .img-name{font-family:monospace;font-size:.78rem;color:var(--accent);
+  margin:6px 0 8px;padding:4px 10px;background:rgba(74,144,226,.12);
+  border-radius:5px;display:inline-block;}
+.img-slot .img-desc{font-size:.85rem;line-height:1.6;}
+.img-slot .img-desc b{color:var(--warm);}
+.img-slot .img-desc .script{
+  margin-top:8px; padding:8px 12px; background:rgba(240,200,64,.1);
+  border-left:2px solid var(--warm); border-radius:4px;
+  font-size:.82rem; color:#ffe9a0; font-style:italic;}
+.img-slot .img-desc .script::before{content:"🎙️ 「"; color:var(--warm); font-style:normal;}
+.img-slot .img-desc .script::after{content:"」"; color:var(--warm); font-style:normal;}
+
+.step-list{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+.step-item{display:flex;align-items:flex-start;gap:10px;
+  background:var(--elev);border-radius:8px;padding:10px 14px;}
+.step-item .sn{display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:50%;background:var(--accent);
+  color:#fff;font-size:.72rem;font-weight:800;flex-shrink:0;margin-top:2px;}
+.step-item .st{flex:1;font-size:.88rem;}
+
+.checklist{background:linear-gradient(135deg,rgba(74,143,60,.15),rgba(74,143,60,.05));
+  border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.checklist h4{margin:0 0 10px;font-size:.9rem;color:#a0d090;}
+.checklist label{display:flex;align-items:flex-start;gap:8px;padding:5px 0;
+  font-size:.88rem;cursor:pointer;}
+.checklist input[type=checkbox]{margin-top:5px;accent-color:var(--green);width:16px;height:16px;}
+
+.faq{margin:14px 0;}
+.faq-item{background:var(--elev);border-radius:8px;padding:12px 16px;margin-bottom:8px;}
+.faq-item .q{font-weight:700;color:var(--warm);margin-bottom:6px;font-size:.88rem;}
+.faq-item .a{font-size:.85rem;color:var(--text);}
+
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.ref-card{background:var(--elev);border:1px solid var(--border);border-radius:10px;
+  padding:16px;transition:.15s;text-decoration:none;color:var(--text);display:block;}
+.ref-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.ref-card .cat{font-size:.72rem;color:var(--accent);font-weight:700;margin-bottom:6px;}
+.ref-card h4{margin:0 0 6px;font-size:.92rem;}
+.ref-card .url{font-size:.75rem;color:var(--muted);font-family:monospace;
+  word-break:break-all;margin-bottom:6px;}
+.ref-card .desc{font-size:.8rem;color:var(--muted);}
+
+.demo-bar{position:fixed;bottom:0;left:260px;right:0;background:rgba(14,20,32,.98);
+  border-top:2px solid var(--accent);padding:8px 14px 10px;
+  display:none;flex-direction:column;gap:6px;z-index:200;
+  box-shadow:0 -6px 24px rgba(0,0,0,.6);}
+.demo-bar.open{display:flex;}
+.demo-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.demo-head button{background:var(--elev);border:1px solid var(--border);
+  color:var(--text);padding:5px 10px;border-radius:6px;cursor:pointer;
+  font-family:inherit;font-size:.78rem;font-weight:600;}
+.demo-head button.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.demo-head .spacer{flex:1;}
+.demo-caption{font-size:.9rem;line-height:1.55;background:var(--elev);
+  padding:9px 12px;border-radius:7px;border-left:3px solid var(--accent);}
+
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);
+  background:var(--accent);color:#fff;padding:10px 20px;border-radius:7px;
+  font-weight:600;font-size:.85rem;opacity:0;pointer-events:none;transition:.25s;z-index:9999;}
+#toast.show{opacity:1;}
+
+.setup-modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;
+  align-items:center;justify-content:center;z-index:10000;padding:20px;}
+.setup-modal.show{display:flex;}
+.setup-card{background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:22px;max-width:440px;width:100%;}
+.setup-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.setup-row label{width:100px;font-size:.82rem;color:var(--muted);}
+.setup-row select{flex:1;background:var(--elev);border:1px solid var(--border);
+  color:var(--text);padding:8px;border-radius:6px;font-family:inherit;font-size:.85rem;}
+.setup-buttons{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
+.setup-buttons button{padding:9px 20px;border-radius:7px;font-size:.85rem;
+  font-family:inherit;cursor:pointer;border:1px solid var(--border);
+  background:var(--elev);color:var(--text);font-weight:600;}
+.setup-buttons button.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+@media(max-width:800px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{position:static;height:auto;border-right:none;
+    border-bottom:1px solid var(--border);max-height:300px;}
+  .main-content{padding:16px 14px 220px;}
+  .demo-bar{left:0;}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">⛏️</div>
+  <div class="title">
+    <h1>Minecraft 遊戲說明</h1>
+    <div class="en">Minecraft Game Guide</div>
+  </div>
+  <div class="voice-mode" id="voiceMode">
+    <button data-mode="zh" class="active">🀄 中文</button>
+    <button data-mode="en">🔤 EN</button>
+    <button data-mode="both">🌐 雙語</button>
+  </div>
+  <button id="startBtn">▶ 開始教學</button>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content" id="mainContent"></main>
+</div>
+
+<div class="demo-bar" id="demoBar">
+  <div class="demo-head">
+    <button id="prevStep">← 上一句</button>
+    <button class="primary" id="playBtn">⏸ 暫停</button>
+    <button id="nextStep">下一句 →</button>
+    <span class="spacer"></span>
+    <button id="exitBtn">✕ 結束</button>
+  </div>
+  <div class="demo-caption" id="caption"></div>
+</div>
+
+<div class="setup-modal" id="setupModal">
+  <div class="setup-card">
+    <h3>演示設定</h3>
+    <div class="setup-row"><label>🎙 聲音</label><select id="voiceSelect"></select></div>
+    <div class="setup-row"><label>⚡ 語速</label>
+      <select id="speedSelect">
+        <option value="0.8">0.8× 慢</option>
+        <option value="1.0" selected>1.0× 正常</option>
+        <option value="1.2">1.2× 快</option>
+      </select>
+    </div>
+    <div class="setup-buttons">
+      <button id="cancelBtn">取消</button>
+      <button class="primary" id="confirmBtn">▶ 開始</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   選單
+   ============================================================ */
+const MENU = [
+  { id: 'download', ico: '📥', zh: '教育版下載與登錄', en: 'Download & Login' },
+  { id: 'task', ico: '📦', zh: '任務', en: 'Tasks', group: true },
+  { id: 'task01', num: '01', zh: '任務01：移動', en: 'Movement', parent: 'task' },
+  { id: 'task02', num: '02', zh: '任務02：放置與打破', en: 'Place & Break', parent: 'task' },
+  { id: 'task03', num: '03', zh: '任務03：互動與彩蛋', en: 'Interaction', parent: 'task' },
+  { id: 'task04', num: '04', zh: '任務04：相機與個人資料', en: 'Camera', parent: 'task' },
+  { id: 'task05', num: '05', zh: '任務05：黑板', en: 'Chalkboard', parent: 'task' },
+  { id: 'task06', num: '06', zh: '任務06：NPC', en: 'NPC', parent: 'task' },
+  { id: 'refs', ico: '🔗', zh: '參考網頁', en: 'References' }
+];
+
+/* ============================================================
+   ★★★ 8 個單元內容（國小生化） ★★★
+   ============================================================ */
+const CONTENT = {
+
+/* ==================== 教育版下載與登錄 ==================== */
+download: {
+  titleZh: '教育版下載與登錄', titleEn: 'Download & Login',
+  sections: [
+    { why: true,
+      body: '👋 歡迎來到麥塊社團！<br>第一次玩麥塊，要先做三件事：<br><b>① 下載</b> — 把遊戲裝到電腦裡<br><b>② 安裝</b> — 讓遊戲可以打開<br><b>③ 登入</b> — 用學校給你的帳號進去<br>跟著老師一步一步做，每個人都能成功！',
+      bodyEn: 'Welcome! First time? Do three things: download, install, and log in.' },
+
+    { titleZh: '🌐 第一步：找到網站', titleEn: '1. Find the Website',
+      body: '打開瀏覽器，在網址列輸入：<b>education.minecraft.net</b><br>這個網址可以抄在聯絡簿上，回家也能自己練習。<br>進到網站後，你會看到很多圖案。別緊張，我們只找一個按鈕 ——「Download Minecraft」。',
+      bodyEn: 'Open a browser and go to education.minecraft.net.',
+      steps: [
+        { n: '1', zh: '打開瀏覽器（Chrome / Edge / Safari）', en: 'Open a browser' },
+        { n: '2', zh: '網址列輸入 education.minecraft.net', en: 'Type the address' },
+        { n: '3', zh: '按 Enter 進入網站', en: 'Press Enter' }
+      ],
+      images: [
+        { num: '0-1', name: 'download-site.png', content: '官方網站首頁', contentEn: 'Official website',
+          desc: '網站首頁截圖，用紅色箭頭標示右上角的「Download Minecraft」按鈕。',
+          descEn: 'Homepage with red arrow to Download button.',
+          script: '這是官方網站首頁，我們要找右上角這個 Download Minecraft 按鈕。',
+          scriptEn: 'This is the homepage. Look for the Download button.' }
+      ]
+    },
+
+    { titleZh: '💻 第二步：選你的電腦', titleEn: '2. Choose Your Device',
+      body: '網站會問你「用什麼設備？」<br>電腦 → 選 <b>Windows</b><br>蘋果電腦 → 選 <b>Mac</b><br>平板 → 選 <b>iPad</b> 或 <b>Chromebook</b><br>大部分同學選 Windows，選好後按「下載」。<br>⚠️ 如果不知道選哪個，舉手問老師。',
+      bodyEn: 'Choose your device: Windows, Mac, iPad, or Chromebook.',
+      images: [
+        { num: '0-2', name: 'platform-select.png', content: '選擇設備畫面', contentEn: 'Platform select',
+          desc: '四個平台按鈕：Windows、Mac、Chromebook、iPhone/iPad。',
+          descEn: 'Four platform buttons.',
+          script: '選你的設備，大部分同學選 Windows。',
+          scriptEn: 'Most students pick Windows.' },
+        { num: '0-3', name: 'ms-store.png', content: 'Microsoft Store 下載頁', contentEn: 'MS Store',
+          desc: 'Microsoft Store 頁面，顯示藍色的「下載」按鈕。',
+          descEn: 'MS Store page with blue download button.',
+          script: 'Windows 會跳到 Microsoft Store 下載。',
+          scriptEn: 'Windows redirects to MS Store.' }
+      ]
+    },
+
+    { titleZh: '📦 第三步：安裝遊戲', titleEn: '3. Install',
+      body: '下載好之後，你會看到一個安裝檔。<br>用滑鼠左鍵<b>點兩下</b>，就會開始安裝。<br>跟著畫面做：<br>① 按 <b>Next</b><br>② 按 <b>Install</b><br>③ 等進度條跑完<br>④ 按 <b>Finish</b><br>💡 如果跳出「是否允許變更」，按「是」。',
+      bodyEn: 'Double-click the installer. Follow Next → Install → Finish.',
+      images: [
+        { num: '0-4', name: 'install-steps.png', content: '安裝精靈畫面', contentEn: 'Install wizard',
+          desc: '安裝精靈截圖，顯示 Next → Install → Finish 流程。',
+          descEn: 'Wizard with Next → Install → Finish.',
+          script: '點 Next 開始，等進度跑完按 Finish。',
+          scriptEn: 'Click Next, wait, then Finish.' }
+      ]
+    },
+
+    { titleZh: '🔑 第四步：登入遊戲', titleEn: '4. Sign In',
+      body: '打開 Minecraft 教育版，你會看到一個畫面。<br>點中間的「<b>登入</b>」按鈕。<br>然後輸入老師發的帳號，長得像這樣：<br><span class="key">user01@happymc.onmicrosoft.com</span><br>再輸入密碼，按「下一步」，就進去了！<br>⚠️ 帳號和密碼寫在老師發的卡片上，要好好保管。',
+      bodyEn: 'Click Sign In and enter the school account.',
+      steps: [
+        { n: '1', zh: '打開 Minecraft 教育版', en: 'Open app' },
+        { n: '2', zh: '點「登入」按鈕', en: 'Click Sign In' },
+        { n: '3', zh: '輸入學校帳號', en: 'Enter account' },
+        { n: '4', zh: '輸入密碼', en: 'Enter password' },
+        { n: '5', zh: '按「下一步」完成', en: 'Click Next' }
+      ],
+      images: [
+        { num: '0-5', name: 'signin-screen.png', content: '登入畫面', contentEn: 'Login screen',
+          desc: '歡迎畫面，中央有登入按鈕，下方有綠字「如果您沒有帳戶，請嘗試體驗課程」。',
+          descEn: 'Welcome screen with login button.',
+          script: '點中間的登入，輸入學校帳號密碼。',
+          scriptEn: 'Click Sign In and enter your account.' }
+      ],
+      faq: [
+        { q: '❓ 登入失敗怎麼辦？', a: '檢查帳號後面有沒有 @happymc.onmicrosoft.com，密碼大小寫要對。' },
+        { q: '❓ 忘記密碼？', a: '舉手問老師，不要自己亂試。' },
+        { q: '❓ 卡在登入畫面？', a: '按 Esc 回首頁，重新試一次。' },
+        { q: '❓ 網路連不上？', a: '檢查 Wi-Fi，或請老師幫忙。' }
+      ]
+    },
+
+    { titleZh: '🗺️ 第五步：五步驟找到課程', titleEn: '5. Five Steps',
+      body: '登入成功後，你會看到遊戲主畫面。<br>要找到課程，跟著這五步：<br><b>① 登入</b> → <b>② 帳號密碼</b> → <b>③ 遊戲</b> → <b>④ 課程庫</b> → <b>⑤ 遊戲說明</b><br>💡 這五個步驟很重要，一定要記住！',
+      bodyEn: 'After login, follow five steps to find lessons.',
+      steps: [
+        { n: '1', zh: '登入 Login', en: 'Login' },
+        { n: '2', zh: '輸入帳號密碼 Account', en: 'Account' },
+        { n: '3', zh: '進入遊戲 Game', en: 'Game' },
+        { n: '4', zh: '打開課程庫 Library', en: 'Library' },
+        { n: '5', zh: '進入遊戲說明 Guide', en: 'Guide' }
+      ],
+      images: [
+        { num: '1-1', name: 'sop-flow.png', content: '五步驟流程圖', contentEn: '5-step flow',
+          desc: '五個方形依序排列：登入 → 帳號密碼 → 遊戲 → 課程庫 → 遊戲說明。綠色底白色字，箭頭串起來。',
+          descEn: 'Five boxes with arrows.',
+          script: '這是進入遊戲的五個步驟，跟著箭頭一步一步來。',
+          scriptEn: 'These are the 5 steps.' },
+        { num: '1-2', name: 'login-screen.png', content: '登入畫面', contentEn: 'Login screen',
+          desc: '遊戲開啟後第一個畫面，有「登入」按鈕。',
+          descEn: 'First screen with Login.',
+          script: '這是遊戲打開後的第一個畫面。',
+          scriptEn: 'The first screen.' },
+        { num: '1-3', name: 'ms-login.png', content: 'Microsoft 帳號輸入框', contentEn: 'MS login',
+          desc: '微軟登入視窗，中間有 Email 輸入欄和 Next 按鈕。',
+          descEn: 'Microsoft login window.',
+          script: '輸入老師發的學校帳號。',
+          scriptEn: 'Enter the school account.' },
+        { num: '1-4', name: 'game-home.png', content: '登入後主畫面', contentEn: 'Game home',
+          desc: '登入成功後的主畫面，中央有「遊玩」「課程庫」選項。',
+          descEn: 'Main screen after login.',
+          script: '看到這個畫面代表登入成功！',
+          scriptEn: 'This means login succeeded!' },
+        { num: '1-5', name: 'library-tab.png', content: '課程庫分頁', contentEn: 'Library tab',
+          desc: '點課程庫後看到的課程列表，包含 6 大任務。',
+          descEn: 'Course list with 6 tasks.',
+          script: '點上方的課程庫，會看到 6 大任務。',
+          scriptEn: 'Click Library to see 6 tasks.' }
+      ]
+    },
+
+    { titleZh: '🖥️ 電腦要多好？', titleEn: '6. PC Requirements',
+      body: '電腦如果不夠好，玩起來會卡卡的。<br>看看你的電腦有沒有達到標準：<br>💡 如果你的電腦低於最低規格，可以請老師幫忙檢查。',
+      bodyEn: 'PC needs to meet minimum requirements.',
+      table: {
+        head: ['項目', '最低規格', '建議規格', '高效能規格'],
+        rows: [
+          ['作業系統', 'Windows 10 / macOS 10.14+', 'Windows 10 64位 / macOS 10.15+', 'Windows 10 64位 / macOS 11+'],
+          ['處理器', 'Intel Core i3', 'Intel Core i5', 'Intel Core i7 / AMD Ryzen 7'],
+          ['記憶體', '4 GB RAM', '8 GB RAM', '16 GB RAM'],
+          ['顯示卡', 'Intel HD 4000+', 'GTX 660 / HD 7850', 'RTX 2060 / RX 5700'],
+          ['儲存空間', '1 GB', '4 GB', '10 GB']
+        ]
+      }
+    },
+
+    { titleZh: '🔍 怎麼查電腦規格？', titleEn: '7. Check PC Specs',
+      body: '想知道自己電腦多強？跟著做：<br><b>Windows：</b><br>① 按 Windows 鍵 + R<br>② 輸入 msinfo32 按 Enter<br>③ 就可以看到 CPU、RAM<br><b>Mac：</b><br>① 點左上角蘋果 <br>② 選「關於這台 Mac」',
+      bodyEn: 'How to check your PC specs.',
+      steps: [
+        { n: 'W1', zh: 'Windows：按 Windows 鍵 + R', en: 'Win+R' },
+        { n: 'W2', zh: '輸入 msinfo32 按 Enter', en: 'Type msinfo32' },
+        { n: 'W3', zh: '查看 CPU、RAM、系統類型', en: 'See specs' },
+        { n: 'M1', zh: 'Mac：點蘋果 → 關於這台 Mac', en: 'About This Mac' }
+      ]
+    },
+
+    { titleZh: '📱 手機平板也可以玩', titleEn: '8. Mobile',
+      body: '手機和平板也可以玩麥塊教育版！<br>但螢幕比較小，操作會比較難。<br>如果可以，建議用電腦或大平板。<br>💡 手機平板規格：',
+      bodyEn: 'Mobile works too.',
+      table: {
+        head: ['項目', '最低規格', '建議規格'],
+        rows: [
+          ['系統', 'Android 6.0 / iOS 12', 'Android 10 / iOS 14'],
+          ['處理器', '1.5 GHz 四核', '2.0 GHz 四核'],
+          ['記憶體', '2 GB RAM', '3 GB RAM'],
+          ['儲存空間', '1 GB', '2 GB']
+        ]
+      }
+    }
+  ],
+  steps: [
+    { zh: '小朋友大家好！歡迎來到麥塊程式社團。', en: 'Hello everyone! Welcome to Minecraft Club.', sec: 0 },
+    { zh: '第一次玩麥塊，要先做三件事：下載、安裝、登入。', en: 'Three things first: download, install, log in.', sec: 0 },
+    { zh: '打開瀏覽器，連到官方網站 education.minecraft.net。', en: 'Open a browser and go to education.minecraft.net.', sec: 1 },
+    { zh: '這個網址可以抄在聯絡簿上，回家也能練習。', en: 'Write it down to practice at home.', sec: 1 },
+    { zh: '點 Download Minecraft，選你的設備。大部分同學選 Windows。', en: 'Click Download, choose your device.', sec: 2 },
+    { zh: '下載完成後，雙擊安裝包，按 Next 開始安裝。', en: 'Double-click the installer, follow Next.', sec: 3 },
+    { zh: '安裝好後，打開 Minecraft 教育版。', en: 'Open Minecraft Education.', sec: 4 },
+    { zh: '點中間的「登入」，輸入老師發的學校帳號。', en: 'Click Sign In and enter the school account.', sec: 4 },
+    { zh: '帳號像這樣：user01@happymc.onmicrosoft.com。', en: 'Account looks like user01@happymc.onmicrosoft.com.', sec: 4 },
+    { zh: '輸入密碼後按下一步，就能進入遊戲。', en: 'Enter password and click Next.', sec: 4 },
+    { zh: '登入後，依照五個步驟找到課程庫和遊戲說明。', en: 'Follow 5 steps to find lessons.', sec: 5 },
+    { zh: '準備好了嗎？我們下個任務見！', en: 'Ready? See you in the next task!', sec: 5 }
+  ]
+},
+
+/* ==================== 任務01：移動 ==================== */
+task01: {
+  titleZh: '任務01：移動', titleEn: 'Task 01: Movement',
+  sections: [
+    { why: true,
+      body: '🎮 想像你在遊戲裡，你要怎麼走路？<br>麥塊用<b>鍵盤</b>移動、<b>滑鼠</b>看世界。<br>只要學會 4 個鍵 + 1 個滑鼠，你就能在麥塊裡到處探險！<br><b>今天的目標：</b><br>✅ 學會用鍵盤移動<br>✅ 學會用滑鼠看四周<br>✅ 學會切換視角<br>✅ 走完迷宮',
+      bodyEn: 'Learn WASD, F5 view switch, mouse control, and finish a maze.' },
+
+    { titleZh: '🖱️ 滑鼠怎麼用？', titleEn: 'Mouse Controls',
+      body: '滑鼠有三個很重要的功能：<br><b>① 移動滑鼠 = 看四周</b><br>想看看後面有什麼？把滑鼠往左滑。想看看天空？把滑鼠往上滑。<br><b>② 左鍵 = 挖東西</b><br>看到石頭想挖掉？對著它按左鍵。<br><b>③ 右鍵 = 放東西</b><br>想放方塊？對著地板按右鍵。<br><b>④ 滾輪 = 換工具</b><br>滾動中間的輪子，可以換手上的工具。<br>💡 現在試試看！把滑鼠往左滑，看看畫面有沒有變？',
+      bodyEn: 'Move mouse = look around. Left click = break. Right click = place. Wheel = switch items.',
+      mouseVisual: true,
+      table: {
+        head: ['操作', '功能', '什麼時候用'],
+        rows: [
+          ['移動滑鼠', '上下左右看', '隨時（最常用）'],
+          ['左鍵', '挖方塊 / 打怪物', '想挖東西時'],
+          ['右鍵', '放方塊 / 用東西', '想放東西時'],
+          ['滾輪', '換手上的工具', '想換工具時']
+        ]
+      },
+      images: [
+        { num: '2-1', name: 'mouse-move.png', content: '滑鼠移動方向', contentEn: 'Mouse movement',
+          desc: '滑鼠圖示，用四個彩色箭頭標示方向：↑↓←→。',
+          descEn: 'Mouse with four arrows.',
+          script: '移動滑鼠就可以看四周。',
+          scriptEn: 'Move the mouse to look around.' },
+        { num: '2-2', name: 'mouse-buttons.png', content: '滑鼠三個按鍵', contentEn: 'Mouse buttons',
+          desc: '滑鼠正面照，左鍵（藍）、右鍵（綠）、滾輪（黃）用彩色標示。',
+          descEn: 'Mouse with buttons highlighted.',
+          script: '左鍵挖、右鍵放、滾輪換工具。',
+          scriptEn: 'Left break, right place, wheel switch.' }
+      ],
+      tips: [
+        { zh: '移動滑鼠時，角色不會移動，只有「視線」會改變', en: 'Mouse moves view, not position' },
+        { zh: '如果在平板或手機上，用一根手指在螢幕右半邊滑動', en: 'On touch devices, slide right half' }
+      ]
+    },
+
+    { titleZh: '⌨️ 鍵盤怎麼移動？', titleEn: 'Keyboard',
+      body: '記住這四個鍵，它們是你移動的好朋友：<br><b>W</b> → 往前走<br><b>A</b> → 往左走<br><b>S</b> → 往後走<br><b>D</b> → 往右走<br>還有這些也很好用：<br>空白鍵 → 跳躍（連按兩下可以飛！）<br>Shift → 蹲下<br>Ctrl → 快跑<br>E → 打開背包<br>T → 打字聊天<br>F5 → 換視角<br>💡 現在試試看！按 W 往前走三步，再按 D 往右走兩步。',
+      bodyEn: 'Use keyboard to move. WASD are the most important.',
+      table: {
+        head: ['按鍵', '功能'],
+        rows: [
+          ['<span class="key">W</span>', '往前走'],
+          ['<span class="key">A</span>', '往左走'],
+          ['<span class="key">S</span>', '往後走'],
+          ['<span class="key">D</span>', '往右走'],
+          ['<span class="key">Space</span>', '跳躍（連按兩次飛）'],
+          ['<span class="key">Shift</span>', '蹲下'],
+          ['<span class="key">Ctrl</span>', '快跑'],
+          ['<span class="key">E</span>', '打開背包'],
+          ['<span class="key">Q</span>', '丟出東西'],
+          ['<span class="key">T</span>', '打字聊天'],
+          ['<span class="key">F5</span>', '換視角'],
+          ['<span class="key">Esc</span>', '暫停']
+        ]
+      },
+      keyboard: true,
+      images: [
+        { num: '2-3', name: 'keyboard-wasd.png', content: '鍵盤 WASD 位置', contentEn: 'WASD keys',
+          desc: '標準鍵盤圖，W、A、S、D 用紅色標示。',
+          descEn: 'Keyboard with WASD highlighted.',
+          script: 'W 往前、S 往後、A 往左、D 往右。',
+          scriptEn: 'W forward, S back, A left, D right.' }
+      ]
+    },
+
+    { titleZh: '💡 移動小技巧', titleEn: 'Movement Tips',
+      body: '熟悉這些技巧，移動會更順。<br>撞到牆 → 按 S 後退，再轉方向<br>掉進洞 → 按空白鍵跳出來<br>想快一點 → 按住 W + Ctrl<br>想看自己 → 按 F5 換第三人稱<br>不想掉下去 → 按住 Shift 蹲下',
+      bodyEn: 'Master these tips.',
+      table: {
+        head: ['狀況', '怎麼做'],
+        rows: [
+          ['撞到牆', '按 S 後退，轉方向'],
+          ['掉進洞', '按空白鍵跳出來'],
+          ['想快一點', '按住 W + Ctrl 快跑'],
+          ['想看自己', '按 F5 換第三人稱'],
+          ['卡住不動', '按 Esc 重新開始'],
+          ['不想掉下去', '按住 Shift 蹲下']
+        ]
+      }
+    },
+
+    { titleZh: '🧩 迷宮任務開始！', titleEn: 'Maze Mission',
+      body: '現在要測試你剛剛學的移動技巧。<br>走進迷宮，找到出口。<br><b>任務目標：</b><br>🎯 找到 <b>5 個金色方塊</b><br>怎麼找？<br>① 走迷宮時，注意看有沒有<b>金色方塊</b><br>② 用滑鼠把視線<b>對準</b>它<br>③ 方塊會出現<b>發光邊框</b>，代表成功！<br>5 個都找到後，大門就會自動打開！<br>💡 三個小技巧：<br>• 沿著地板走，不要跳上牆<br>• 遇到岔路，選比較亮的<br>• 慢慢走，不要急',
+      bodyEn: 'Finish the maze. Look at 5 golden blocks to open the gate.',
+      images: [
+        { num: '2-4', name: 'maze-overview.png', content: '迷宮路線圖', contentEn: 'Maze route',
+          desc: '從高處往下看的迷宮圖，紅色箭頭標示路線，星星標出 5 個金色方塊。',
+          descEn: 'Top-down maze with route.',
+          script: '迷宮有兩條路，主要那條會經過 5 個金色方塊。',
+          scriptEn: 'Two paths. Main one has 5 blocks.' },
+        { num: '2-5', name: 'golden-block-glow.png', content: '金色方塊', contentEn: 'Golden blocks',
+          desc: '金色方塊特寫，邊緣有黃色高亮邊框，注視時會發光。',
+          descEn: 'Golden block with highlight.',
+          script: '看到金色發光就是目標，把視線對準它。',
+          scriptEn: 'Golden glow means target.' }
+      ]
+    },
+
+    { titleZh: '👀 換視角 F5', titleEn: 'Change View',
+      body: '按 F5 可以換三種視角：<br><b>① 第一人稱</b> — 只能看到手（像戴 VR 眼鏡）<br><b>② 第三人稱背面</b> — 看到自己的背影<br><b>③ 第三人稱正面</b> — 看到自己的臉<br>💡 蓋房子時用第三人稱，可以看到自己站在哪裡，很方便！',
+      bodyEn: 'F5 switches three views.',
+      images: [
+        { num: '2-6', name: 'three-views.png', content: '三種視角', contentEn: 'Three views',
+          desc: '三張並排：左第一人稱、中第三人稱背面、右第三人稱正面。',
+          descEn: 'Three views side by side.',
+          script: 'F5 按下去會切換三種視角。',
+          scriptEn: 'Press F5 to switch.' }
+      ]
+    },
+
+    { titleZh: '☀️ 指令：白天/晚上', titleEn: 'Command: Day/Night',
+      body: '按 T 打開聊天框，輸入指令切換時間。<br>指令就是「魔法句子」，可以讓遊戲幫你做事。<br><span class="key">/time set day</span> → 白天<br><span class="key">/time set night</span> → 晚上<br>💡 現在試試看！按 T，輸入 /time set day，按 Enter。',
+      bodyEn: 'Press T to open chat, type commands.',
+      table: {
+        head: ['指令', '結果'],
+        rows: [
+          ['<span class="key">/time set day</span>', '白天'],
+          ['<span class="key">/time set night</span>', '晚上'],
+          ['<span class="key">/time set 0</span>', '日出'],
+          ['<span class="key">/time set 6000</span>', '中午'],
+          ['<span class="key">/time set 12000</span>', '日落'],
+          ['<span class="key">/time set 18000</span>', '午夜']
+        ]
+      },
+      images: [
+        { num: '2-7', name: 'day-night.png', content: '白天/晚上對照', contentEn: 'Day/Night',
+          desc: '遊戲中的白天與晚上對照圖。',
+          descEn: 'Day and night in game.',
+          script: '按 T 輸入 /time set day 就是白天。',
+          scriptEn: 'Type /time set day for daytime.' }
+      ]
+    },
+
+    { titleZh: '✅ 我學會了嗎？', titleEn: 'Self Check',
+      body: '完成以下檢核，就代表你熟練了移動！<br>打勾吧！',
+      bodyEn: 'Check these to master movement!',
+      checklist: [
+        '我知道 W、A、S、D 怎麼用',
+        '我知道空白鍵跳躍',
+        '我知道移動滑鼠可以看四周',
+        '我知道左鍵挖、右鍵放',
+        '我知道按 F5 換視角',
+        '我走完迷宮了'
+      ]
+    }
+  ],
+  steps: [
+    { zh: '歡迎來到任務01：移動。', en: 'Welcome to Task 01: Movement.', sec: 0 },
+    { zh: '麥塊用鍵盤移動，最重要的四個鍵是 W、A、S、D。', en: 'Use WASD to move.', sec: 2 },
+    { zh: '記住：W 往前、S 往後、A 往左、D 往右。', en: 'W forward, S back, A left, D right.', sec: 2 },
+    { zh: '空白鍵是跳躍，連續按兩下可以飛起來。', en: 'Space to jump, double-tap to fly.', sec: 2 },
+    { zh: '移動滑鼠可以看四周，改變你的視角。', en: 'Move the mouse to look around.', sec: 1 },
+    { zh: '滑鼠左鍵挖方塊、右鍵放方塊、滾輪換工具。', en: 'Left break, right place, wheel switch.', sec: 1 },
+    { zh: '按 F5 可以切換三種視角，可以看到自己。', en: 'Press F5 to switch views.', sec: 5 },
+    { zh: '現在走進迷宮，沿著地板走，不要跳上牆。', en: 'Walk into the maze along the floor.', sec: 4 },
+    { zh: '看到金色方塊，把視線對準它，5 個都找到後大門就會打開。', en: 'Look at golden blocks to open the gate.', sec: 4 },
+    { zh: '太棒了！你已經完成任務01。', en: 'Great! You finished Task 01.', sec: 7 }
+  ]
+},
+
+/* ==================== 任務02：放置與打破 ==================== */
+task02: {
+  titleZh: '任務02：放置與打破', titleEn: 'Task 02: Place & Break',
+  sections: [
+    { why: true,
+      body: '⛏️ 你知道嗎？在麥塊裡，<b>不同的方塊要用不同的工具</b>！<br>就像在家裡：<br>剪紙用剪刀、釘東西用鐵鎚、切菜用菜刀<br>用錯工具，會很慢、甚至什麼都拿不到！<br><b>今天的目標：</b><br>✅ 認識 7 種工具<br>✅ 知道什麼方塊用什麼工具<br>✅ 學會用對工具',
+      bodyEn: 'Right tool for right block. Wrong tool wastes time.' },
+
+    { titleZh: '🧰 7 種工具', titleEn: '7 Tools',
+      body: '麥塊裡有 7 種工具，每種都不一樣。<br>記住這個口訣：<br><b>「石頭找鎬、木頭找斧、泥土找鏟」</b>',
+      bodyEn: 'Minecraft has 7 tools.',
+      grid: [
+        { ico: '⛏️', t: '鎬', s: '挖石頭' },
+        { ico: '🪓', t: '斧', s: '砍樹' },
+        { ico: '🥄', t: '鏟', s: '挖土' },
+        { ico: '⚒️', t: '鋤頭', s: '種田' },
+        { ico: '✂️', t: '剪刀', s: '剪羊毛' },
+        { ico: '⚔️', t: '劍', s: '打怪物' },
+        { ico: '✋', t: '徒手', s: '拔花草' }
+      ],
+      images: [
+        { num: '3-1', name: 'tools-7-icons.png', content: '7 種工具圖示', contentEn: '7 tool icons',
+          desc: '7 種工具圖示一列排開，下方標中英文名稱。',
+          descEn: 'Seven tool icons in a row.',
+          script: '記住這些工具的長相。',
+          scriptEn: 'Remember the tools.' }
+      ]
+    },
+
+    { titleZh: '🔍 每種工具介紹', titleEn: 'Tool Details',
+      body: '<b>⛏️ 鎬 Pickaxe</b><br>用來挖：石頭、礦石、黑曜石<br>特殊：挖黑曜石一定要用「鑽石鎬」<br>💡 黑曜石很硬，其他工具都挖不動！<br><br><b>🪓 斧 Axe</b><br>用來砍：木頭、木板、南瓜<br>特殊：可以剝樹皮<br>💡 想蓋房子，先砍樹拿木頭！<br><br><b>🥄 鏟 Shovel</b><br>用來挖：泥土、沙子、雪<br>特殊：對草地按右鍵可以做成小路<br>💡 想種田，用鏟子挖土就對了！<br><br><b>⚒️ 鋤頭 Hoe</b><br>用來：種田、割草<br>特殊：對泥土按右鍵變成農田<br>💡 有農田就可以種小麥和紅蘿蔔！<br><br><b>✂️ 剪刀 Shears</b><br>用來剪：羊毛、樹葉、蜂窩<br>特殊：剪羊毛不會傷害羊<br>💡 想蓋彩色房子，剪羊毛就對了！<br><br><b>⚔️ 劍 Sword</b><br>用來打：怪物、蜘蛛網、竹子<br>特殊：挖蜘蛛網比鎬快<br>💡 晚上有怪物，記得帶劍防身！<br><br><b>✋ 徒手 Hand</b><br>用來拔：花、草、蘑菇<br>特殊：挖玻璃或書架，什麼都拿不到<br>💡 看到漂亮的花，徒手拔就好！',
+      bodyEn: 'Each tool has its use and special cases.',
+      table: {
+        head: ['工具', '用來挖', '特殊功能'],
+        rows: [
+          ['⛏️ 鎬', '石頭、礦石、黑曜石', '黑曜石要用鑽石鎬'],
+          ['🪓 斧', '木頭、木板、南瓜', '可以剝樹皮'],
+          ['🥄 鏟', '泥土、沙子、雪', '可做草徑'],
+          ['⚒️ 鋤頭', '泥土、葉子', '對泥土右鍵變農田'],
+          ['✂️ 剪刀', '羊毛、樹葉、蜂窩', '剪羊毛不傷害羊'],
+          ['⚔️ 劍', '蜘蛛網、竹子、西瓜', '挖蜘蛛網比鎬快'],
+          ['✋ 徒手', '花、草、蘑菇', '挖玻璃什麼都拿不到']
+        ]
+      },
+      images: [
+        { num: '3-2', name: 'pickaxe-vs-stone.png', content: '鎬挖石頭', contentEn: 'Pickaxe on stone',
+          desc: '用鎬挖石頭的畫面。',
+          descEn: 'Pickaxe mining stone.',
+          script: '用對工具，一兩下就挖掉。',
+          scriptEn: 'Right tool is fast.' },
+        { num: '3-3', name: 'wrong-tool.png', content: '用錯工具對照', contentEn: 'Wrong tool',
+          desc: '左邊用斧挖石頭（慢），右邊用鎬挖石頭（快）。',
+          descEn: 'Wrong vs right.',
+          script: '用錯工具挖半天還掉不出東西。',
+          scriptEn: 'Wrong tool wastes time.' },
+        { num: '3-4', name: 'obsidian-diamond.png', content: '鑽石鎬挖黑曜石', contentEn: 'Diamond on obsidian',
+          desc: '黑曜石深紫色，旁邊放鑽石鎬。',
+          descEn: 'Obsidian with diamond pickaxe.',
+          script: '黑曜石只有鑽石鎬能挖。',
+          scriptEn: 'Diamond pickaxe only.' }
+      ]
+    },
+
+    { titleZh: '⭐ 工具也有等級', titleEn: 'Tool Tiers',
+      body: '工具用不同材料做，效果也不一樣：<br><b>木頭</b> → 最弱，只能挖一點點<br><b>石頭</b> → 中等，可以挖鐵<br><b>鐵</b> → 很好，可以挖鑽石<br><b>鑽石</b> → 超強，可以挖黑曜石<br>💡 越好的工具，挖得越快，也越耐用。',
+      bodyEn: 'Different materials have different efficiency.',
+      table: {
+        head: ['工具', '推薦材質'],
+        rows: [
+          ['⛏️ 鎬', '鐵鎬以上（挖鑽石、綠寶石）'],
+          ['🪓 斧', '石斧以上'],
+          ['🥄 鏟', '鐵鏟以上'],
+          ['⚒️ 鋤頭', '任何材質都可以']
+        ]
+      }
+    },
+
+    { titleZh: '⚠️ 常見錯誤', titleEn: 'Common Mistakes',
+      body: '避開這些錯誤，挖東西更有效率！',
+      bodyEn: 'Avoid these mistakes.',
+      table: {
+        head: ['錯誤', '為什麼錯', '正確做法'],
+        rows: [
+          ['用劍挖石頭', '劍是打怪用的', '用鎬'],
+          ['用斧挖土', '斧是砍樹的', '用鏟'],
+          ['徒手挖石頭', '挖超慢', '用鎬'],
+          ['用鐵鎬挖黑曜石', '挖不到', '用鑽石鎬']
+        ]
+      }
+    }
+  ],
+  steps: [
+    { zh: '任務02：放置與打破。', en: 'Task 02: Place & Break.', sec: 0 },
+    { zh: '不同方塊要用不同的工具，就像剪紙要用剪刀。', en: 'Right tool for right block.', sec: 0 },
+    { zh: '7 種工具：鎬、斧、鏟、鋤頭、剪刀、劍、徒手。', en: '7 tools.', sec: 1 },
+    { zh: '記住口訣：石頭找鎬、木頭找斧、泥土找鏟。', en: 'Stone-pickaxe, wood-axe, dirt-shovel.', sec: 2 },
+    { zh: '挖黑曜石一定要用鑽石鎬，其他工具都挖不動。', en: 'Obsidian needs diamond pickaxe.', sec: 2 },
+    { zh: '工具也有等級，鑽石工具最強！', en: 'Diamond tools are the best!', sec: 3 },
+    { zh: '完成任務02，你已經學會使用工具了！', en: 'Task 02 complete!', sec: 4 }
+  ]
+},
+
+/* ==================== 任務03：互動與彩蛋 ==================== */
+task03: {
+  titleZh: '任務03：互動與彩蛋', titleEn: 'Task 03: Interaction & Eggs',
+  sections: [
+    { why: true,
+      body: '🚪 「互動」就是<b>跟遊戲裡的東西說話</b>。<br>在麥塊裡，互動都是按<b>滑鼠右鍵</b>！<br>你可以：<br>• 開門、關門<br>• 按按鈕<br>• 拉桿<br>• 打開箱子<br>而且啊，互動教學裡<b>藏了 3 個彩蛋</b>！<br>仔細找，會有驚喜喔！',
+      bodyEn: 'Interaction means right-click. Three eggs are hidden!' },
+
+    { titleZh: '🎯 七個可以互動的東西', titleEn: 'Seven Interactions',
+      body: '<b>🚪 門</b> — 按右鍵打開或關起來<br>💡 有些門要用按鈕或拉桿控制<br><br><b>🔘 按鈕</b> — 按一下啟動機關，會自己彈回來<br>💡 適合「按一次」的東西<br><br><b>🎚️ 拉桿</b> — 拉一下切換開關，可以一直保持<br>💡 適合「一直開著」的東西<br><br><b>📦 箱子</b> — 按右鍵打開，可以放東西<br>💡 就像你的置物櫃<br><br><b>🧑‍🌾 村民</b> — 按右鍵跟他交易<br>💡 用綠寶石換東西<br><br><b>🛤️ 鐵道</b> — 放礦車坐上去，加動力鐵軌會自己跑<br>💡 想去很遠的地方就用這個',
+      bodyEn: 'Right-click to interact.',
+      grid: [
+        { ico: '🚪', t: '門', s: '打開/關起來' },
+        { ico: '🔘', t: '按鈕', s: '按一下啟動' },
+        { ico: '🎚️', t: '拉桿', s: '切換開關' },
+        { ico: '📦', t: '箱子', s: '放東西' },
+        { ico: '🧑‍🌾', t: '村民', s: '買賣東西' },
+        { ico: '🛤️', t: '鐵道', s: '快速移動' }
+      ],
+      images: [
+        { num: '4-1', name: 'door-open-close.png', content: '門開關', contentEn: 'Door',
+          desc: '左邊門關著，右邊門開著。',
+          descEn: 'Closed vs open.',
+          script: '門按右鍵就開關。',
+          scriptEn: 'Click to open.' },
+        { num: '4-2', name: 'button-press.png', content: '按鈕按下', contentEn: 'Button',
+          desc: '按鈕被按下，紅石線路亮起紅光。',
+          descEn: 'Button pressed, redstone lights.',
+          script: '按鈕按下去會傳訊號到紅石。',
+          scriptEn: 'Press sends signal.' },
+        { num: '4-3', name: 'lever-toggle.png', content: '拉桿切換', contentEn: 'Lever',
+          desc: '拉桿在上（關）vs 在下（開）。',
+          descEn: 'Lever up vs down.',
+          script: '拉桿拉一次切換狀態。',
+          scriptEn: 'Lever toggles state.' },
+        { num: '4-4', name: 'chest-open.png', content: '箱子打開', contentEn: 'Chest',
+          desc: '箱子打開，裡面有道具。',
+          descEn: 'Chest open.',
+          script: '箱子可以放東西，按右鍵打開。',
+          scriptEn: 'Right-click to open.' }
+      ]
+    },
+
+    { titleZh: '🔴 紅石是什麼？', titleEn: 'Redstone & Rails',
+      body: '紅石就像麥塊裡的<b>電線</b>。<br>它可以傳電、做開關、做自動門。<br>四個重要元件：<br><b>紅石粉</b> — 像電線，把電傳到很遠<br><b>紅石火把</b> — 像電池，提供電力<br><b>紅石中繼器</b> — 像延長線，把訊號傳更遠<br><b>動力鐵軌</b> — 會推礦車，讓它跑起來<br>💡 有了紅石，你可以做自動門、隱藏機關、電梯！',
+      bodyEn: 'Redstone is like electricity.',
+      table: {
+        head: ['元件', '功能'],
+        rows: [
+          ['紅石粉', '像電線，傳電'],
+          ['紅石火把', '像電池，提供電'],
+          ['紅石中繼器', '像延長線，延長訊號'],
+          ['動力鐵軌', '會推礦車']
+        ]
+      },
+      images: [
+        { num: '4-5', name: 'redstone-circuit.png', content: '基本紅石電路', contentEn: 'Redstone circuit',
+          desc: '紅石火把（電源）→ 紅石粉（傳導）→ 紅石燈（亮）。',
+          descEn: 'Torch → dust → lamp.',
+          script: '紅石火把供電，紅石粉傳電，紅石燈亮。',
+          scriptEn: 'Torch powers, dust carries, lamp lights.' },
+        { num: '4-6', name: 'rail-minecart.png', content: '動力鐵軌 + 礦車', contentEn: 'Powered rail',
+          desc: '鐵軌上有礦車，幾段是金色發光的動力鐵軌。',
+          descEn: 'Minecart with powered rails.',
+          script: '動力鐵軌會推礦車。',
+          scriptEn: 'Powered rails push minecart.' }
+      ]
+    },
+
+    { titleZh: '🥚 三個彩蛋（找找看！）', titleEn: 'Three Eggs',
+      body: '互動教學裡藏了三個有趣的機關。<br>當你玩到這些地方，仔細觀察它們怎麼運作的！<br><b>① 太陽能燈</b> — 白天關、晚上自動亮<br><b>② 控制發射器</b> — 按按鈕就會噴出東西<br><b>③ 自動流水系統</b> — 拉桿控制水流',
+      bodyEn: 'Three hidden mechanisms.',
+      images: [
+        { num: '5-1', name: 'egg-solar-day-night.png', content: '太陽能燈', contentEn: 'Solar lamp',
+          desc: '左：白天燈沒亮；右：晚上燈自動亮。',
+          descEn: 'Day off, night on.',
+          script: '白天充電，晚上燈亮。',
+          scriptEn: 'Charges in day.' },
+        { num: '5-2', name: 'egg-dispenser.png', content: '控制發射器', contentEn: 'Dispenser',
+          desc: '發射器前有箭飛出來，旁邊有按鈕。',
+          descEn: 'Dispenser shooting arrows.',
+          script: '按按鈕，發射器射出東西。',
+          scriptEn: 'Press to fire.' },
+        { num: '5-3', name: 'egg-water-system.png', content: '自動流水系統', contentEn: 'Water system',
+          desc: '剖面圖：拉桿 → 紅石粉 → 活塞 → 水流。',
+          descEn: 'Lever → dust → piston → water.',
+          script: '拉桿一拉，水流就往這邊流。',
+          scriptEn: 'Pull lever, water flows.' }
+      ]
+    }
+  ],
+  steps: [
+    { zh: '任務03：互動與彩蛋。', en: 'Task 03: Interaction & Eggs.', sec: 0 },
+    { zh: '互動就是按滑鼠右鍵，跟東西說話。', en: 'Interaction means right-click.', sec: 1 },
+    { zh: '門、按鈕、拉桿、箱子都可以互動。', en: 'Doors, buttons, levers, chests.', sec: 1 },
+    { zh: '紅石就像電線，可以做自動門和機關。', en: 'Redstone is like electricity.', sec: 2 },
+    { zh: '互動教學裡藏了三個彩蛋，仔細找找看！', en: 'Three eggs are hidden!', sec: 3 }
+  ]
+},
+
+/* ==================== 任務04：相機與個人資料 ==================== */
+task04: {
+  titleZh: '任務04：相機與個人資料', titleEn: 'Task 04: Camera & Portfolio',
+  sections: [
+    { why: true,
+      body: '📸 玩麥塊的時候，你蓋了很漂亮的房子。<br>要怎麼<b>記錄</b>下來呢？<br>麥塊教育版有兩個好工具：<br>📷 <b>相機</b> — 拍照<br>📖 <b>書本與羽毛筆</b> — 寫日記<br>學會以後，你就能跟同學分享你的作品！',
+      bodyEn: 'Record your work with camera and book.' },
+
+    { titleZh: '📷 相機的兩種用法', titleEn: 'Camera',
+      body: '<b>方法 1：把相機放在地上</b><br>① 從背包拿出相機<br>② 對地板按右鍵，放下去<br>③ 相機會倒數 3 秒<br>④ 自動拍一張！<br><br><b>方法 2：把相機拿在手上</b><br>① 從背包拿出相機<br>② 拿在手上，不要放下<br>③ 對著想拍的東西按右鍵<br>④ 立刻拍照！<br><br>💡 <b>自拍小技巧：</b><br>拍完立刻往前走，相機會拍到你帥氣的臉！',
+      bodyEn: 'Camera is in inventory. Move after shot to take a selfie.',
+      table: {
+        head: ['操作', '結果'],
+        rows: [
+          ['放地上', '3 秒後自動拍'],
+          ['拿在手上', '右鍵立刻拍'],
+          ['拍完立刻動', '拍到自己的臉'],
+          ['打開個人資料', '看所有照片']
+        ]
+      },
+      images: [
+        { num: '6-1', name: 'camera-item.png', content: '相機圖示', contentEn: 'Camera item',
+          desc: '相機圖示特寫，黑色方盒、中間有鏡頭。',
+          descEn: 'Camera icon.',
+          script: '相機在背包裡，像一個黑色小盒子。',
+          scriptEn: 'Camera is a black box.' },
+        { num: '6-2', name: 'camera-place-timer.png', content: '放地上倒數', contentEn: 'Place & timer',
+          desc: '相機放地上，畫面上方有大大的 3、2、1 倒數。',
+          descEn: 'Big countdown.',
+          script: '放地上，會 3 秒後自動拍。',
+          scriptEn: 'Shoots in 3 seconds.' },
+        { num: '6-3', name: 'camera-hold-shoot.png', content: '拿在手上拍', contentEn: 'Hold & shoot',
+          desc: '手拿相機，右下角標示右鍵。',
+          descEn: 'Holding camera.',
+          script: '拿在手上右鍵拍，不用等。',
+          scriptEn: 'Right-click to shoot.' },
+        { num: '6-4', name: 'portfolio-screen.png', content: '相簿', contentEn: 'Portfolio',
+          desc: '相簿介面，有幾張照片縮圖。',
+          descEn: 'Portfolio with thumbnails.',
+          script: '打開個人資料看所有照片。',
+          scriptEn: 'See all photos.' }
+      ]
+    },
+
+    { titleZh: '📖 寫一本自己的冒險故事！', titleEn: 'Book & Quill',
+      body: '書本與羽毛筆，就像你的日記本。<br><b>怎麼用？</b><br>① 從背包拿出書本與羽毛筆<br>② 按右鍵打開<br>③ 開始寫字<br>④ 寫完按「<b>簽名並完成</b>」<br>完成後，就變成一本<b>正式的書</b>了！<br><br><b>可以寫什麼？</b><br>• 「今天是我第一天上麥塊課」<br>• 「我蓋了一間小木屋」<br>• 「我養了一隻狗」<br>• 「我學會做紅石燈了」',
+      bodyEn: 'Write diaries and notes. Sign to make it official.',
+      images: [
+        { num: '6-5', name: 'book-quill-screen.png', content: '書本編輯畫面', contentEn: 'Book editor',
+          desc: '書本頁面，左邊書寫區，右邊完成頁面，上方有署名按鈕。',
+          descEn: 'Book editor with Sign button.',
+          script: '寫完按署名就變正式的書。',
+          scriptEn: 'Sign to make official.' }
+      ]
+    },
+
+    { titleZh: '✅ 我學會了嗎？', titleEn: 'Self Check',
+      body: '完成以下檢核，就代表你學會用相機記錄了！',
+      bodyEn: 'Check these!',
+      checklist: [
+        '我知道相機在哪裡',
+        '我知道放地上 3 秒會拍照',
+        '我知道拿在手上右鍵直接拍',
+        '我知道相簿可以看照片',
+        '我知道書本可以寫日記',
+        '我拍了一張照片'
+      ]
+    }
+  ],
+  steps: [
+    { zh: '任務04：相機與個人資料。', en: 'Task 04: Camera & Portfolio.', sec: 0 },
+    { zh: '麥塊教育版有相機，可以拍下你的作品。', en: 'Minecraft Education has a camera.', sec: 1 },
+    { zh: '相機放地上，3 秒後會自動拍。', en: 'Place = timer.', sec: 1 },
+    { zh: '相機拿在手上，按右鍵馬上拍。', en: 'Hold and right-click.', sec: 1 },
+    { zh: '拍完立刻走，就會拍到自己的臉，像自拍。', en: 'Move to take a selfie.', sec: 1 },
+    { zh: '照片存在相簿裡，可以寫說明文字。', en: 'Photos go to Portfolio.', sec: 1 },
+    { zh: '書本與羽毛筆可以寫日記，寫完按署名。', en: 'Book and Quill for diaries.', sec: 2 },
+    { zh: '試著完成檢核表上的項目吧！', en: 'Try the checklist!', sec: 3 }
+  ]
+},
+
+/* ==================== 任務05：黑板 ==================== */
+task05: {
+  titleZh: '任務05：黑板', titleEn: 'Task 05: Chalkboard',
+  sections: [
+    { why: true,
+      body: '📋 黑板就像學校教室的黑板。<br>你可以寫字、畫畫、留言！<br>在黑板上寫字，<b>其他玩家路過都看得到</b>。<br>很適合：<br>• 寫公告<br>• 寫規則<br>• 寫任務說明',
+      bodyEn: 'Chalkboards for messages, notes, and announcements.' },
+
+    { titleZh: '📐 黑板有三種大小', titleEn: 'Three Sizes',
+      body: '<b>🟫 Slate 小黑板</b><br>只能寫 <b>1 行</b><br>適合：寫路標、寫名字<br>例句：「這是廁所 →」<br><br><b>🟫 Poster 中黑板</b><br>可以寫 <b>2 行</b><br>適合：寫短句、寫提醒<br>例句：「圖書館到了」「請保持安靜」<br><br><b>🟫 Board 大黑板</b><br>可以寫 <b>4 行</b><br>適合：寫公告、寫規則<br>例句：「今天的任務」<br>「1. 蓋一座橋」<br>「2. 找 3 隻動物」<br>「3. 拍照上傳」<br>💡 選對大小，寫字才不會卡卡的！',
+      bodyEn: 'Three sizes with different lines.',
+      table: {
+        head: ['種類', '英文', '行數'],
+        rows: [
+          ['小黑板', 'Slate', '1 行'],
+          ['中黑板', 'Poster', '2 行'],
+          ['大黑板', 'Board', '4 行（適合公告）']
+        ]
+      },
+      images: [
+        { num: '7-1', name: 'board-3-sizes.png', content: '三種黑板', contentEn: 'Three sizes',
+          desc: 'Slate（1 行）、Poster（2 行）、Board（4 行）並排。',
+          descEn: 'Slate 1, Poster 2, Board 4.',
+          script: 'Slate 一行、Poster 兩行、Board 四行。',
+          scriptEn: 'Slate 1, Poster 2, Board 4.' }
+      ]
+    },
+
+    { titleZh: '🖊️ 怎麼用黑板？', titleEn: 'How to Use',
+      body: '四個步驟：<br>① <b>拿出</b>黑板（從背包找）<br>② <b>放置</b>（對地面或牆壁按右鍵）<br>③ <b>編輯</b>（對黑板按右鍵，輸入文字）<br>④ <b>完成</b>（按完成按鈕）<br>💡 寫完就會顯示在牆上！',
+      bodyEn: 'Take out, place, edit, confirm.',
+      images: [
+        { num: '7-2', name: 'board-edit-screen.png', content: '編輯黑板', contentEn: 'Edit screen',
+          desc: '黑板編輯介面，中間有文字輸入框。',
+          descEn: 'Editor with text field.',
+          script: '對黑板右鍵，就會跳出輸入框。',
+          scriptEn: 'Right-click to open editor.' },
+        { num: '7-3', name: 'board-example-class.png', content: '課堂公告範例', contentEn: 'Announcement',
+          desc: '牆上黑板寫著「今天的課程：學習紅石機關！」',
+          descEn: 'Chalkboard with lesson.',
+          script: '可以寫今天的課程內容。',
+          scriptEn: 'Write today\'s lesson.' },
+        { num: '7-4', name: 'board-example-rule.png', content: '規則提醒範例', contentEn: 'Rule',
+          desc: '門旁黑板寫著「進入房子前要先敲門哦！」',
+          descEn: 'Chalkboard with rule.',
+          script: '也可以寫規則。',
+          scriptEn: 'You can write rules.' }
+      ]
+    },
+
+    { titleZh: '🎨 黑板可以做什麼？', titleEn: 'Application Examples',
+      body: '黑板的五種用法：',
+      bodyEn: 'Five chalkboard uses:',
+      steps: [
+        { n: '📢', zh: '課堂公告：「今天的課程：學習紅石機關！」', en: 'Class announcement' },
+        { n: '🎮', zh: '遊戲指引：「請先收集木頭，然後製作工具！」', en: 'Game guide' },
+        { n: '🏫', zh: '建築標示：「這是學校！」', en: 'Building label' },
+        { n: '🚪', zh: '規則提醒：「進入房子前要先敲門哦！」', en: 'Rule reminder' },
+        { n: '📸', zh: '任務說明：「請找到 3 種動物，並拍照記錄！」', en: 'Quest description' }
+      ]
+    }
+  ],
+  steps: [
+    { zh: '任務05：黑板。', en: 'Task 05: Chalkboard.', sec: 0 },
+    { zh: '黑板就像教室的黑板，可以寫字給大家看。', en: 'Chalkboards show messages.', sec: 0 },
+    { zh: '三種大小：Slate 一行、Poster 兩行、Board 四行。', en: 'Three sizes.', sec: 1 },
+    { zh: '對地面或牆壁按右鍵放置，輸入文字按完成。', en: 'Right-click, type, confirm.', sec: 2 },
+    { zh: '試試寫一個「歡迎來到我的家」公告吧！', en: 'Try "Welcome to my home"!', sec: 3 }
+  ]
+},
+
+/* ==================== 任務06：NPC ==================== */
+task06: {
+  titleZh: '任務06：NPC', titleEn: 'Task 06: NPC',
+  sections: [
+    { why: true,
+      body: '🤖 你有看過遊戲裡的「神秘商人」或「任務發放者」嗎？<br>他們站在那裡，你走過去跟他說話，<br>他就會給你任務、賣你東西。<br>這些角色叫做 <b>NPC</b>（非玩家角色）。<br>今天我們要學會<b>自己做一個 NPC</b>！',
+      bodyEn: 'NPCs guide players, give quests, run shops.' },
+
+    { titleZh: '❓ NPC 是什麼？', titleEn: 'What is NPC',
+      body: 'NPC 就是<b>遊戲裡不會動的角色</b>。<br>他們：<br>✅ 站在固定位置<br>✅ 可以跟他說話<br>✅ 不能被攻擊<br>✅ 可以給你任務或東西<br><br><b>NPC 可以做什麼？</b><br>🛒 當商店老闆（賣東西）<br>📋 當任務發放者（給你任務）<br>🗺️ 當導遊（告訴你路）<br>⚠️ 當警告牌（告訴你前面危險）<br>💡 想像力有多大，NPC 就能做多少事！',
+      bodyEn: 'NPC = Non-Player Character.',
+      images: [
+        { num: '8-1', name: 'npc-normal.png', content: 'NPC 外觀', contentEn: 'NPC appearance',
+          desc: 'NPC 站在地面上，像普通村民但沒有職業服裝。',
+          descEn: 'NPC on ground.',
+          script: 'NPC 站著不動、不能攻擊。',
+          scriptEn: 'NPCs stand still.' }
+      ]
+    },
+
+    { titleZh: '🥚 怎麼拿到 NPC？', titleEn: 'Get & Place',
+      body: '<b>方法 1：用指令（推薦）</b><br>① 按 <b>T</b> 打開聊天框<br>② 輸入：<br><span class="key">/give @p npc_spawn_egg 1</span><br>③ 按 Enter<br>④ 背包裡就會多一個 NPC 蛋！<br><br><b>方法 2：從背包找</b><br>① 按 <b>E</b> 打開背包<br>② 搜尋「NPC Spawn Egg」<br><br><b>怎麼放 NPC？</b><br>① 拿 NPC 蛋在手上<br>② 對著地面按右鍵<br>③ NPC 就出現了！<br>⚠️ 正確指令是 <b>npc_spawn_egg</b>，不是舊版的 spawn_egg 151。',
+      bodyEn: 'Get NPC spawn egg by command.',
+      table: {
+        head: ['方法', '指令'],
+        rows: [
+          ['聊天指令（推薦）', '<span class="key">/give @p npc_spawn_egg 1</span>'],
+          ['直接召喚', '<span class="key">/summon npc</span>'],
+          ['創造模式背包', '搜尋 NPC Spawn Egg']
+        ]
+      },
+      images: [
+        { num: '8-2', name: 'npc-spawn-egg.png', content: 'NPC 生怪蛋', contentEn: 'Spawn egg',
+          desc: 'NPC 生怪蛋特寫，蛋上有 NPC 圖案。',
+          descEn: 'NPC spawn egg.',
+          script: '生怪蛋長得像一顆蛋，上面有 NPC 圖案。',
+          scriptEn: 'Looks like an egg.' }
+      ]
+    },
+
+    { titleZh: '✏️ 怎麼改 NPC 的名字和對話？', titleEn: 'Edit NPC',
+      body: '首先要輸入這個指令：<br><span class="key">/wb</span><br>這會打開「建構者模式」，你才能編輯 NPC。<br>⚠️ <b>每次登入遊戲都要重新打一次 /wb</b><br><br>然後對 NPC 按右鍵，會跳出編輯器。<br>編輯器有 4 個區塊：<br><br><b>① 名稱</b><br>給 NPC 取名字，例如「神秘商人」<br><br><b>② 對話</b><br>玩家點 NPC 時，他會說的話<br>例如：「你好！需要幫忙嗎？」<br><br><b>③ 按鈕</b><br>可以加按鈕，每個按鈕做不同事<br>例如：「我要買東西」「不要」<br><br><b>④ URL 連結</b><br>點按鈕可以打開網頁（比較少用）',
+      bodyEn: 'Use /wb to enable World Builder.',
+      images: [
+        { num: '8-3', name: 'npc-editor-tabs.png', content: 'NPC 編輯器', contentEn: 'NPC editor',
+          desc: '四個區塊：名稱、對話、按鈕、URL 連結。',
+          descEn: 'Four sections.',
+          script: '編輯器有四個區塊。',
+          scriptEn: 'Four sections to edit.' },
+        { num: '8-4', name: 'npc-dialog-screen.png', content: 'NPC 對話框', contentEn: 'NPC dialog',
+          desc: '玩家點 NPC 後出現的對話框，左邊頭像，右邊對話。',
+          descEn: 'Dialog with portrait.',
+          script: '點 NPC 跳出對話框。',
+          scriptEn: 'Click to open dialog.' },
+        { num: '8-5', name: 'npc-button-command.png', content: '按鈕綁指令', contentEn: 'Button command',
+          desc: '按鈕文字「領取鑽石」，綁定 /give @p diamond 1。',
+          descEn: 'Button bound to command.',
+          script: '按鈕可以綁指令。',
+          scriptEn: 'Buttons run commands.' },
+        { num: '8-6', name: 'npc-color-code.png', content: '名稱顏色', contentEn: 'Name colors',
+          desc: '§6 金色、§c 紅色、§a 綠色。',
+          descEn: '§6 gold, §c red, §a green.',
+          script: '名稱前加 §6 變金色。',
+          scriptEn: 'Add §6 for gold.' }
+      ]
+    },
+
+    { titleZh: '💡 NPC 應用範例', titleEn: 'NPC Examples',
+      body: '兩個實用範例：<br><br><b>🛒 交易商店 NPC</b><br>名稱：§6村莊商人<br>對話：「你好！我這裡有一些道具可以幫助你冒險，你需要什麼呢？」<br>按鈕：「買麵包」→ /give @p bread 5<br>按鈕：「買鐵劍」→ /give @p iron_sword 1<br><br><b>⚠️ 危險區域警告 NPC</b><br>名稱：§c⚠️ 危險區域<br>對話：「小心！前方是岩漿地區，請確保你有裝備再進入！」<br>按鈕：「我準備好了」→ /tp @p 200 64 300<br>按鈕：「再準備一下」→ 關閉對話',
+      bodyEn: 'Two practical examples.',
+      steps: [
+        { n: '🛒', zh: '交易商店 NPC：名稱 §6村莊商人，按鈕買食物、買裝備', en: 'Shop NPC' },
+        { n: '⚠️', zh: '危險區域 NPC：名稱 §c⚠️ 危險區域，按鈕傳送到地牢', en: 'Warning NPC' }
+      ]
+    },
+
+    { titleZh: '🎨 名稱顏色代碼（常用 5 種）', titleEn: 'Color Codes',
+      body: '在 NPC 名稱前面加符號，字就會變色。<br>以下是常用的 5 種：',
+      bodyEn: 'Add color code before NPC name.',
+      table: {
+        head: ['顏色', '代碼', '什麼時候用'],
+        rows: [
+          ['金色', '<span class="key">§6</span>', '重要人物（商人）'],
+          ['紅色', '<span class="key">§c</span>', '警告（危險區域）'],
+          ['綠色', '<span class="key">§a</span>', '任務（任務發放）'],
+          ['白色', '<span class="key">§f</span>', '一般說明'],
+          ['灰色', '<span class="key">§7</span>', '不重要資訊']
+        ]
+      }
+    }
+  ],
+  steps: [
+    { zh: '任務06：NPC。', en: 'Task 06: NPC.', sec: 0 },
+    { zh: 'NPC 是遊戲裡不會動的角色，可以跟他說話。', en: 'NPC = Non-Player Character.', sec: 1 },
+    { zh: '用指令 /give @p npc_spawn_egg 1 取得 NPC 蛋。', en: 'Get spawn egg: /give @p npc_spawn_egg 1.', sec: 2 },
+    { zh: '對地面右鍵放置，就出現一個 NPC。', en: 'Right-click to place.', sec: 2 },
+    { zh: '要編輯 NPC，先輸入 /wb 開啟建構者模式。', en: 'Use /wb to edit.', sec: 3 },
+    { zh: '編輯器有四個區塊：名稱、對話、按鈕、URL 連結。', en: 'Four sections.', sec: 3 },
+    { zh: '試著做一個「任務發放者」NPC 吧！', en: 'Try a Quest Giver NPC!', sec: 4 }
+  ]
+},
+
+/* ==================== 參考網頁 ==================== */
+refs: {
+  titleZh: '參考網頁', titleEn: 'References',
+  sections: [
+    { why: true,
+      body: '想學更多麥塊知識？<br>以下是可以幫助你的網站和資源。<br>遇到不會的地方，也可以到這些網站查查看！',
+      bodyEn: 'Websites to learn more about Minecraft.' },
+
+    { titleZh: '🏢 官方資源', titleEn: 'Official Resources',
+      body: 'Minecraft 教育版的官方網站和教學資源。',
+      bodyEn: 'Official websites.',
+      refs: [
+        { cat: '官方', title: 'Minecraft Education 官方網站', titleEn: 'Official Site',
+          url: 'https://education.minecraft.net', desc: '下載、教學資源、課程計畫', descEn: 'Download, resources' },
+        { cat: '官方', title: '教育者資源中心', titleEn: 'Educator Resources',
+          url: 'https://education.minecraft.net/en-us/resources', desc: '免費培訓、教學影片', descEn: 'Free training' },
+        { cat: '官方', title: '教育版支援中心', titleEn: 'Support Center',
+          url: 'https://edusupport.minecraft.net', desc: '技術、帳號問題', descEn: 'Tech support' }
+      ]
+    },
+
+    { titleZh: '📚 中文 Wiki', titleEn: 'Chinese Wiki',
+      body: '完整的方塊、工具、NPC 等遊戲資訊。',
+      bodyEn: 'Complete game info.',
+      refs: [
+        { cat: 'Wiki', title: 'NPC 說明', titleEn: 'NPC',
+          url: 'https://zh.minecraft.wiki/w/NPC', desc: 'NPC 設定、指令、顏色代碼', descEn: 'NPC settings' },
+        { cat: 'Wiki', title: '黑板說明', titleEn: 'Chalkboard',
+          url: 'https://zh.minecraft.wiki/w/%E9%BB%91%E6%9D%BF', desc: '三種尺寸、使用方法', descEn: 'Three sizes' },
+        { cat: 'Wiki', title: '相機說明', titleEn: 'Camera',
+          url: 'https://zh.minecraft.wiki/w/%E6%91%84%E5%83%8F%E6%9C%BA', desc: '拍照、自拍、相簿', descEn: 'Photo, selfie' },
+        { cat: 'Wiki', title: '工具說明', titleEn: 'Tools',
+          url: 'https://zh.minecraft.wiki/w/%E5%B7%A5%E5%85%B7', desc: '7 種工具完整介紹', descEn: '7 tools' },
+        { cat: 'Wiki', title: '物品說明', titleEn: 'Items',
+          url: 'https://zh.minecraft.wiki/w/%E7%89%A9%E5%93%81', desc: '所有物品清單', descEn: 'All items' }
+      ]
+    },
+
+    { titleZh: '💻 程式學習', titleEn: 'Coding Resources',
+      body: 'MakeCode 與 Python 程式設計的教學資源。',
+      bodyEn: 'Coding tutorials.',
+      refs: [
+        { cat: '程式', title: 'MakeCode 官方編輯器', titleEn: 'MakeCode Editor',
+          url: 'https://makecode.com', desc: '用積木寫程式的線上工具', descEn: 'Block coding online' },
+        { cat: '程式', title: 'Python 101 with MakeCode', titleEn: 'Python 101',
+          url: 'https://education.minecraft.net/en-us/lessons/python-101-lesson-6', desc: '用 Python 寫麥塊程式', descEn: 'Python coding' },
+        { cat: '程式', title: 'Minecraft Education 課程範例', titleEn: 'Lesson Samples',
+          url: 'https://education.minecraft.net/en-us/lessons', desc: '官方課程範例', descEn: 'Official samples' }
+      ]
+    }
+  ],
+  steps: [
+    { zh: '參考網頁。', en: 'References.', sec: 0 },
+    { zh: '官方網站是最重要的資源，有課程、教學、培訓。', en: 'Official site is #1.', sec: 1 },
+    { zh: '中文 Wiki 有完整的方塊、工具、NPC 說明。', en: 'Chinese Wiki is complete.', sec: 2 },
+    { zh: 'MakeCode 編輯器可以線上寫程式。', en: 'MakeCode online editor.', sec: 3 },
+    { zh: '遇到問題可以到支援中心找答案。', en: 'Support center for help.', sec: 1 }
+  ]
+}
+};
+
+/* ============================================================
+   語音
+   ============================================================ */
+const VOICE = {
+  zh: null, en: null, all: [], rate: 1.0, mode: 'zh',
+  load(){
+    this.all = speechSynthesis.getVoices();
+    const tw = this.all.filter(v => /zh[-_]TW/i.test(v.lang) || v.name.includes('台灣'));
+    this.zh = tw.find(v => v.name.includes('HsiaoChen')) ||
+              tw.find(v => v.name.includes('曉臻')) ||
+              tw.find(v => v.name.includes('HsiaoYu')) ||
+              tw.find(v => v.name.includes('曉雨')) ||
+              tw.find(v => v.name.includes('YunJhe')) ||
+              tw.find(v => v.name.includes('雲哲')) ||
+              tw.find(v => v.name.includes('Online')) ||
+              tw.find(v => v.name.includes('Google')) ||
+              tw[0] || this.all.find(v => v.lang.startsWith('zh'));
+    this.en = this.all.find(v => /en[-_]US/i.test(v.lang) && v.name.includes('Online')) ||
+              this.all.find(v => /en[-_]US/i.test(v.lang)) ||
+              this.all.find(v => v.lang.startsWith('en'));
+    return this.all.length > 0;
+  },
+  _speakOne(text, lang){
+    return new Promise(resolve => {
+      const u = new SpeechSynthesisUtterance(text);
+      const v = lang === 'zh' ? this.zh : this.en;
+      if (v){ u.voice = v; u.lang = v.lang; }
+      else u.lang = lang === 'zh' ? 'zh-TW' : 'en-US';
+      u.rate = this.rate; u.pitch = 1.05;
+      u.onend = resolve; u.onerror = resolve;
+      speechSynthesis.speak(u);
+    });
+  },
+  async speak(zhText, enText, onEnd){
+    speechSynthesis.cancel();
+    if (this.mode === 'zh') await this._speakOne(zhText, 'zh');
+    else if (this.mode === 'en') await this._speakOne(enText, 'en');
+    else { await this._speakOne(zhText, 'zh'); await new Promise(r => setTimeout(r, 150)); await this._speakOne(enText, 'en'); }
+    onEnd && onEnd();
+  },
+  stop(){ speechSynthesis.cancel(); }
+};
+
+function loadVoicesWithRetry(attempt = 0){
+  const ok = VOICE.load();
+  if (ok) return;
+  if (attempt < 10) setTimeout(() => loadVoicesWithRetry(attempt + 1), 300);
+}
+speechSynthesis.addEventListener('voiceschanged', () => loadVoicesWithRetry());
+
+function bi(zh, en){
+  if (VOICE.mode === 'zh') return zh;
+  if (VOICE.mode === 'en') return en;
+  return `${zh}<span style="display:block;font-size:.78rem;color:var(--muted);margin-top:2px;">${en}</span>`;
+}
+function biInline(zh, en){
+  if (VOICE.mode === 'zh') return zh;
+  if (VOICE.mode === 'en') return en;
+  return `${zh} <span style="color:var(--muted);font-size:.85em;">${en}</span>`;
+}
+
+let currentId = 'download';
+let demoOn = false, demoIndex = 0, demoPlaying = false, demoPaused = false;
+let demoToken = 0, demoTimers = [];
+let lastScrolledSec = -1;
+
+const $ = id => document.getElementById(id);
+
+function renderSidebar(){
+  const sb = $('sidebar');
+  sb.innerHTML = '';
+  MENU.forEach(m => {
+    if (m.group){
+      const g = document.createElement('div');
+      g.innerHTML = `<div class="sidebar-group-title">${m.ico} ${biInline(m.zh, m.en)}</div>`;
+      sb.appendChild(g);
+      MENU.filter(x => x.parent === m.id).forEach(sub => {
+        const subBtn = document.createElement('button');
+        subBtn.className = 'sidebar-item sidebar-sub' + (sub.id === currentId ? ' active' : '');
+        subBtn.innerHTML = `<span class="num">${sub.num}</span><span>${biInline(sub.zh, sub.en)}</span>`;
+        subBtn.addEventListener('click', () => switchTo(sub.id));
+        sb.appendChild(subBtn);
+      });
+      return;
+    }
+    if (m.parent) return;
+    const btn = document.createElement('button');
+    btn.className = 'sidebar-item' + (m.id === currentId ? ' active' : '');
+    btn.innerHTML = `<span class="ico">${m.ico || ''}</span>${m.num ? `<span class="num">${m.num}</span>` : ''}<span>${biInline(m.zh, m.en)}</span>`;
+    btn.addEventListener('click', () => switchTo(m.id));
+    sb.appendChild(btn);
+  });
+}
+
+function switchTo(id){
+  currentId = id;
+  demoIndex = 0;
+  lastScrolledSec = -1;
+  if (demoOn) exitDemo();
+  renderSidebar();
+  renderContent();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderContent(){
+  const mc = $('mainContent');
+  const data = CONTENT[currentId];
+  if (!data){ mc.innerHTML = '<p>內容載入中...</p>'; return; }
+
+  let html = `<div class="unit-header">
+    <div class="badge">📖 ${biInline('單元', 'Unit')}</div>
+    <h2>${bi(data.titleZh, data.titleEn)}</h2>
+  </div>`;
+
+  data.sections.forEach((sec, idx) => {
+    if (sec.why){
+      html += `<div class="section" id="sec-${idx}"><div style="background:var(--elev);border-left:4px solid var(--warm);padding:12px 16px;border-radius:8px;font-size:.92rem;line-height:1.8;">${bi(sec.body, sec.bodyEn)}</div></div>`;
+      return;
+    }
+    html += `<div class="section" id="sec-${idx}"><h3>${bi(sec.titleZh, sec.titleEn)}</h3><p style="line-height:1.9;">${bi(sec.body, sec.bodyEn)}</p>`;
+
+    if (sec.mouseVisual){
+      html += `<div style="text-align:center;">
+        <div class="mouse-vis">
+          <div class="mouse-body">
+            <div class="mouse-btn-l"></div>
+            <div class="mouse-btn-r"></div>
+            <div class="mouse-wheel"></div>
+          </div>
+          <div class="mouse-label">
+            <span class="l">左鍵 挖</span>
+            <span class="w">滾輪 換</span>
+            <span class="r">右鍵 放</span>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    if (sec.steps){
+      html += '<div class="step-list">';
+      sec.steps.forEach(s => {
+        html += `<div class="step-item"><span class="sn">${s.n}</span><span class="st">${bi(s.zh, s.en)}</span></div>`;
+      });
+      html += '</div>';
+    }
+
+    if (sec.table){
+      html += '<table class="data-table"><thead><tr>' + sec.table.head.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>';
+      sec.table.rows.forEach(r => { html += '<tr>' + r.map(c => `<td>${c}</td>`).join('') + '</tr>'; });
+      html += '</tbody></table>';
+    }
+
+    if (sec.keyboard){
+      html += `<div style="text-align:center;margin:14px 0;">
+        <div class="kb-vis" style="display:inline-grid;">
+          <div class="kb-row">
+            <div class="kb-key" style="visibility:hidden;">　</div>
+            <div class="kb-key hl">W</div>
+            <div class="kb-key" style="visibility:hidden;">　</div>
+          </div>
+          <div class="kb-row">
+            <div class="kb-key">A</div>
+            <div class="kb-key">S</div>
+            <div class="kb-key">D</div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    if (sec.grid){
+      html += `<div class="grid-cards">`;
+      sec.grid.forEach(g => {
+        html += `<div class="mini-card">
+          <div class="ico">${g.ico}</div>
+          <div class="t">${g.t}</div>
+          <div class="s">${g.s}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    if (sec.checklist){
+      html += '<div class="checklist"><h4>✅ 我可以做到這些嗎？</h4>';
+      sec.checklist.forEach(c => {
+        html += `<label><input type="checkbox"><span>${c}</span></label>`;
+      });
+      html += '</div>';
+    }
+
+    if (sec.faq){
+      html += '<div class="faq">';
+      sec.faq.forEach(f => {
+        html += `<div class="faq-item"><div class="q">${f.q}</div><div class="a">${f.a}</div></div>`;
+      });
+      html += '</div>';
+    }
+
+    if (sec.refs){
+      html += '<div class="ref-grid">';
+      sec.refs.forEach(r => {
+        html += `<a class="ref-card" href="${r.url}" target="_blank" rel="noopener">
+          <div class="cat">${r.cat}</div>
+          <h4>${biInline(r.title, r.titleEn || r.title)}</h4>
+          <div class="url">${r.url}</div>
+          <div class="desc">${biInline(r.desc, r.descEn || r.desc)}</div>
+        </a>`;
+      });
+      html += '</div>';
+    }
+
+    if (sec.images){
+      sec.images.forEach(img => {
+        const path = `images/${img.name}`;
+        html += `<div class="img-block" id="img-${img.num}">
+          <img src="${path}" alt="${img.content}" onerror="this.style.display='none';">
+          <div class="img-slot">
+            <span class="img-num">📷 ${VOICE.mode === 'en' ? 'Fig' : '圖'} ${img.num}</span>
+            <div class="img-name">${path}</div>
+            <div class="img-desc">
+              <b>${VOICE.mode === 'en' ? 'Content:' : '內容：'}</b>${bi(img.content, img.contentEn || img.content)}<br>
+              <b>${VOICE.mode === 'en' ? 'How:' : '怎麼做：'}</b>${bi(img.desc, img.descEn || img.desc)}
+              <div class="script">${bi(img.script, img.scriptEn || img.script)}</div>
+            </div>
+          </div>
+        </div>`;
+      });
+    }
+
+    if (sec.tips){
+      sec.tips.forEach(t => {
+        html += `<div class="tip">💡 ${bi(t.zh, t.en)}</div>`;
+      });
+    }
+
+    html += '</div>';
+  });
+
+  mc.innerHTML = html;
+}
+
+/* ★ 捲動到 section（等圖片載入完才滾） ★ */
+function scrollToSection(idx){
+  if (idx === undefined || idx === null) return;
+  const target = document.getElementById('sec-' + idx);
+  if (!target) return;
+
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('focused'));
+  target.classList.add('focused');
+
+  const imgs = target.querySelectorAll('img');
+  const pending = [...imgs].filter(img => !img.complete);
+  if (pending.length > 0){
+    Promise.all(pending.map(img => new Promise(res => {
+      img.addEventListener('load', res, { once: true });
+      img.addEventListener('error', res, { once: true });
+    }))).then(() => doScrollEl(target));
+  } else {
+    doScrollEl(target);
+  }
+}
+
+function doScrollEl(target){
+  const topbar = document.querySelector('.topbar');
+  const demoBar = document.getElementById('demoBar');
+  const topbarH = topbar ? topbar.getBoundingClientRect().height : 52;
+  const demoBarH = (demoBar && demoBar.classList.contains('open'))
+                    ? demoBar.getBoundingClientRect().height : 0;
+
+  const viewportH = window.innerHeight;
+  const padding = 20;
+  const availTop = topbarH + padding;
+  const availBottom = viewportH - demoBarH - padding;
+  const availH = availBottom - availTop;
+
+  const rect = target.getBoundingClientRect();
+  const targetH = rect.height;
+  const targetTopAbs = rect.top + window.scrollY;
+
+  let scrollTo;
+  if (targetH <= availH) {
+    const offset = availTop + (availH - targetH) / 2;
+    scrollTo = targetTopAbs - offset;
+  } else {
+    scrollTo = targetTopAbs - availTop;
+  }
+
+  window.scrollTo({ top: scrollTo, behavior: 'smooth' });
+}
+
+function clearTimers(){ demoTimers.forEach(clearTimeout); demoTimers = []; }
+function schedule(fn, d){ const t = setTimeout(fn, d); demoTimers.push(t); return t; }
+
+function playStep(i){
+  const data = CONTENT[currentId];
+  if (!data || !data.steps || i >= data.steps.length){ finishAll(); return; }
+  demoIndex = i;
+  clearTimers(); demoToken++;
+  const token = demoToken;
+  const step = data.steps[i];
+  $('caption').innerHTML = bi(step.zh, step.en);
+
+  /* ★ 只有換 section 才滾動 ★ */
+  if (step.sec !== undefined && step.sec !== lastScrolledSec){
+    scrollToSection(step.sec);
+    lastScrolledSec = step.sec;
+  }
+
+  VOICE.speak(step.zh, step.en, () => {
+    if (token !== demoToken || !demoPlaying || demoPaused) return;
+    schedule(() => {
+      if (token !== demoToken || !demoPlaying || demoPaused) return;
+      playStep(i + 1);
+    }, 400);
+  });
+}
+
+function startDemo(){
+  demoOn = true; demoPlaying = true; demoPaused = false; demoIndex = 0;
+  lastScrolledSec = -1;
+  $('startBtn').classList.add('on');
+  $('startBtn').textContent = '✕ 結束';
+  $('demoBar').classList.add('open');
+  $('playBtn').textContent = '⏸ 暫停';
+  playStep(0);
+}
+
+function pauseDemo(){
+  demoPaused = true;
+  $('playBtn').textContent = '▶ 繼續';
+  speechSynthesis.cancel();
+  clearTimers();
+  demoToken++;
+}
+
+function resumeDemo(){
+  demoPaused = false;
+  $('playBtn').textContent = '⏸ 暫停';
+  demoToken++;
+  const token = demoToken;
+  const data = CONTENT[currentId];
+  if (!data || !data.steps) return;
+  const step = data.steps[demoIndex];
+  if (!step) return;
+  $('caption').innerHTML = bi(step.zh, step.en);
+  if (step.sec !== undefined) scrollToSection(step.sec);
+  VOICE.speak(step.zh, step.en, () => {
+    if (token !== demoToken || !demoPlaying || demoPaused) return;
+    schedule(() => {
+      if (token !== demoToken || !demoPlaying || demoPaused) return;
+      playStep(demoIndex + 1);
+    }, 400);
+  });
+}
+
+function finishAll(){
+  demoPlaying = false; demoPaused = false;
+  $('playBtn').textContent = '↻ 重播';
+  toast('🎉 完成！');
+  setTimeout(() => { if (!demoPlaying) exitDemo(); }, 3000);
+}
+
+function exitDemo(){
+  demoOn = false; demoPlaying = false; demoPaused = false;
+  demoToken++;
+  VOICE.stop(); clearTimers();
+  lastScrolledSec = -1;
+  $('startBtn').classList.remove('on');
+  $('startBtn').textContent = '▶ 開始教學';
+  $('demoBar').classList.remove('open');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('focused'));
+}
+
+$('startBtn').addEventListener('click', () => { if (demoOn){ exitDemo(); return; } openSetup(); });
+$('playBtn').addEventListener('click', () => {
+  if (!demoOn){ openSetup(); return; }
+  if (!demoPlaying && !demoPaused){ demoIndex = 0; startDemo(); return; }
+  if (demoPaused) resumeDemo(); else pauseDemo();
+});
+$('nextStep').addEventListener('click', () => {
+  if (!demoOn) return;
+  VOICE.stop(); clearTimers();
+  demoPlaying = true; demoPaused = false;
+  playStep(demoIndex + 1);
+});
+$('prevStep').addEventListener('click', () => {
+  if (!demoOn || demoIndex === 0) return;
+  VOICE.stop(); clearTimers();
+  demoPlaying = true; demoPaused = false;
+  playStep(demoIndex - 1);
+});
+$('exitBtn').addEventListener('click', exitDemo);
+
+document.querySelectorAll('#voiceMode button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    VOICE.mode = btn.dataset.mode;
+    document.querySelectorAll('#voiceMode button').forEach(b => b.classList.toggle('active', b === btn));
+    renderSidebar(); renderContent();
+    if (demoOn && demoPlaying){
+      VOICE.stop(); clearTimers();
+      demoToken++;
+      const token = demoToken;
+      const data = CONTENT[currentId];
+      const step = data && data.steps && data.steps[demoIndex];
+      if (step){
+        demoPaused = false;
+        $('caption').innerHTML = bi(step.zh, step.en);
+        if (step.sec !== undefined) scrollToSection(step.sec);
+        VOICE.speak(step.zh, step.en, () => {
+          if (token !== demoToken || !demoPlaying || demoPaused) return;
+          schedule(() => {
+            if (token !== demoToken || !demoPlaying || demoPaused) return;
+            playStep(demoIndex + 1);
+          }, 400);
+        });
+      }
+    } else {
+      VOICE.stop();
+    }
+  });
+});
+
+function openSetup(){
+  const sel = $('voiceSelect'); sel.innerHTML = '';
+  if (VOICE.zh){ const o = document.createElement('option'); o.value = 'zh'; o.textContent = '🀄 ' + VOICE.zh.name; sel.appendChild(o); }
+  if (VOICE.en){ const o = document.createElement('option'); o.value = 'en'; o.textContent = '🔤 ' + VOICE.en.name; sel.appendChild(o); }
+  sel.value = VOICE.mode;
+  $('setupModal').classList.add('show');
+}
+$('cancelBtn').addEventListener('click', () => $('setupModal').classList.remove('show'));
+$('confirmBtn').addEventListener('click', () => {
+  VOICE.mode = $('voiceSelect').value;
+  document.querySelectorAll('#voiceMode button').forEach(b => b.classList.toggle('active', b.dataset.mode === VOICE.mode));
+  $('setupModal').classList.remove('show');
+  renderSidebar(); renderContent();
+  startDemo();
+});
+
+let toastTimer;
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.className = 'show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = '', 2600);
+}
+
+(function init(){
+  VOICE.rate = 1.0;
+  renderSidebar();
+  renderContent();
+  loadVoicesWithRetry();
+})();
+</script>
+</body>
+</html>

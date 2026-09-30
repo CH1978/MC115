@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#4a8f3c">
+<title>僑仁麥塊學院 ｜ 用方塊蓋出你的程式邏輯</title>
+<style>
+/* ============ 基礎 ============ */
+:root{
+  --green:#4a8f3c; --green-d:#356a2b; --green-l:#eef4ea;
+  --blue:#5ba3d9; --cyan:#2ec4b6;
+  --halloween:#e67e22; --christmas:#c0392b;
+  --warm:#f0c840;
+  --bg:#f2f6ef; --card:#fff; --text:#1f2a1c; --muted:#6b7a66;
+  --border:#d8e3d2; --r:14px; --shadow:0 2px 8px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  line-height:1.6;
+}
+.wrap{max-width:1140px; margin:0 auto; padding:0 18px;}
+img{max-width:100%; display:block;}
+
+/* ============ 頂部列 ============ */
+.topbar{
+  background:var(--green); color:#fff; position:sticky; top:0; z-index:100;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+.topbar .wrap{display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:10px 18px;}
+.brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.02rem; white-space:nowrap;}
+.brand .logo{
+  width:34px; height:34px; background:#3a7530; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+}
+.topbar nav{display:flex; gap:4px; flex-wrap:wrap; margin-left:auto;}
+.topbar nav a{
+  color:#fff; text-decoration:none; padding:7px 11px; border-radius:8px;
+  font-size:.9rem; transition:.15s; white-space:nowrap; cursor:pointer;
+}
+.topbar nav a:hover{background:rgba(255,255,255,.2);}
+.topbar nav a.ext{background:rgba(0,0,0,.18); font-weight:600;}
+.topbar nav a.highlight{background:var(--warm); color:#1a1a1a; font-weight:700;}
+.topbar nav a.highlight:hover{background:#ffe066;}
+.menu-toggle{display:none; background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; margin-left:auto;}
+
+/* ============ Hero ============ */
+.hero{
+  background:linear-gradient(135deg,var(--green-d),var(--green) 60%, var(--cyan));
+  color:#fff; padding:56px 0 60px; text-align:center; position:relative; overflow:hidden;
+}
+.hero::before{
+  content:""; position:absolute; inset:0; opacity:.12;
+  background-image:
+    linear-gradient(#fff 1px, transparent 1px),
+    linear-gradient(90deg, #fff 1px, transparent 1px);
+  background-size:40px 40px;
+}
+.hero .wrap{position:relative; z-index:1;}
+.hero h1{
+  margin:0 0 10px; font-size:2.2rem; letter-spacing:1px;
+  text-shadow:0 3px 14px rgba(0,0,0,.2);
+}
+.hero .slogan{font-size:1.05rem; opacity:.95; margin:0 0 22px; font-weight:300;}
+.hero .meta{font-size:.9rem; opacity:.85; margin:0 0 26px;}
+.hero .cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+.hero .cta a{
+  padding:12px 26px; border-radius:11px; text-decoration:none; font-weight:700;
+  font-size:.95rem; transition:.15s; cursor:pointer;
+}
+.hero .cta a.primary{background:#fff; color:var(--green-d);}
+.hero .cta a.primary:hover{background:#f0f8ec; transform:translateY(-2px);}
+.hero .cta a.ghost{background:rgba(255,255,255,.15); color:#fff; border:2px solid rgba(255,255,255,.6);}
+.hero .cta a.ghost:hover{background:rgba(255,255,255,.25);}
+.hero .cta a.warm{background:var(--warm); color:#1a1a1a;}
+.hero .cta a.warm:hover{background:#ffe066; transform:translateY(-2px);}
+
+/* ============ 節慶 banner ============ */
+.festival-banner{
+  padding:20px 0; text-align:center; color:#fff; cursor:pointer;
+  transition:.2s; position:relative; overflow:hidden;
+}
+.festival-banner:hover{filter:brightness(1.08);}
+.festival-banner.halloween{background:linear-gradient(90deg,#1a1a1a,#e67e22,#1a1a1a);}
+.festival-banner.christmas{background:linear-gradient(90deg,#8b1a1a,#c0392b,#2a5c2a,#8b1a1a);}
+.festival-banner .inner{
+  display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
+}
+.festival-banner .emoji{font-size:2rem;}
+.festival-banner b{font-size:1.1rem;}
+.festival-banner span{opacity:.92; font-size:.92rem;}
+
+/* ============ Section ============ */
+section{padding:38px 0;}
+section h2{
+  font-size:1.45rem; margin:0 0 6px; display:flex; align-items:center; gap:10px;
+  color:var(--text);
+}
+section h2::before{
+  content:""; width:6px; height:26px; background:var(--green); border-radius:3px;
+}
+.sub{color:var(--muted); margin:0 0 20px; font-size:.92rem;}
+
+/* ============ 面板 ============ */
+.panel{
+  background:#fff; border:1px solid var(--border); border-radius:var(--r);
+  padding:24px; box-shadow:var(--shadow);
+}
+.panel + .panel{margin-top:16px;}
+
+/* ============ 表單 ============ */
+.field{margin-bottom:14px;}
+.field label{display:block; font-size:.9rem; font-weight:700; margin-bottom:6px;}
+.field input,.field select,.field textarea{
+  width:100%; padding:11px 13px; border:2px solid var(--border); border-radius:10px;
+  font-size:1rem; font-family:inherit; background:#fbfdfa;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none; border-color:var(--green);
+}
+select{cursor:pointer;}
+
+/* ============ 按鈕 ============ */
+.btn{
+  display:inline-block; padding:12px 22px; background:var(--green); color:#fff;
+  text-decoration:none; border-radius:10px; font-weight:700; border:none;
+  cursor:pointer; font-family:inherit; font-size:.95rem; transition:.15s;
+  text-align:center;
+}
+.btn:hover{background:var(--green-d);}
+.btn.ghost{background:#fff; color:var(--green-d); border:2px solid var(--green);}
+.btn.ghost:hover{background:var(--green-l);}
+.btn.full{width:100%;}
+.btn.sm{padding:8px 16px; font-size:.86rem;}
+
+.err{color:#c0392b; font-size:.88rem; margin:12px 0 0; min-height:22px; text-align:center;}
+
+/* ============ 公告 ============ */
+.announce-list{list-style:none; padding:0; margin:0;}
+.announce-list li{
+  padding:12px 14px; background:#fff; border-radius:10px; margin-bottom:10px;
+  border-left:4px solid var(--green); box-shadow:var(--shadow);
+  display:flex; gap:12px; align-items:flex-start;
+}
+.announce-list li .date{
+  font-size:.8rem; color:var(--muted); flex-shrink:0; font-weight:700;
+}
+
+/* ============ 課程表 ============ */
+.lesson-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:14px;
+}
+.lesson-card{
+  background:#fff; border:1px solid var(--border); border-radius:14px;
+  padding:18px 14px; text-align:center; box-shadow:var(--shadow);
+  transition:.2s; position:relative; overflow:hidden;
+  text-decoration:none; color:inherit; display:block;
+}
+.lesson-card:hover{transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,.1);}
+.lesson-card.locked{background:#f7f7f7; border-style:dashed; color:#aaa;}
+.lesson-card.locked:hover{transform:none; box-shadow:var(--shadow);}
+.lesson-card.theme-halloween{border:2px solid var(--halloween);}
+.lesson-card.theme-halloween::before{
+  content:"🎃"; position:absolute; top:6px; right:8px; font-size:1.1rem;
+}
+.lesson-card.theme-christmas{border:2px solid var(--christmas);}
+.lesson-card.theme-christmas::before{
+  content:"🎄"; position:absolute; top:6px; right:8px; font-size:1.1rem;
+}
+.lesson-card.guide-card{
+  background:linear-gradient(135deg,#356a2b,#4a8f3c);
+  color:#fff; border:none;
+}
+.lesson-card.guide-card:hover{
+  box-shadow:0 8px 24px rgba(74,143,60,.4);
+}
+.lesson-card.guide-card .num{color:rgba(255,255,255,.95);}
+.lesson-card.guide-card .date{color:#fff;}
+.lesson-card.guide-card .guide-sub{
+  font-size:.85rem; color:rgba(255,255,255,.9); margin-bottom:12px;
+}
+.lesson-card.guide-card .lesson-link{
+  background:#fff; color:var(--green-d);
+}
+.lesson-card.guide-card .lesson-link:hover{
+  background:#f0f8ec;
+}
+.lesson-card .num{font-size:.75rem; font-weight:800; color:var(--green-d); letter-spacing:1px; margin-bottom:4px;}
+.lesson-card.locked .num{color:#aaa;}
+.lesson-card .date{font-size:1.28rem; font-weight:800; margin-bottom:12px;}
+.lesson-card .lesson-link{
+  display:block; padding:9px 12px; background:var(--green); color:#fff;
+  border-radius:9px; text-decoration:none; font-size:.85rem; font-weight:700;
+  border:none; cursor:pointer; font-family:inherit; width:100%; transition:.15s;
+}
+.lesson-card .lesson-link:hover{background:var(--green-d);}
+.lesson-card .lesson-nolink{font-size:.8rem; color:#c0392b; padding:9px 0;}
+.lesson-card .lesson-locked{font-size:.82rem; color:#999; padding:9px 0;}
+
+/* ============ 帳號卡 ============ */
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px;}
+.card{
+  background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+  padding:18px; box-shadow:var(--shadow); position:relative;
+}
+.card.spare{opacity:.75; border-style:dashed;}
+.card.mine{border:3px solid var(--green); box-shadow:0 6px 20px rgba(74,143,60,.25);}
+.card .who{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+.card .who .who-text{flex:1; min-width:0;}
+.card .who b{display:block; font-size:1.12rem;}
+.card .who span{font-size:.83rem; color:var(--muted);}
+.tag{
+  position:absolute; top:14px; right:14px; font-size:.72rem; padding:2px 9px;
+  border-radius:20px; background:var(--green-l); color:var(--green-d); font-weight:700;
+}
+.tag.spare{background:#f0f0f0; color:#888;}
+
+.row{
+  display:flex; align-items:center; gap:8px; background:#f7faf5;
+  border:1px solid var(--border); border-radius:9px; padding:9px 11px; margin-bottom:9px;
+}
+.row .lbl{font-size:.75rem; color:var(--muted); width:36px; flex-shrink:0;}
+.row .val{
+  flex:1; font-family:ui-monospace,Consolas,monospace; font-size:.86rem;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;
+}
+.row .val.hide{letter-spacing:2px;}
+.iconbtn{
+  border:1px solid var(--border); background:#fff; cursor:pointer;
+  border-radius:7px; padding:4px 9px; font-size:.85rem; transition:.15s; flex-shrink:0;
+}
+.iconbtn:hover{background:var(--green); color:#fff; border-color:var(--green);}
+.iconbtn.ok{background:var(--green); color:#fff; border-color:var(--green);}
+.btn-copyall{
+  width:100%; padding:10px; border:none; border-radius:9px; cursor:pointer;
+  background:var(--green); color:#fff; font-weight:700; font-size:.9rem;
+  font-family:inherit; transition:.15s;
+}
+.btn-copyall:hover{background:var(--green-d);}
+
+/* ============ 學生頭像 ============ */
+.avatar-preview{
+  width:88px; height:88px; border-radius:50%; object-fit:cover;
+  border:3px solid var(--green); margin:0 auto 16px; display:block;
+  box-shadow:0 6px 16px rgba(74,143,60,.28); animation:pop .3s ease-out;
+}
+.result-avatar{
+  width:110px; height:110px; border-radius:50%; object-fit:cover;
+  border:4px solid var(--green); margin:0 auto 14px; display:block;
+  box-shadow:0 8px 22px rgba(74,143,60,.35); animation:pop .35s ease-out;
+}
+.teacher-avatar{
+  width:48px; height:48px; border-radius:50%; object-fit:cover;
+  border:2px solid var(--green); flex-shrink:0;
+}
+@keyframes pop{
+  0%{transform:scale(.6);opacity:0;}
+  60%{transform:scale(1.08);}
+  100%{transform:scale(1);opacity:1;}
+}
+
+/* ============ 結果卡 ============ */
+.result-card{
+  background:#fff; border:2px solid var(--green); border-radius:16px;
+  padding:26px; box-shadow:0 8px 24px rgba(74,143,60,.18);
+}
+.result-card .hello{font-size:1.25rem; font-weight:800; color:var(--green-d); margin:0 0 4px; text-align:center;}
+.result-card .hello-sub{text-align:center; color:var(--muted); font-size:.88rem; margin:0 0 20px;}
+
+/* ============ 作品牆 ============ */
+.filters{
+  display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;
+}
+.filters select{
+  padding:9px 14px; border:2px solid var(--border); border-radius:10px;
+  font-size:.9rem; font-family:inherit; background:#fff; cursor:pointer;
+  min-width:140px;
+}
+.filters select:focus{outline:none; border-color:var(--green);}
+
+.work-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px;
+}
+.work-card{
+  background:#fff; border-radius:14px; overflow:hidden; box-shadow:var(--shadow);
+  border:1px solid var(--border); transition:.2s; cursor:pointer;
+}
+.work-card:hover{transform:translateY(-3px); box-shadow:0 8px 22px rgba(0,0,0,.12);}
+.work-card.mine{border:3px solid var(--green); box-shadow:0 6px 20px rgba(74,143,60,.25);}
+.work-thumb{
+  width:100%; aspect-ratio:1/1; background:#eef4ea; object-fit:cover; display:block;
+}
+.work-info{padding:12px 14px;}
+.work-info b{font-size:.98rem; display:block; margin-bottom:2px;}
+.work-info .meta{font-size:.8rem; color:var(--muted);}
+.work-badge{
+  display:inline-block; font-size:.7rem; padding:2px 8px; border-radius:20px;
+  background:var(--green-l); color:var(--green-d); font-weight:700; margin-top:6px;
+}
+
+/* ============ 節慶活動卡 ============ */
+.festival-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px;}
+.festival-card{
+  border-radius:16px; padding:26px 24px; color:#fff; position:relative; overflow:hidden;
+  cursor:pointer; transition:.2s; box-shadow:var(--shadow); min-height:170px;
+}
+.festival-card:hover{transform:translateY(-3px); box-shadow:0 10px 24px rgba(0,0,0,.18);}
+.festival-card.halloween{background:linear-gradient(135deg,#1a1a1a,#4a2810,#e67e22);}
+.festival-card.christmas{background:linear-gradient(135deg,#2a5c2a,#8b1a1a,#c0392b);}
+.festival-card .emoji{font-size:2.6rem; display:block; margin-bottom:10px;}
+.festival-card h3{margin:0 0 8px; font-size:1.3rem;}
+.festival-card p{margin:0 0 14px; opacity:.9; font-size:.92rem; line-height:1.5;}
+.festival-card .cta{
+  display:inline-block; padding:9px 18px; background:rgba(255,255,255,.2);
+  border-radius:9px; font-size:.86rem; font-weight:700; backdrop-filter:blur(8px);
+}
+
+/* ============ 老師區 ============ */
+.pin-table{
+  width:100%; border-collapse:collapse; font-size:.9rem; background:#fff;
+  border-radius:10px; overflow:hidden;
+}
+.pin-table th{background:var(--green); color:#fff; padding:10px; text-align:left; font-size:.85rem;}
+.pin-table td{padding:9px 10px; border-bottom:1px solid var(--border);}
+.pin-table tr:last-child td{border-bottom:none;}
+.pin-table tr:nth-child(even) td{background:#fafdf8;}
+.pin-table .pin-cell{
+  font-family:ui-monospace,Consolas,monospace; font-weight:700;
+  color:var(--green-d); font-size:1rem; letter-spacing:1px;
+}
+
+/* ============ Modal / Lightbox ============ */
+.modal{
+  position:fixed; inset:0; background:rgba(0,0,0,.6); display:none;
+  align-items:center; justify-content:center; z-index:300; padding:20px;
+}
+.modal.show{display:flex;}
+.modalbox{
+  background:#fff; border-radius:16px; padding:28px; max-width:360px; width:100%;
+  text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.modalbox h3{margin:0 0 16px; font-size:1.15rem;}
+.modalbox input{
+  width:100%; padding:12px; border:2px solid var(--border); border-radius:10px;
+  font-size:1rem; text-align:center; margin-bottom:12px; font-family:inherit;
+}
+.modalbox input:focus{outline:none; border-color:var(--green);}
+.modalbox button{
+  width:100%; padding:11px; border:none; border-radius:10px; background:var(--green);
+  color:#fff; font-size:.95rem; font-weight:700; cursor:pointer; font-family:inherit;
+  margin-bottom:8px;
+}
+.modalbox button:hover{background:var(--green-d);}
+.modalbox button.ghost{background:#fff; color:var(--green-d); border:2px solid var(--green);}
+
+/* Lightbox */
+.lightbox{
+  position:fixed; inset:0; background:rgba(0,0,0,.93); z-index:500;
+  display:none; align-items:center; justify-content:center; padding:60px 20px 20px;
+  flex-direction:column; gap:14px;
+}
+.lightbox.show{display:flex;}
+.lightbox img{max-width:95vw; max-height:78vh; border-radius:10px; background:#fff;}
+.lightbox .lb-info{color:#fff; text-align:center; font-size:.92rem; opacity:.9;}
+.lightbox-close{
+  position:absolute; top:16px; right:20px; background:rgba(255,255,255,.15);
+  color:#fff; border:none; border-radius:50%; width:42px; height:42px;
+  font-size:1.3rem; cursor:pointer; transition:.15s;
+}
+.lightbox-close:hover{background:rgba(255,255,255,.3);}
+.lightbox-pdf{
+  background:var(--green); color:#fff; padding:10px 22px;
+  border-radius:10px; text-decoration:none; font-weight:700; font-size:.95rem;
+}
+
+/* Toast */
+#toast{
+  position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:#1f2a1c; color:#fff; padding:12px 24px; border-radius:30px;
+  font-size:.9rem; opacity:0; transition:.3s; z-index:1000; pointer-events:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+/* Footer */
+footer{
+  background:#2f3a2b; color:#a9b8a4; text-align:center; padding:28px 18px;
+  font-size:.85rem; margin-top:30px;
+}
+footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
+
+/* ============ RWD ============ */
+@media(max-width:768px){
+  .menu-toggle{display:block;}
+  .topbar nav{
+    display:none; width:100%; flex-direction:column; margin-left:0;
+    padding-top:10px; border-top:1px solid rgba(255,255,255,.2); margin-top:10px;
+  }
+  .topbar nav.open{display:flex;}
+  .topbar nav a{padding:10px; text-align:center;}
+  .hero h1{font-size:1.6rem;}
+  .hero{padding:40px 0 44px;}
+  .lesson-grid{grid-template-columns:repeat(2,1fr);}
+  .work-grid{grid-template-columns:repeat(2,1fr); gap:10px;}
+  .grid{grid-template-columns:1fr;}
+  .filters select{flex:1; min-width:0;}
+}
+@media(max-width:480px){
+  .work-grid{grid-template-columns:1fr;}
+  .hero .cta a{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 頂部列 ============ -->
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <span class="logo">⛏️</span>
+      <span>僑仁麥塊學院</span>
+    </div>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <nav id="mainNav">
+      <a data-go="home">首頁</a>
+      <!-- ★ 遊戲說明連結（完整檔名） -->
+      <a href="lesson01/index.html" class="highlight">📖 遊戲說明</a>
+      <a data-go="lessons">課程</a>
+      <a data-go="works">作品牆</a>
+      <a data-go="festival">節慶</a>
+      <a data-go="about">關於</a>
+      <a data-go="contact">聯絡</a>
+      <a class="ext" id="fbLink" target="_blank" rel="noopener">📘 FB</a>
+      <a class="ext" id="ytLink" target="_blank" rel="noopener">▶️ YT</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ Hero ============ -->
+<div class="hero" id="home">
+  <div class="wrap">
+    <h1>⛏️ 用方塊蓋出你的程式邏輯</h1>
+    <p class="slogan">僑仁國小麥塊社團 ｜ 從玩遊戲到寫程式</p>
+    <p class="meta">115 學年度上學期 ｜ 每週三 12:50–14:50 ｜ 指導老師：王景弘老師</p>
+    <div class="cta">
+      <!-- ★ 遊戲說明按鈕（完整檔名） -->
+      <a href="lesson01/index.html" class="warm">📖 遊戲說明</a>
+      <a class="primary" data-go="student-login">🎒 我是學生，領帳號 →</a>
+      <a class="ghost" data-go="works">🏆 看大家作品</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 節慶 Banner（自動顯示） ============ -->
+<div id="festivalBanner"></div>
+
+<!-- ============ 公告 ============ -->
+<section id="announce">
+  <div class="wrap">
+    <h2>📢 最新公告</h2>
+    <ul class="announce-list" id="announceList">
+      <li><span class="date">9/23</span><span>9/30 第一堂課開始，請記得帶自己的 Microsoft 帳號密碼卡。</span></li>
+      <li><span class="date">9/30</span><span>本學期共 12 堂課，最後一堂（12/16）是聖誕成果發表，歡迎家長參加。</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 課程 ============ -->
+<section id="lessons">
+  <div class="wrap">
+    <h2>📅 課程行事曆</h2>
+    <p class="sub">每堂課的內容會<strong>在上課前一天開放</strong>，點卡片看當週教材。</p>
+    <div class="lesson-grid" id="lessonGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 學生領帳號 ============ -->
+<section id="student-login">
+  <div class="wrap">
+    <h2>🔑 領取我的麥塊帳號</h2>
+    <p class="sub">選自己的名字，輸入老師給你的 6 位數字，就能看到你的帳號密碼。</p>
+
+    <div id="loginPanel" class="panel" style="max-width:520px;margin:0 auto;">
+      <div class="field">
+        <label>① 我是誰</label>
+        <select id="studentSelect">
+          <option value="">— 請選擇你的名字 —</option>
+        </select>
+      </div>
+      <div id="avatarPreview" style="text-align:center; min-height:0;"></div>
+      <div class="field">
+        <label>② 6 位數字密碼</label>
+        <input id="pinInput" type="password" inputmode="numeric"
+               maxlength="6" placeholder="●●●●●●" autocomplete="off">
+      </div>
+      <button class="btn full" id="viewBtn">查看我的帳號 →</button>
+      <p class="err" id="viewErr"></p>
+    </div>
+
+    <div id="resultArea" style="display:none;max-width:520px;margin:0 auto;"></div>
+  </div>
+</section>
+
+<!-- ============ 作品牆 ============ -->
+<section id="works">
+  <div class="wrap">
+    <h2>🏆 作品牆</h2>
+    <p class="sub">所有學生的作品。可以用下方篩選器找作品，登入後你自己的作品會發光 ✨</p>
+
+    <div class="filters">
+      <select id="filterStudent"><option value="">👤 全部學生</option></select>
+      <select id="filterType"><option value="">📦 全部類型</option></select>
+      <select id="filterSort">
+        <option value="new">🕒 最新在前</option>
+        <option value="old">🕒 最舊在前</option>
+      </select>
+    </div>
+
+    <div class="work-grid" id="workGrid"></div>
+    <p class="sub" id="noWork" style="display:none;text-align:center;padding:40px 0;">
+      目前還沒有作品，等大家上傳 🚧
+    </p>
+  </div>
+</section>
+
+<!-- ============ 節慶活動 ============ -->
+<section id="festival">
+  <div class="wrap">
+    <h2>🎉 節慶特別企劃</h2>
+    <p class="sub">學期中間我們會做兩個節慶主題，做出來會有徽章 🏅</p>
+    <div class="festival-grid">
+      <div class="festival-card halloween" data-go="lesson-jump" data-lesson="4">
+        <span class="emoji">🎃</span>
+        <h3>萬聖節：不給糖就搗蛋</h3>
+        <p>用紅石 + 指令做南瓜田、鬼屋、糖果發放機</p>
+        <span class="cta">看第 5 堂課 →</span>
+      </div>
+      <div class="festival-card christmas" data-go="lesson-jump" data-lesson="11">
+        <span class="emoji">🎄</span>
+        <h3>聖誕節：聖誕村成果發表</h3>
+        <p>綜合運用本學期所學，蓋一座聖誕村歡迎家長參觀</p>
+        <span class="cta">看第 12 堂課 →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 關於 ============ -->
+<section id="about">
+  <div class="wrap">
+    <h2>👨‍🏫 關於我們</h2>
+    <div class="panel">
+      <h3 style="margin-top:0;">僑仁國小麥塊學院</h3>
+      <p>我們相信：<strong>玩遊戲也能學程式。</strong></p>
+      <p>透過 Minecraft 教育版，孩子從蓋房子、種田、做紅石機關開始，一步步學會變數、迴圈、事件、座標，最後能自己寫程式控制遊戲裡的機器人。</p>
+
+      <h3 style="margin-top:24px;">指導老師</h3>
+      <p><strong>王景弘 老師</strong><br>
+      聯絡信箱：<a id="aboutEmail" href="#">載入中…</a></p>
+
+      <h3 style="margin-top:24px;">上課資訊</h3>
+      <ul style="margin:0; padding-left:20px;">
+        <li>時間：每週三 12:50–14:50</li>
+        <li>地點：僑仁國小電腦教室</li>
+        <li>對象：三～六年級</li>
+        <li>本學期共 12 堂課</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ============ 老師區 ============ -->
+<section id="teacherArea" style="display:none;">
+  <div class="wrap">
+    <h2>👨‍🏫 老師模式</h2>
+    <p class="sub">
+      共 <span id="totalCount">0</span> 組 ｜
+      <a id="logoutBtn" style="cursor:pointer;color:var(--green-d);text-decoration:underline;">登出老師模式</a>
+    </p>
+
+    <div class="panel" style="padding:18px;margin-bottom:24px;">
+      <h3 style="margin:0 0 12px;font-size:1.05rem;">🔢 學生 PIN 速查表</h3>
+      <p style="margin:0 0 12px;color:var(--muted);font-size:.86rem;">
+        發給學生時可以複製這份。忘記 PIN 也能從這裡查。
+      </p>
+      <table class="pin-table" id="pinTable">
+        <thead>
+          <tr>
+            <th>姓名</th><th>班級</th><th>6 位密碼</th><th style="width:60px;">複製</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h3 style="margin:22px 0 10px;font-size:1.05rem;">👦 學生專屬帳號</h3>
+    <div class="grid" id="teacherGridStudents"></div>
+
+    <h3 style="margin:32px 0 10px;font-size:1.05rem;">📦 備用帳號</h3>
+    <div class="grid" id="teacherGridSpare"></div>
+  </div>
+</section>
+
+<!-- ============ Footer ============ -->
+<footer>
+  <p style="margin:0 0 6px;">僑仁國小 麥塊學院 ｜ 指導老師：王景弘老師</p>
+  <p style="margin:0 0 10px; font-size:.8rem; opacity:.75;">本頁帳號僅供社團上課使用，請勿對外分享</p>
+  <p style="margin:0;"><a id="teacherEntry">👨‍🏫 老師登入</a></p>
+</footer>
+
+<!-- ============ Modal / Lightbox ============ -->
+<div id="tModal" class="modal">
+  <div class="modalbox">
+    <h3>👨‍🏫 老師登入</h3>
+    <input id="tPw" type="password" placeholder="請輸入老師密碼" autocomplete="off">
+    <button id="tBtn">登入</button>
+    <button id="tCancel" class="ghost">取消</button>
+    <p class="err" id="tErr"></p>
+  </div>
+</div>
+
+<div id="lightbox" class="lightbox">
+  <button id="lightboxClose" class="lightbox-close">✕</button>
+  <img id="lightboxImg" src="" alt="">
+  <div class="lb-info" id="lightboxInfo"></div>
+  <a id="lightboxPdf" class="lightbox-pdf" href="" target="_blank" rel="noopener" style="display:none;">📄 下載講義</a>
+</div>
+
+<div id="toast">已複製！</div>
+
+<script>
+/* ==================================================================
+   ★★★★★ 設定區 ★★★★★
+   ================================================================== */
+const CONFIG = {
+  teacherPassword : "898989",
+  fb              : "https://www.facebook.com/NovaCraftMinecrafClub?locale=zh_TW",
+  yt              : "https://www.youtube.com/@novacraftlab-MCEducation",
+  Line           : "Chinghungw",
+  uploadFormUrl   : "https://forms.gle/",
+  worksSheetUrl   : "",
+
+  // ★ 遊戲說明頁網址（未來改路徑只要改這裡）
+  guideUrl        : "lesson01/index.html",
+};
+
+/* ==================================================================
+   ★★★★★ 12 堂課 ★★★★★
+   ★ 新增 url 欄位：這堂課要連到哪個資料夾
+   ★ 有 url → 卡片可點，跳頁
+   ★ 沒 url → 卡片顯示「準備中」
+   ================================================================== */
+const LESSONS = [
+  { date:"9/30",  unlock:"2026-09-29", img:"lessons/lesson01.png", folder:"", theme:"normal", url:"lesson01/index.html" },
+  { date:"10/7",  unlock:"2026-10-06", img:"lessons/lesson02.png", folder:"", theme:"normal", url:"lesson02/index.html" },
+  { date:"10/14", unlock:"2026-10-13", img:"lessons/lesson03.png", folder:"", theme:"normal", url:"lesson03/index.html" },
+  { date:"10/21", unlock:"2026-10-20", img:"lessons/lesson04.png", folder:"", theme:"normal", url:"lesson04/index.html" },
+  { date:"10/28", unlock:"2026-10-27", img:"lessons/lesson05.png", folder:"", theme:"halloween", url:"lesson05/index.html" },
+  { date:"11/4",  unlock:"2026-11-03", img:"lessons/lesson06.png", folder:"", theme:"normal", url:"lesson06/index.html" },
+  { date:"11/11", unlock:"2026-11-10", img:"lessons/lesson07.png", folder:"", theme:"normal", url:"lesson07/index.html" },
+  { date:"11/18", unlock:"2026-11-17", img:"lessons/lesson08.png", folder:"", theme:"normal", url:"lesson08/index.html" },
+  { date:"11/25", unlock:"2026-11-24", img:"lessons/lesson09.png", folder:"", theme:"normal", url:"lesson09/index.html" },
+  { date:"12/2",  unlock:"2026-12-01", img:"lessons/lesson10.png", folder:"", theme:"normal", url:"lesson10/index.html" },
+  { date:"12/9",  unlock:"2026-12-08", img:"lessons/lesson11.png", folder:"", theme:"normal", url:"lesson11/index.html" },
+  { date:"12/16", unlock:"2026-12-15", img:"lessons/lesson12.png", folder:"", theme:"christmas", url:"lesson12/index.html" },
+];
+
+/* ==================================================================
+   ★★★★★ 學生帳號 ★★★★★
+   ================================================================== */
+const ACCOUNTS = [
+  { name:"周韵媞", cls:"三年甲班", user:"user01@happymc.onmicrosoft.com", pw:"G.514259182373ac", pin:"482913", photo:"photos/s01.jpg" },
+  { name:"翁莆博", cls:"四年甲班", user:"user02@happymc.onmicrosoft.com", pw:"X#633180188959ok", pin:"715264", photo:"photos/s02.jpg" },
+  { name:"林昕翰", cls:"四年甲班", user:"user03@happymc.onmicrosoft.com", pw:"M(195823353823uf", pin:"308571", photo:"photos/s03.jpg" },
+  { name:"謝朋洧", cls:"四年丙班", user:"user04@happymc.onmicrosoft.com", pw:"R*131281814086oy", pin:"926480", photo:"photos/s04.jpg" },
+  { name:"黄宥傑", cls:"四年丙班", user:"user05@happymc.onmicrosoft.com", pw:"T!203603413482op", pin:"150739", photo:"photos/s05.jpg" },
+  { name:"何晁寬", cls:"四年戊班", user:"user06@happymc.onmicrosoft.com", pw:"H@835762875765ah", pin:"673825", photo:"photos/s06.jpg" },
+  { name:"陳繹安", cls:"五年乙班", user:"user07@happymc.onmicrosoft.com", pw:"K#242147185847uq", pin:"284196", photo:"photos/s07.jpg" },
+  { name:"翁秉學", cls:"五年丙班", user:"user08@happymc.onmicrosoft.com", pw:"Y^230519532115ap", pin:"539702", photo:"photos/s08.jpg" },
+  { name:"林慕心", cls:"五年丙班", user:"user09@happymc.onmicrosoft.com", pw:"W^871135038610us", pin:"841365", photo:"photos/s09.jpg" },
+  { name:"吳奕霆", cls:"五年丁班", user:"user10@happymc.onmicrosoft.com", pw:"D#515100067433ug", pin:"607248", photo:"photos/s10.jpg" },
+  { name:"林毓橙", cls:"五年丁班", user:"user11@happymc.onmicrosoft.com", pw:"D*050483725621oz", pin:"392517", photo:"photos/s11.jpg" },
+  { name:"陳哲元", cls:"五年戊班", user:"user12@happymc.onmicrosoft.com", pw:"B$220017697635uv", pin:"758430", photo:"photos/s12.jpg" },
+  { name:"賴炵伃", cls:"六年乙班", user:"user13@happymc.onmicrosoft.com", pw:"W/080499984712oq", pin:"214986", photo:"photos/s13.jpg" },
+  { name:"王奕勛", cls:"六年丁班", user:"user14@happymc.onmicrosoft.com", pw:"M(086619973330oh", pin:"630472", photo:"photos/s14.jpg" },
+
+  { name:"", cls:"備用", user:"user15@happymc.onmicrosoft.com", pw:"L/523997587137ug", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user16@happymc.onmicrosoft.com", pw:"H$081941769045uv", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user17@happymc.onmicrosoft.com", pw:"V^061582945985ax", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user18@happymc.onmicrosoft.com", pw:"X*852482359735uk", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user19@happymc.onmicrosoft.com", pw:"S%508096813671op", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user20@happymc.onmicrosoft.com", pw:"B&649857740654ul", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user21@happymc.onmicrosoft.com", pw:"N!569984853113um", pin:"", photo:"" },
+];
+
+const DEMO_WORKS = [];
+
+/* ==================================================================
+   以下不用改
+   ================================================================== */
+const STUDENTS = ACCOUNTS.filter(a => a.pin);
+const SPARES   = ACCOUNTS.filter(a => !a.pin);
+
+let isTeacher = sessionStorage.getItem('mc_teacher') === '1';
+let currentStudent = null;
+let allWorks = [];
+
+document.getElementById('fbLink').href = CONFIG.fb;
+document.getElementById('ytLink').href = CONFIG.yt;
+document.getElementById('aboutEmail').href = 'mailto:' + CONFIG.email;
+document.getElementById('aboutEmail').textContent = CONFIG.email;
+
+// 設定導覽列和 Hero 的遊戲說明連結
+document.querySelectorAll('a[href="lesson01/index.html"]').forEach(a => {
+  a.href = CONFIG.guideUrl;
+});
+
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+async function copyText(text, btn, label){
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  toast('已複製 ' + label + '！');
+  if(btn){
+    const old = btn.textContent;
+    btn.textContent = '✓'; btn.classList.add('ok');
+    setTimeout(()=>{ btn.textContent = old; btn.classList.remove('ok'); }, 1200);
+  }
+}
+
+function todayStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function goTo(id){
+  const el = document.getElementById(id);
+  if(el){ el.scrollIntoView({behavior:'smooth', block:'start'}); }
+}
+document.querySelectorAll('[data-go]').forEach(el => {
+  el.addEventListener('click', () => {
+    const target = el.dataset.go;
+    if(target === 'lesson-jump'){
+      const idx = Number(el.dataset.lesson);
+      scrollToLesson(idx);
+      return;
+    }
+    goTo(target);
+    document.getElementById('mainNav').classList.remove('open');
+  });
+});
+function scrollToLesson(idx){
+  const cards = document.querySelectorAll('.lesson-card');
+  if(cards[idx + 1]) cards[idx + 1].scrollIntoView({behavior:'smooth', block:'center'});
+}
+document.getElementById('menuToggle').addEventListener('click', () => {
+  document.getElementById('mainNav').classList.toggle('open');
+});
+
+function renderFestivalBanner(){
+  const box = document.getElementById('festivalBanner');
+  const today = new Date();
+  const m = today.getMonth()+1, d = today.getDate();
+  const dayKey = m*100 + d;
+
+  if(dayKey >= 1001 && dayKey <= 1031){
+    box.innerHTML = `
+      <div class="festival-banner halloween">
+        <div class="inner">
+          <span class="emoji">🎃</span>
+          <b>萬聖節特別企劃開跑！</b>
+          <span>10/28 用紅石做搗蛋機關</span>
+          <span class="emoji">🍬</span>
+        </div>
+      </div>`;
+    box.querySelector('.festival-banner').addEventListener('click', () => goTo('festival'));
+    return;
+  }
+  if(dayKey >= 1201 && dayKey <= 1225){
+    box.innerHTML = `
+      <div class="festival-banner christmas">
+        <div class="inner">
+          <span class="emoji">🎄</span>
+          <b>聖誕成果發表倒數！</b>
+          <span>12/16 歡迎家長來看孩子的聖誕村</span>
+          <span class="emoji">🎁</span>
+        </div>
+      </div>`;
+    box.querySelector('.festival-banner').addEventListener('click', () => goTo('festival'));
+  }
+}
+
+/* ==================================================================
+   課程表 — 改成有 url 就跳頁，沒 url 才顯示彈圖
+   ================================================================== */
+function renderLessons(){
+  const box = document.getElementById('lessonGrid');
+  box.innerHTML = '';
+  const today = todayStr();
+
+  // ★ 遊戲說明卡片
+  const guideCard = document.createElement('a');
+  guideCard.className = 'lesson-card guide-card';
+  guideCard.href = CONFIG.guideUrl;
+  guideCard.innerHTML = `
+    <div class="num">📖 先看這個</div>
+    <div class="date">遊戲說明</div>
+    <div class="guide-sub">8 個單元教學</div>
+    <div class="lesson-link">▶ 開始學習</div>
+  `;
+  box.appendChild(guideCard);
+
+  // ★ 12 堂課
+  LESSONS.forEach((L, i) => {
+    const unlocked = isTeacher || today >= L.unlock;
+    const card = document.createElement('div');
+    let cls = 'lesson-card';
+    if(!unlocked) cls += ' locked';
+    if(L.theme === 'halloween') cls += ' theme-halloween';
+    if(L.theme === 'christmas') cls += ' theme-christmas';
+    card.className = cls;
+
+    let inner = `
+      <div class="num">第 ${i+1} 堂</div>
+      <div class="date">${L.date}</div>
+    `;
+
+    if(unlocked){
+      // ★ 有 url → 連到獨立頁面
+      if(L.url){
+        inner += `<a class="lesson-link" href="${L.url}">📖 進入本堂課</a>`;
+      } else if(L.img){
+        // 沒 url 但有圖 → 顯示彈圖按鈕
+        inner += `<button class="lesson-link" data-img="${L.img}" data-idx="${i}">🖼️ 看本堂內容</button>`;
+      } else {
+        inner += `<div class="lesson-nolink">尚未上傳</div>`;
+      }
+      if(L.folder){
+        inner += `<a class="lesson-link" style="background:var(--blue);margin-top:6px;" href="${L.folder}" target="_blank" rel="noopener">📁 課程資料夾</a>`;
+      }
+    } else {
+      inner += `<div class="lesson-locked">🔒 上課前一天開放</div>`;
+    }
+
+    card.innerHTML = inner;
+    box.appendChild(card);
+  });
+}
+
+document.getElementById('lessonGrid').addEventListener('click', e => {
+  const btn = e.target.closest('[data-img]');
+  if(!btn) return;
+  e.preventDefault();
+  openLightbox({
+    img: btn.dataset.img,
+    info: `第 ${Number(btn.dataset.idx)+1} 堂課 ｜ ${LESSONS[btn.dataset.idx].date}`
+  });
+});
+
+/* ==================================================================
+   學生領帳號
+   ================================================================== */
+const sel = document.getElementById('studentSelect');
+STUDENTS.forEach((s, i) => {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = `${s.name}（${s.cls}）`;
+  sel.appendChild(opt);
+});
+
+const avatarPreview = document.getElementById('avatarPreview');
+sel.addEventListener('change', () => {
+  avatarPreview.innerHTML = '';
+  if(sel.value === '') return;
+  const s = STUDENTS[Number(sel.value)];
+  if(!s.photo) return;
+
+  const img = document.createElement('img');
+  img.src = s.photo;
+  img.alt = s.name;
+  img.className = 'avatar-preview';
+  img.onerror = () => {
+    img.replaceWith(makeDefaultAvatar(s.name));
+  };
+  avatarPreview.appendChild(img);
+});
+
+function makeDefaultAvatar(name){
+  const div = document.createElement('div');
+  div.className = 'avatar-preview';
+  div.style.background = 'var(--green-l)';
+  div.style.display = 'flex';
+  div.style.alignItems = 'center';
+  div.style.justifyContent = 'center';
+  div.style.fontSize = '2.6rem';
+  div.style.color = 'var(--green-d)';
+  div.title = name || '';
+  div.textContent = '🧑‍🎓';
+  return div;
+}
+
+const pinInput = document.getElementById('pinInput');
+pinInput.addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/\D/g,'').slice(0,6);
+});
+
+const viewBtn = document.getElementById('viewBtn');
+const viewErr = document.getElementById('viewErr');
+const loginPanel = document.getElementById('loginPanel');
+const resultArea = document.getElementById('resultArea');
+
+function resetView(){
+  loginPanel.style.display = '';
+  resultArea.style.display = 'none';
+  resultArea.innerHTML = '';
+  sel.value = '';
+  pinInput.value = '';
+  viewErr.textContent = '';
+  avatarPreview.innerHTML = '';
+}
+
+viewBtn.addEventListener('click', () => {
+  viewErr.textContent = '';
+  const idx = sel.value;
+  const pin = pinInput.value.trim();
+
+  if(idx === ''){ viewErr.textContent = '請先選擇你的名字'; return; }
+  if(pin.length !== 6){ viewErr.textContent = '請輸入 6 位數字密碼'; return; }
+
+  const s = STUDENTS[Number(idx)];
+  if(s.pin !== pin){
+    viewErr.textContent = '密碼不對喔，請再試一次';
+    pinInput.value = ''; pinInput.focus();
+    return;
+  }
+  currentStudent = s;
+  showResult(s);
+  renderWorks();
+});
+
+function showResult(s){
+  loginPanel.style.display = 'none';
+  resultArea.style.display = '';
+  resultArea.innerHTML = `
+    <div class="result-card">
+      ${s.photo
+        ? `<img src="${s.photo}" alt="${s.name}" class="result-avatar" onerror="this.replaceWith(makeDefaultAvatar('${s.name}'))">`
+        : `<div class="result-avatar" style="background:var(--green-l);display:flex;align-items:center;justify-content:center;font-size:3.2rem;color:var(--green-d);">🧑‍🎓</div>`
+      }
+      <p class="hello">✅ ${s.name}</p>
+      <p class="hello-sub">${s.cls} ｜ 這是你的麥塊帳號</p>
+
+      <div class="row">
+        <span class="lbl">帳號</span>
+        <span class="val" title="${s.user}">${s.user}</span>
+        <button class="iconbtn" data-copy="user">📋</button>
+      </div>
+
+      <div class="row">
+        <span class="lbl">密碼</span>
+        <span class="val hide" data-pw title="${s.pw}">••••••••</span>
+        <button class="iconbtn" data-eye>👁️</button>
+        <button class="iconbtn" data-copy="pw">📋</button>
+      </div>
+
+      <button class="btn-copyall" data-copy="both">⧉ 一次複製帳號 + 密碼</button>
+
+      <p style="text-align:center;margin:16px 0 0;color:var(--muted);font-size:.83rem;">
+        貼到 Minecraft 登入畫面即可。請勿把帳號給別人。
+      </p>
+      <p style="text-align:center;margin:12px 0 0;">
+        <a style="cursor:pointer;color:var(--green-d);text-decoration:underline;font-size:.88rem;"
+           id="backBtn">← 換別人查</a>
+      </p>
+    </div>
+  `;
+
+  resultArea.querySelector('[data-eye]').addEventListener('click', e => {
+    const span = resultArea.querySelector('[data-pw]');
+    const btn = e.currentTarget;
+    if(span.classList.contains('hide')){
+      span.textContent = s.pw; span.classList.remove('hide'); btn.textContent = '🙈';
+    }else{
+      span.textContent = '••••••••'; span.classList.add('hide'); btn.textContent = '👁️';
+    }
+  });
+
+  resultArea.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.dataset.copy;
+      if(type === 'user') copyText(s.user, btn, '帳號');
+      if(type === 'pw')   copyText(s.pw, btn, '密碼');
+      if(type === 'both'){
+        copyText(`帳號：${s.user}\n密碼：${s.pw}`, null, '帳號與密碼');
+        btn.textContent = '✓ 已複製';
+        setTimeout(()=>{ btn.textContent = '⧉ 一次複製帳號 + 密碼'; }, 1400);
+      }
+    });
+  });
+
+  resultArea.querySelector('#backBtn').addEventListener('click', () => {
+    currentStudent = null;
+    resetView();
+    renderWorks();
+  });
+  resultArea.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+/* ==================================================================
+   作品牆
+   ================================================================== */
+function parseCSV(text){
+  const rows = [];
+  let row = [], cell = '', inQ = false;
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    if(inQ){
+      if(c === '"' && text[i+1] === '"'){ cell += '"'; i++; }
+      else if(c === '"'){ inQ = false; }
+      else cell += c;
+    } else {
+      if(c === '"') inQ = true;
+      else if(c === ','){ row.push(cell); cell = ''; }
+      else if(c === '\n'){ row.push(cell); rows.push(row); row = []; cell = ''; }
+      else if(c === '\r'){ /* ignore */ }
+      else cell += c;
+    }
+  }
+  if(cell || row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+
+async function loadWorks(){
+  if(!CONFIG.worksSheetUrl){
+    allWorks = DEMO_WORKS.slice();
+    return;
+  }
+  try{
+    const res = await fetch(CONFIG.worksSheetUrl);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    allWorks = rows.slice(1).filter(r => r[0]).map(r => ({
+      date:  r[0] || '',
+      name:  r[1] || '',
+      cls:   r[2] || '',
+      title: r[3] || '',
+      type:  r[4] || '',
+      img:   r[5] || '',
+    }));
+  }catch(e){
+    console.warn('作品讀取失敗，改用示範資料', e);
+    allWorks = DEMO_WORKS.slice();
+  }
+}
+
+function renderFilterOptions(){
+  const ss = document.getElementById('filterStudent');
+  const curS = ss.value;
+  ss.innerHTML = '<option value="">👤 全部學生</option>';
+  STUDENTS.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.name;
+    opt.textContent = `${s.name}（${s.cls}）`;
+    ss.appendChild(opt);
+  });
+  ss.value = curS;
+
+  const ts = document.getElementById('filterType');
+  const curT = ts.value;
+  const types = [...new Set(allWorks.map(w => w.type).filter(Boolean))].sort();
+  ts.innerHTML = '<option value="">📦 全部類型</option>';
+  types.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = t;
+    ts.appendChild(opt);
+  });
+  ts.value = curT;
+}
+
+function renderWorks(){
+  const grid = document.getElementById('workGrid');
+  const noWork = document.getElementById('noWork');
+  grid.innerHTML = '';
+
+  const fs = document.getElementById('filterStudent').value;
+  const ft = document.getElementById('filterType').value;
+  const sort = document.getElementById('filterSort').value;
+
+  let list = allWorks.slice();
+  if(fs) list = list.filter(w => w.name === fs);
+  if(ft) list = list.filter(w => w.type === ft);
+  list.sort((a,b) => {
+    const da = a.date || '', db = b.date || '';
+    return sort === 'new' ? db.localeCompare(da) : da.localeCompare(db);
+  });
+
+  if(list.length === 0){
+    noWork.style.display = '';
+    return;
+  }
+  noWork.style.display = 'none';
+
+  list.forEach(w => {
+    const isMine = currentStudent && currentStudent.name === w.name;
+    const card = document.createElement('div');
+    card.className = 'work-card' + (isMine ? ' mine' : '');
+    card.innerHTML = `
+      <img class="work-thumb" src="${w.img}" alt="${w.title}"
+           onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect fill=%22%23eef4ea%22 width=%22200%22 height=%22200%22/><text x=%22100%22 y=%22110%22 font-size=%2260%22 text-anchor=%22middle%22>🖼️</text></svg>'">
+      <div class="work-info">
+        <b>${w.title || '未命名作品'}</b>
+        <div class="meta">${w.name} ｜ ${w.cls}</div>
+        <span class="work-badge">${w.type || '其他'}</span>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      openLightbox({
+        img: w.img,
+        info: `${w.title} ｜ ${w.name}（${w.cls}）｜ ${w.date || ''}`
+      });
+    });
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById('filterStudent').addEventListener('change', renderWorks);
+document.getElementById('filterType').addEventListener('change', renderWorks);
+document.getElementById('filterSort').addEventListener('change', renderWorks);
+
+/* ==================================================================
+   聯絡表單
+   ================================================================== */
+document.getElementById('sendBtn').addEventListener('click', () => {
+  const name    = document.getElementById('cName').value.trim()    || '（未填姓名）';
+  const subject = document.getElementById('cSubject').value.trim() || '麥塊社團問題';
+  const body    = document.getElementById('cBody').value.trim();
+
+  const fullBody =
+    `姓名/班級：${name}\n\n問題內容：\n${body}\n\n---\n（此信由麥塊社團網站寄出）`;
+
+  const url = `mailto:${CONFIG.email}`
+    + `?subject=${encodeURIComponent('[麥塊社團] ' + subject)}`
+    + `&body=${encodeURIComponent(fullBody)}`;
+  window.location.href = url;
+});
+
+/* ==================================================================
+   老師模式
+   ================================================================== */
+const tModal = document.getElementById('tModal');
+const tPw    = document.getElementById('tPw');
+const tErr   = document.getElementById('tErr');
+const teacherArea = document.getElementById('teacherArea');
+
+document.getElementById('teacherEntry').addEventListener('click', () => {
+  tModal.classList.add('show');
+  tPw.value = ''; tErr.textContent = '';
+  setTimeout(() => tPw.focus(), 100);
+});
+document.getElementById('tCancel').addEventListener('click', () => {
+  tModal.classList.remove('show');
+});
+tPw.addEventListener('keydown', e => { if(e.key === 'Enter') doTeacherLogin(); });
+document.getElementById('tBtn').addEventListener('click', doTeacherLogin);
+
+function doTeacherLogin(){
+  if(tPw.value === CONFIG.teacherPassword){
+    isTeacher = true;
+    sessionStorage.setItem('mc_teacher', '1');
+    tModal.classList.remove('show');
+    renderTeacherView();
+    document.querySelector('.hero').style.display = 'none';
+    document.getElementById('announce').style.display = 'none';
+    document.getElementById('student-login').style.display = 'none';
+    teacherArea.style.display = '';
+    renderLessons();
+    window.scrollTo({top: 0, behavior:'smooth'});
+  } else {
+    tErr.textContent = '老師密碼錯誤';
+    tPw.value = ''; tPw.focus();
+  }
+}
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  isTeacher = false;
+  sessionStorage.removeItem('mc_teacher');
+  teacherArea.style.display = 'none';
+  document.querySelector('.hero').style.display = '';
+  document.getElementById('announce').style.display = '';
+  document.getElementById('student-login').style.display = '';
+  resetView();
+  renderLessons();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+function renderTeacherView(){
+  const boxS = document.getElementById('teacherGridStudents');
+  const boxP = document.getElementById('teacherGridSpare');
+  const tbody = document.querySelector('#pinTable tbody');
+  boxS.innerHTML = ''; boxP.innerHTML = ''; tbody.innerHTML = '';
+  document.getElementById('totalCount').textContent = ACCOUNTS.length;
+
+  STUDENTS.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><b>${s.name}</b></td>
+      <td>${s.cls}</td>
+      <td class="pin-cell">${s.pin}</td>
+      <td><button class="iconbtn" data-pin-copy="${s.pin}">📋</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  ACCOUNTS.forEach((a, i) => {
+    const isSpare = !a.pin;
+    const card = document.createElement('div');
+    card.className = 'card' + (isSpare ? ' spare' : '');
+    card.innerHTML = `
+      <div class="who">
+        ${(!isSpare && a.photo)
+          ? `<img src="${a.photo}" class="teacher-avatar" alt="${a.name}" onerror="this.style.display='none'">`
+          : (isSpare ? '' : `<div class="teacher-avatar" style="background:var(--green-l);display:flex;align-items:center;justify-content:center;font-size:1.4rem;">🧑‍🎓</div>`)
+        }
+        <div class="who-text">
+          <b>${isSpare ? '備用帳號 ' + (i - STUDENTS.length + 1) : a.name}</b>
+          <span>${isSpare ? '尚未分配' : a.cls}</span>
+        </div>
+      </div>
+      <span class="tag ${isSpare ? 'spare' : ''}">${isSpare ? '備用' : '學生專屬'}</span>
+
+      ${!isSpare ? `
+      <div class="row">
+        <span class="lbl">PIN</span>
+        <span class="val">${a.pin}</span>
+        <button class="iconbtn" data-copy="pin" data-i="${i}">📋</button>
+      </div>` : ''}
+
+      <div class="row">
+        <span class="lbl">帳號</span>
+        <span class="val" title="${a.user}">${a.user}</span>
+        <button class="iconbtn" data-copy="user" data-i="${i}">📋</button>
+      </div>
+
+      <div class="row">
+        <span class="lbl">密碼</span>
+        <span class="val hide" data-pw="${i}" title="${a.pw}">••••••••</span>
+        <button class="iconbtn" data-eye="${i}">👁️</button>
+        <button class="iconbtn" data-copy="pw" data-i="${i}">📋</button>
+      </div>
+    `;
+    (isSpare ? boxP : boxS).appendChild(card);
+  });
+}
+
+document.getElementById('teacherArea').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if(!btn) return;
+
+  if(btn.dataset.pinCopy !== undefined){
+    copyText(btn.dataset.pinCopy, btn, 'PIN');
+    return;
+  }
+  const i = btn.dataset.i;
+  if(i === undefined) return;
+  const a = ACCOUNTS[i];
+
+  if(btn.dataset.eye !== undefined){
+    const span = document.querySelector(`[data-pw="${i}"]`);
+    if(span.classList.contains('hide')){
+      span.textContent = a.pw; span.classList.remove('hide'); btn.textContent = '🙈';
+    }else{
+      span.textContent = '••••••••'; span.classList.add('hide'); btn.textContent = '👁️';
+    }
+    return;
+  }
+  if(btn.dataset.copy === 'pin')  copyText(a.pin, btn, 'PIN');
+  if(btn.dataset.copy === 'user') copyText(a.user, btn, '帳號');
+  if(btn.dataset.copy === 'pw')   copyText(a.pw, btn, '密碼');
+});
+
+/* ==================================================================
+   Lightbox
+   ================================================================== */
+function openLightbox({img, info, pdf}){
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = img;
+  document.getElementById('lightboxInfo').textContent = info || '';
+  const dl = document.getElementById('lightboxPdf');
+  if(pdf){ dl.href = pdf; dl.style.display = ''; }
+  else { dl.style.display = 'none'; }
+
+  lb.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('show');
+  document.body.style.overflow = '';
+}
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', e => {
+  if(e.target.id === 'lightbox') closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeLightbox();
+});
+
+/* ==================================================================
+   初始化
+   ================================================================== */
+(async function init(){
+  renderFestivalBanner();
+  renderLessons();
+  await loadWorks();
+  renderFilterOptions();
+  renderWorks();
+
+  if(isTeacher){
+    renderTeacherView();
+    document.querySelector('.hero').style.display = 'none';
+    document.getElementById('announce').style.display = 'none';
+    document.getElementById('student-login').style.display = 'none';
+    teacherArea.style.display = '';
+    renderLessons();
+  }
+})();
+</script>
+
+</body>
+</html>
