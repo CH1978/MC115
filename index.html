@@ -641,9 +641,10 @@ const CONFIG = {
   teacherPassword : "898989",
   fb              : "https://www.facebook.com/NovaCraftMinecrafClub?locale=zh_TW",
   yt              : "https://www.youtube.com/@novacraftlab-MCEducation",
-  Line           : "Chinghungw",
+  Line            : "Chinghungw",
   uploadFormUrl   : "https://forms.gle/",
   worksSheetUrl   : "",
+  email           : "chinghungw@example.com",   // ← 補上，避免 aboutEmail 顯示 undefined
 
   // ★ 遊戲說明頁網址（未來改路徑只要改這裡）
   guideUrl        : "lesson01/index.html",
@@ -651,7 +652,6 @@ const CONFIG = {
 
 /* ==================================================================
    ★★★★★ 12 堂課 ★★★★★
-   ★ 新增 url 欄位：這堂課要連到哪個資料夾
    ★ 有 url → 卡片可點，跳頁
    ★ 沒 url → 卡片顯示「準備中」
    ================================================================== */
@@ -809,7 +809,7 @@ function renderFestivalBanner(){
 }
 
 /* ==================================================================
-   課程表 — 改成有 url 就跳頁，沒 url 才顯示彈圖
+   課程表
    ================================================================== */
 function renderLessons(){
   const box = document.getElementById('lessonGrid');
@@ -1147,21 +1147,8 @@ document.getElementById('filterType').addEventListener('change', renderWorks);
 document.getElementById('filterSort').addEventListener('change', renderWorks);
 
 /* ==================================================================
-   聯絡表單
+   ★ 聯絡表單 JS 已移除（頁面沒有表單，避免 null 錯誤中斷 script）
    ================================================================== */
-document.getElementById('sendBtn').addEventListener('click', () => {
-  const name    = document.getElementById('cName').value.trim()    || '（未填姓名）';
-  const subject = document.getElementById('cSubject').value.trim() || '麥塊社團問題';
-  const body    = document.getElementById('cBody').value.trim();
-
-  const fullBody =
-    `姓名/班級：${name}\n\n問題內容：\n${body}\n\n---\n（此信由麥塊社團網站寄出）`;
-
-  const url = `mailto:${CONFIG.email}`
-    + `?subject=${encodeURIComponent('[麥塊社團] ' + subject)}`
-    + `&body=${encodeURIComponent(fullBody)}`;
-  window.location.href = url;
-});
 
 /* ==================================================================
    老師模式
