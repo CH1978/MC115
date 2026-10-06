@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft 第一夜：AI 冒險指南</title>
+<script>
+window.addEventListener('error', (e) => { console.error('錯誤：', e); });
+document.addEventListener('DOMContentLoaded', () => {
+    const setupImgError = (img) => {
+        if (img.dataset.errorHandled) return;
+        img.dataset.errorHandled = '1';
+        img.addEventListener('error', function() {
+            const fileName = this.getAttribute('src') || '未知檔名';
+            const placeholder = document.createElement('div');
+            placeholder.style.cssText = `display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;aspect-ratio:16/10;background:#ffe0e0;border:3px dashed #e53935;border-radius:8px;color:#c62828;font-weight:bold;font-size:1.1em;padding:20px;text-align:center;margin:8px 0;`;
+            placeholder.innerHTML = `<div style="font-size:2.5em;margin-bottom:10px;">❌</div><div style="font-size:1.2em;margin-bottom:6px;">找不到圖片</div><div style="font-family:'Courier New',monospace;font-size:1.1em;background:#fff;padding:6px 14px;border-radius:6px;color:#b71c1c;">${fileName}</div>`;
+            this.parentNode.replaceChild(placeholder, this);
+        });
+    };
+    const scanImages = () => { document.querySelectorAll('img').forEach(setupImgError); };
+    scanImages();
+    const observer = new MutationObserver(scanImages);
+    observer.observe(document.body, { childList: true, subtree: true });
+});
+</script>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --primary: #4CAF50; --primary-dark: #388E3C; --sidebar-bg: #1a2a3a; --bg: #eef2f5; --card-bg: #ffffff; --text: #2c3e50; --text-heading: #1a2a3a; --text-muted: #888; --border: #e0e0e0; }
+    body { font-family: 'Segoe UI', 'Microsoft JhengHei', Arial, sans-serif; line-height: 1.7; color: var(--text); background: var(--bg); }
+    .sidebar { width: 270px; background: var(--sidebar-bg); color: #ecf0f1; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100; transition: transform 0.3s ease; display: flex; flex-direction: column; }
+    .sidebar-header { padding: 22px 20px 14px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar-header h3 { font-size: 1.05em; color: #fff; margin-bottom: 4px; }
+    .sidebar-header p { font-size: 0.78em; color: #8899aa; }
+    .lang-select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #4CAF50;
+        background: #ffffff;
+        color: #1a2a3a;
+        font-family: inherit;
+        font-size: 0.9em;
+        font-weight: bold;
+        margin-top: 12px;
+        cursor: pointer;
+        outline: none;
+    }
+    .lang-select:hover { background: #f1f8e9; }
+    .lang-select:focus { border-color: #388E3C; box-shadow: 0 0 0 3px rgba(76,175,80,0.25); }
+    .sidebar-nav { padding: 15px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .sidebar-nav button { font-family: inherit; font-size: 0.86em; color: #c8d4e0; background: transparent; border: none; text-align: left; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+    .sidebar-nav button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sidebar-nav button.active { background: var(--primary); color: #fff; font-weight: bold; }
+    .sidebar-nav button .num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.12); font-size: 0.75em; font-weight: bold; flex-shrink: 0; }
+    .sidebar-nav button.active .num { background: rgba(255,255,255,0.3); }
+    .sidebar-footer { padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .progress-label { font-size: 0.75em; color: #8899aa; margin-bottom: 6px; display: flex; justify-content: space-between; }
+    .progress-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-bottom: 12px; }
+    .progress-bar-fill { height: 100%; background: var(--primary); width: 12.5%; transition: width 0.4s ease; }
+    .dark-toggle { padding: 9px 12px; background: rgba(255,255,255,0.08); border: none; color: #c8d4e0; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.82em; width: 100%; text-align: left; }
+    .main-content { margin-left: 270px; flex: 1; min-width: 0; padding: 25px 20px 60px; }
+    .page { display: none; max-width: 1000px; margin: 0 auto; }
+    .page.active { display: block; }
+    .card { background: var(--card-bg); border-radius: 14px; padding: 28px 30px; margin-bottom: 22px; box-shadow: 0 4px 18px rgba(0,0,0,0.07); }
+    h1 { font-size: 2em; text-align: center; color: var(--text-heading); margin-bottom: 8px; }
+    h2 { font-size: 1.55em; color: var(--text-heading); border-left: 5px solid var(--primary); padding-left: 14px; margin-bottom: 18px; }
+    h3 { font-size: 1.15em; color: var(--text); margin: 22px 0 10px; }
+    h4 { font-size: 1.02em; color: var(--primary); margin: 16px 0 8px; }
+    p { margin: 8px 0; }
+    ul, ol { margin: 8px 0 8px 22px; }
+    li { margin-bottom: 4px; }
+    img { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; background: #f0f4f8; border: 1px solid var(--border); border-radius: 8px; padding: 6px; margin: 8px 0; }
+    .img-pair { display: flex; gap: 14px; flex-wrap: wrap; margin: 14px 0; align-items: flex-start; }
+    .img-pair img { flex: 1 1 300px; margin: 0; }
+    .img-pair .col-text, .img-pair .col-img { flex: 1 1 300px; min-width: 0; }
+    .hero-cover { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; margin-top: 18px; }
+    .hero-media { flex: 1 1 320px; min-width: 0; }
+    .hero-media img { margin: 0; }
+    .hero-video { flex: 1 1 340px; min-width: 0; }
+    .hero-video .video-box { margin: 0; }
+    .image-block { margin: 16px 0; padding: 16px; background: #f8f9fa; border-radius: 10px; border: 1px solid #e0e0e0; }
+    .image-row { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .image-item { flex: 0 1 calc(50% - 8px); min-width: 260px; max-width: 480px; background: #fff; border-radius: 10px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .image-item img { width: 100%; margin: 0 0 10px 0; aspect-ratio: 16 / 10; object-fit: contain; background: #f0f4f8; border: 1px solid #e0e0e0; padding: 6px; border-radius: 6px; }
+    .image-item-text { font-size: 0.88em; line-height: 1.6; color: #555; padding: 4px 2px; }
+    .image-item-text strong { color: #4CAF50; display: block; margin-bottom: 4px; font-size: 1em; }
+    .code-block { margin: 16px 0; padding: 16px; background: #f8f9fa; border-radius: 10px; border: 1px solid #e0e0e0; }
+    .code-block-title { font-size: 0.95em; font-weight: bold; color: #7b1fa2; margin-bottom: 12px; }
+    .code-row { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .code-item { flex: 0 1 calc(50% - 8px); min-width: 260px; max-width: 480px; background: #fff; border-radius: 10px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .code-item img { width: 100%; margin: 0 0 10px 0; background: #1e1e1e; border: 2px solid #2d2d2d; padding: 6px; border-radius: 6px; }
+    .code-item-text { font-size: 0.88em; line-height: 1.6; color: #555; padding: 4px 2px; }
+    .code-item-text strong { color: #7b1fa2; display: block; margin-bottom: 4px; font-size: 1em; }
+    .video-box { margin: 18px 0; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.15); background: #000; }
+    .video-title { background: var(--primary); color: #fff; padding: 10px 16px; font-size: 0.95em; font-weight: bold; }
+    .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; }
+    .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .video-hint { background: #fff3e0; border-left: 5px solid #ff9800; padding: 12px 16px; border-radius: 8px; margin: 14px 0; font-size: 0.9em; color: #e65100; font-weight: bold; }
+    .tour-block { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-radius: 14px; padding: 18px 26px; margin-top: 22px; margin-bottom: 0; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; box-shadow: 0 4px 14px rgba(76,175,80,0.15); }
+    .tour-header { flex: 1 1 320px; min-width: 0; }
+    .tour-header h2 { border: none; padding: 0; color: #1b5e20; font-size: 1.25em; margin-bottom: 4px; text-align: left; }
+    .tour-header p { color: #2e7d32; font-size: 0.9em; margin: 0; }
+    .tour-start-btn { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #4CAF50, #388E3C); color: #fff; border: none; padding: 13px 28px; border-radius: 30px; font-family: inherit; font-size: 1em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(76,175,80,0.4); transition: all 0.25s; flex-shrink: 0; white-space: nowrap; }
+    .tour-start-btn::before { content: "🎬"; font-size: 1.2em; }
+    .tour-overlay { position: fixed; inset: 0; z-index: 9999; display: none; pointer-events: none; }
+    .tour-overlay.active { display: block; pointer-events: auto; }
+    .tour-spotlight { position: fixed; border-radius: 12px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75); transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; border: 3px solid #4CAF50; z-index: 10000; }
+    .tour-cursor { position: fixed; width: 44px; height: 44px; z-index: 10002; pointer-events: none; transform: translate(-50%, -50%); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+    .tour-cursor::before { content: ""; display: block; width: 100%; height: 100%; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="%23333" stroke-width="1.5"><path d="M3 2l7.07 18.97 2.12-7.07 7.07-2.12L3 2z"/></svg>') no-repeat center center; background-size: contain; }
+
+    .tour-panel {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10001;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 60px;
+        padding: 12px 24px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+        display: none;
+        align-items: center;
+        gap: 20px;
+        border: 1px solid rgba(76,175,80,0.3);
+    }
+    .tour-panel.active { display: flex; }
+    .sound-wave { display: flex; align-items: center; justify-content: center; gap: 4px; height: 36px; width: 60px; }
+    .sound-wave span { display: block; width: 5px; height: 8px; background: #4CAF50; border-radius: 3px; transition: height 0.2s ease; }
+    .sound-wave.playing span { animation: wave 1s ease-in-out infinite; }
+    .sound-wave.playing span:nth-child(1) { animation-delay: 0s; }
+    .sound-wave.playing span:nth-child(2) { animation-delay: 0.15s; }
+    .sound-wave.playing span:nth-child(3) { animation-delay: 0.3s; }
+    .sound-wave.playing span:nth-child(4) { animation-delay: 0.45s; }
+    .sound-wave.playing span:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave { 0%, 100% { height: 8px; opacity: 0.6; } 50% { height: 28px; opacity: 1; } }
+    .tour-panel-btns { display: flex; gap: 8px; align-items: center; }
+    .tour-panel-btn { font-family: inherit; font-size: 0.85em; padding: 8px 16px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+    .tour-panel-btn-skip { background: #f5f5f5; color: #666; }
+    .tour-panel-btn-pause { background: #ff9800; color: #fff; }
+    .tour-panel-btn-next { background: var(--primary); color: #fff; }
+    @media (max-width: 600px) {
+        .tour-panel { padding: 10px 16px; gap: 12px; bottom: 20px; width: 92%; justify-content: space-between; }
+        .sound-wave { width: 40px; }
+    }
+
+    .step-block { border: 2px solid var(--border); border-radius: 12px; padding: 20px 22px; margin: 20px 0; background: #fafbfc; }
+    .step-block.watch { border-color: #ffb74d; background: #fffaf2; }
+    .step-block.learn { border-color: #81c784; background: #f5fbf5; }
+    .step-block.play { border-color: #ce93d8; background: #faf5fb; }
+    .step-header { display: flex; align-items: center; gap: 10px; font-size: 1.05em; font-weight: bold; margin-bottom: 12px; }
+    .step-block.watch .step-header { color: #e65100; }
+    .step-block.learn .step-header { color: #2e7d32; }
+    .step-block.play .step-header { color: #7b1fa2; }
+    .step-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; color: #fff; font-size: 0.8em; font-weight: bold; flex-shrink: 0; }
+    .step-block.watch .step-num { background: #ff9800; }
+    .step-block.learn .step-num { background: #4CAF50; }
+    .step-block.play .step-num { background: #9c27b0; }
+    .step-explain { background: rgba(255,255,255,0.6); border-radius: 8px; padding: 12px 16px; margin: 10px 0 14px; font-size: 0.93em; line-height: 1.7; border-left: 3px solid currentColor; }
+    .step-block.watch .step-explain { color: #b26a00; border-left-color: #ff9800; }
+    .step-block.learn .step-explain { color: #2e7d32; border-left-color: #4CAF50; }
+    .step-block.play .step-explain { color: #6a1b9a; border-left-color: #9c27b0; }
+    .step-list { background: #fff; border-radius: 8px; padding: 12px 16px; margin: 8px 0; border: 1px dashed #81c784; }
+    .dialogue { background: #f8f9fa; border-radius: 12px; padding: 18px 20px; margin: 14px 0; border-left: 5px solid var(--primary); position: relative; }
+
+    /* 對話主題標題：綠色粗體 + 綠色底線 */
+    .dialogue-title {
+        font-size: 0.95em;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 14px;
+        padding-right: 130px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid rgba(76,175,80,0.25);
+        letter-spacing: 0.02em;
+    }
+
+    .dialogue-line { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+    .dialogue-line.player { flex-direction: row-reverse; }
+    .speaker { font-size: 0.82em; font-weight: bold; flex-shrink: 0; width: 65px; text-align: center; padding-top: 10px; }
+    .speaker.agent { color: var(--primary); }
+    .speaker.player { color: #2196F3; }
+    .bubble { background: #fff; border-radius: 12px; padding: 12px 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); flex: 1; font-size: 0.95em; }
+    .dialogue-line.player .bubble { background: #e3f2fd; }
+    .dialogue-line.agent .bubble { background: #e8f5e9; }
+    .dialogue-line.speaking .bubble { box-shadow: 0 0 0 3px #4CAF50; transform: scale(1.02); }
+    .speak-btn { position: absolute; top: 12px; right: 12px; background: var(--primary); color: #fff; border: none; padding: 7px 14px; border-radius: 20px; cursor: pointer; font-family: inherit; font-size: 0.8em; font-weight: bold; }
+    .speak-btn.playing { background: #e91e63; }
+    .highlight { background: #fff8e1; border-left: 5px solid #ffc107; padding: 14px 18px; border-radius: 6px; margin: 16px 0; }
+    .analogy { background: #e8f5e9; border-left: 5px solid #4CAF50; padding: 14px 18px; border-radius: 6px; margin: 14px 0; font-size: 0.95em; }
+    .analogy::before { content: "🍎 生活比喻："; font-weight: bold; color: #2e7d32; }
+    .ethics { background: #fce4ec; border-left: 5px solid #e91e63; padding: 18px 20px; border-radius: 6px; margin: 16px 0; }
+    .ethics h3 { color: #c2185b; margin-top: 0; border: none; padding: 0; }
+    .step-badge { display: inline-block; background: var(--primary); color: #fff; font-size: 0.8em; font-weight: bold; padding: 3px 12px; border-radius: 20px; margin-bottom: 10px; }
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .quiz-option { background: #fff; border: 2px solid #e0e0e0; border-radius: 10px; padding: 12px 16px; cursor: pointer; font-family: inherit; font-size: 0.95em; text-align: left; }
+    .quiz-option.correct { background: #e8f5e9; border-color: #4CAF50; color: #2e7d32; font-weight: bold; }
+    .quiz-option.wrong { background: #ffebee; border-color: #e53935; color: #c62828; }
+    .quiz-option:disabled { cursor: default; }
+    .quiz-feedback { margin-top: 12px; padding: 12px 16px; border-radius: 8px; font-weight: bold; display: none; }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.correct { background: #e8f5e9; color: #2e7d32; }
+    .quiz-feedback.wrong { background: #ffebee; color: #c62828; }
+    .page-nav { display: flex; justify-content: space-between; max-width: 1000px; margin: 0 auto; gap: 10px; }
+    .page-nav button { font-family: inherit; font-size: 0.95em; background: var(--card-bg); color: var(--text-heading); border: 2px solid var(--primary); padding: 10px 24px; border-radius: 25px; cursor: pointer; }
+    .page-nav button:disabled { opacity: 0.35; cursor: not-allowed; border-color: #ccc; }
+    .page-nav button.primary { background: var(--primary); color: #fff; }
+    .back-top { position: fixed; bottom: 25px; right: 25px; width: 48px; height: 48px; border-radius: 50%; background: var(--primary); color: #fff; border: none; cursor: pointer; font-size: 1.2em; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 90; }
+    .back-top.show { opacity: 1; pointer-events: auto; }
+    .export-btn { position: fixed; top: 15px; right: 15px; z-index: 110; background: var(--primary); color: #fff; border: none; padding: 10px 18px; border-radius: 25px; cursor: pointer; font-family: inherit; font-size: 0.85em; font-weight: bold; }
+    .hamburger { display: none; position: fixed; top: 15px; left: 15px; z-index: 110; background: var(--sidebar-bg); color: #fff; border: none; width: 44px; height: 44px; border-radius: 10px; cursor: pointer; font-size: 1.3em; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 95; }
+    .overlay.show { display: block; }
+    @media (max-width: 900px) {
+        .sidebar { transform: translateX(-100%); }
+        .sidebar.open { transform: translateX(0); }
+        .main-content { margin-left: 0; padding-top: 75px; }
+        .hamburger { display: flex; align-items: center; justify-content: center; }
+        .page-nav { flex-direction: column; }
+        .page-nav button { width: 100%; }
+        .card { padding: 22px 18px; }
+        .speaker { width: 50px; font-size: 0.75em; }
+        .code-item, .image-item { flex: 1 1 100%; max-width: 100%; }
+        .hero-media, .hero-video { flex: 1 1 100%; }
+        .tour-block { flex-direction: column; align-items: stretch; text-align: center; padding: 18px; }
+        .tour-start-btn { justify-content: center; width: 100%; }
+    }
+</style>
+</head>
+<body>
+
+<button class="export-btn" onclick="exportHTML()">💾 匯出 HTML</button>
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h3>🎮 第一夜</h3>
+        <p id="sidebarSubtitle">我的 AI 冒險指南</p>
+        <select class="lang-select" id="langSelect" onchange="switchLang(this.value)">
+            <option value="zh_TW">繁體中文</option>
+            <option value="en_US">English</option>
+        </select>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-footer">
+        <div class="progress-label">
+            <span id="progressLabel">冒險進度</span>
+            <span id="progressText">第 1 頁 / 共 8 頁</span>
+        </div>
+        <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+        <button class="dark-toggle" onclick="toggleDark()" id="darkBtn">🌙 切換深色模式</button>
+    </div>
+</aside>
+
+<main class="main-content" id="mainContent"></main>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+
+<footer style="text-align:center;padding:20px;color:#888;font-size:0.85em;margin-left:270px;">
+    <p>© 2026 Minecraft 第一夜 AI 冒險指南 | 本教材僅供教育用途</p>
+</footer>
+
+<div class="tour-overlay" id="tourOverlay">
+    <div class="tour-spotlight" id="tourSpotlight"></div>
+    <div class="tour-cursor" id="tourCursor"></div>
+</div>
+
+<div class="tour-panel" id="tourPanel">
+    <div class="sound-wave" id="soundWave">
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="tour-panel-btns">
+        <button class="tour-panel-btn tour-panel-btn-skip" onclick="endTour()">跳過</button>
+        <button class="tour-panel-btn tour-panel-btn-pause" id="tourPauseBtn" onclick="toggleTourPause()">⏸</button>
+        <button class="tour-panel-btn tour-panel-btn-next" onclick="nextTourStep()">下一步</button>
+    </div>
+</div>
+
+<script>
+/* ============================================================
+   全域狀態
+   ============================================================ */
+let currentLang = 'zh_TW';
+let currentPage = 0;
+let isSpeaking = false;
+let allVoices = [];
+
+/* 中文雙聲音 */
+let voiceZhAgent = null, voiceZhPlayer = null;
+/* 英文雙聲音 */
+let voiceEnAgent = null, voiceEnPlayer = null;
+
+function getChineseVoice() {
+    return allVoices.find(v => /zh-(tw|hk)/i.test(v.lang))
+        || allVoices.find(v => /^zh/i.test(v.lang)) || null;
+}
+function getEnglishVoice() {
+    return allVoices.find(v => /en-(us|gb)/i.test(v.lang))
+        || allVoices.find(v => /^en/i.test(v.lang)) || null;
+}
+
+function loadVoices() {
+    allVoices = speechSynthesis.getVoices();
+
+    /* 中文 pair */
+    const zh = allVoices.filter(x => x.lang.toLowerCase().startsWith('zh'));
+    if (zh.length >= 2) {
+        voiceZhAgent = zh[0];
+        voiceZhPlayer = zh.find(x => x.voiceURI !== zh[0].voiceURI) || zh[0];
+    } else if (zh.length === 1) {
+        voiceZhAgent = voiceZhPlayer = zh[0];
+    } else {
+        voiceZhAgent = voiceZhPlayer = null;
+    }
+
+    /* 英文 pair */
+    const en = allVoices.filter(x => x.lang.toLowerCase().startsWith('en'));
+    if (en.length >= 2) {
+        voiceEnAgent = en[0];
+        voiceEnPlayer = en.find(x => x.voiceURI !== en[0].voiceURI) || en[0];
+    } else if (en.length === 1) {
+        voiceEnAgent = voiceEnPlayer = en[0];
+    } else {
+        voiceEnAgent = voiceEnPlayer = null;
+    }
+}
+if (typeof speechSynthesis.onvoiceschanged !== 'undefined') speechSynthesis.onvoiceschanged = loadVoices;
+(function waitVoices(retry) {
+    retry = retry || 0;
+    if (speechSynthesis.getVoices().length || retry > 20) { loadVoices(); return; }
+    setTimeout(() => waitVoices(retry + 1), 250);
+})();
+
+/* ============================================================
+   導覽邏輯
+   ============================================================ */
+let tourActive = false;
+let tourStepIndex = 0;
+let tourPaused = false;
+let tourFallbackTimer = null;
+const TOUR_FALLBACK_MS = 30000;
+
+function speakTourText(text, onDone) {
+    speechSynthesis.cancel();
+    const wave = document.getElementById('soundWave');
+    if (wave) wave.classList.add('playing');
+
+    setTimeout(() => {
+        if (!text) {
+            if (wave) wave.classList.remove('playing');
+            if (onDone) onDone();
+            return;
+        }
+        const u = new SpeechSynthesisUtterance(text);
+        if (currentLang === 'zh_TW') {
+            u.lang = 'zh-TW';
+            const v = getChineseVoice();
+            if (v) u.voice = v;
+            u.pitch = 1.05;
+            u.rate = 1.15;
+        } else {
+            u.lang = 'en-US';
+            const v = getEnglishVoice();
+            if (v) u.voice = v;
+            u.pitch = 1.0;
+            u.rate = 0.95;
+        }
+        let advanced = false;
+        const advance = () => {
+            if (advanced) return;
+            advanced = true;
+            if (wave) wave.classList.remove('playing');
+            if (onDone) onDone();
+        };
+        u.onend = advance;
+        u.onerror = advance;
+        speechSynthesis.speak(u);
+    }, 400);
+}
+
+function startTour() {
+    if (isSpeaking) stopSpeaking();
+    if (currentPage !== 0) {
+        showPage(0);
+        setTimeout(_beginTour, 700);
+    } else {
+        _beginTour();
+    }
+}
+
+function _beginTour() {
+    tourActive = true;
+    tourStepIndex = 0;
+    tourPaused = false;
+    document.getElementById('tourOverlay').classList.add('active');
+    document.getElementById('tourPanel').classList.add('active');
+    document.getElementById('tourPauseBtn').textContent = '⏸';
+    goToTourStep(0);
+}
+
+function goToTourStep(index) {
+    if (!tourActive) return;
+    const steps = t('tour_steps');
+    if (index >= steps.length) { endTour(); return; }
+    tourStepIndex = index;
+    const step = steps[index];
+    const myIndex = index;
+
+    clearTimeout(tourFallbackTimer);
+
+    speakTourText(step.text, () => {
+        if (!tourActive || tourPaused) return;
+        if (tourStepIndex !== myIndex) return;
+        setTimeout(() => {
+            if (tourActive && !tourPaused && tourStepIndex === myIndex) {
+                goToTourStep(tourStepIndex + 1);
+            }
+        }, 600);
+    });
+
+    tourFallbackTimer = setTimeout(() => {
+        if (tourActive && !tourPaused && tourStepIndex === myIndex) {
+            speechSynthesis.cancel();
+            goToTourStep(tourStepIndex + 1);
+        }
+    }, TOUR_FALLBACK_MS);
+
+    if (!step.target) {
+        document.getElementById('tourSpotlight').style.width = '0px';
+        document.getElementById('tourSpotlight').style.height = '0px';
+        document.getElementById('tourCursor').style.opacity = '0';
+        return;
+    }
+
+    const el = document.querySelector(step.target);
+    if (!el) { goToTourStep(index + 1); return; }
+
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    setTimeout(() => {
+        if (!tourActive || tourStepIndex !== myIndex) return;
+        const rect = el.getBoundingClientRect();
+        const padding = 12;
+        const sp = document.getElementById('tourSpotlight');
+        sp.style.left = (rect.left - padding) + 'px';
+        sp.style.top = (rect.top - padding) + 'px';
+        sp.style.width = (rect.width + padding * 2) + 'px';
+        sp.style.height = (rect.height + padding * 2) + 'px';
+
+        const cursor = document.getElementById('tourCursor');
+        cursor.style.left = (rect.left + rect.width / 2) + 'px';
+        cursor.style.top = (rect.top + rect.height / 2) + 'px';
+        cursor.style.opacity = '1';
+    }, 700);
+}
+
+function nextTourStep() {
+    clearTimeout(tourFallbackTimer);
+    speechSynthesis.cancel();
+    document.getElementById('soundWave').classList.remove('playing');
+    goToTourStep(tourStepIndex + 1);
+}
+
+function toggleTourPause() {
+    tourPaused = !tourPaused;
+    document.getElementById('tourPauseBtn').textContent = tourPaused ? '▶' : '⏸';
+    const wave = document.getElementById('soundWave');
+    if (tourPaused) {
+        clearTimeout(tourFallbackTimer);
+        speechSynthesis.cancel();
+        if (wave) wave.classList.remove('playing');
+    } else {
+        const step = t('tour_steps')[tourStepIndex];
+        if (!step) return;
+        const myIndex = tourStepIndex;
+        if (wave) wave.classList.add('playing');
+        speakTourText(step.text, () => {
+            if (!tourActive || tourPaused) return;
+            if (tourStepIndex !== myIndex) return;
+            setTimeout(() => {
+                if (tourActive && !tourPaused && tourStepIndex === myIndex) {
+                    goToTourStep(tourStepIndex + 1);
+                }
+            }, 600);
+        });
+        clearTimeout(tourFallbackTimer);
+        tourFallbackTimer = setTimeout(() => {
+            if (tourActive && !tourPaused && tourStepIndex === myIndex) {
+                speechSynthesis.cancel();
+                goToTourStep(tourStepIndex + 1);
+            }
+        }, TOUR_FALLBACK_MS);
+    }
+}
+
+function endTour() {
+    tourActive = false;
+    tourPaused = false;
+    clearTimeout(tourFallbackTimer);
+    speechSynthesis.cancel();
+    document.getElementById('tourOverlay').classList.remove('active');
+    document.getElementById('tourPanel').classList.remove('active');
+    document.getElementById('soundWave').classList.remove('playing');
+}
+
+/* ============================================================
+   對話語音：中文 / 英文都用「雙聲音」區分 Agent 與 Player
+   ============================================================ */
+function initSpeakButtons() {
+    document.querySelectorAll('.dialogue').forEach(dialogue => {
+        if (dialogue.querySelector('.speak-btn')) return;
+        const btn = document.createElement('button');
+        btn.className = 'speak-btn';
+        btn.textContent = currentLang === 'zh_TW' ? '▶ 播放對話' : '▶ Play';
+        btn.onclick = () => toggleSpeak(dialogue, btn);
+        dialogue.appendChild(btn);
+    });
+}
+
+function toggleSpeak(dialogue, btn) {
+    if (isSpeaking) { stopSpeaking(); return; }
+    const lines = dialogue.querySelectorAll('.dialogue-line');
+    if (lines.length === 0) return;
+    isSpeaking = true;
+    btn.classList.add('playing');
+    btn.textContent = currentLang === 'zh_TW' ? '⏸ 停止' : '⏸ Stop';
+    playLines(lines, 0, btn, dialogue);
+}
+
+function playLines(lines, index, btn, dialogueEl) {
+    if (index >= lines.length || !isSpeaking) { stopSpeaking(); return; }
+    const line = lines[index];
+    const bubble = line.querySelector('.bubble');
+    const speaker = line.querySelector('.speaker');
+    if (!bubble) { playLines(lines, index + 1, btn, dialogueEl); return; }
+    if (dialogueEl) dialogueEl.querySelectorAll('.dialogue-line').forEach(l => l.classList.remove('speaking'));
+    line.classList.add('speaking');
+    const rect = line.getBoundingClientRect();
+    if (rect.top < 100 || rect.bottom > window.innerHeight - 100) line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    const isZh = currentLang === 'zh_TW';
+    const isAgent = speaker && speaker.classList.contains('agent');
+    const text = bubble.textContent.trim();
+    const u = new SpeechSynthesisUtterance(text);
+
+    if (isZh) {
+        u.lang = 'zh-TW';
+        const voice = isAgent ? voiceZhAgent : voiceZhPlayer;
+        if (voice) u.voice = voice;
+        const sameVoice = voiceZhAgent && voiceZhPlayer && voiceZhAgent.voiceURI === voiceZhPlayer.voiceURI;
+        if (isAgent) {
+            u.pitch = sameVoice ? 0.6 : 0.95;
+            u.rate = 1.25;
+        } else {
+            u.pitch = sameVoice ? 1.4 : 1.05;
+            u.rate = 1.45;
+        }
+    } else {
+        u.lang = 'en-US';
+        const voice = isAgent ? voiceEnAgent : voiceEnPlayer;
+        if (voice) u.voice = voice;
+        const sameVoice = voiceEnAgent && voiceEnPlayer && voiceEnAgent.voiceURI === voiceEnPlayer.voiceURI;
+        if (isAgent) {
+            u.pitch = sameVoice ? 0.7 : 1.0;
+            u.rate = sameVoice ? 0.85 : 0.95;
+        } else {
+            u.pitch = sameVoice ? 1.3 : 1.0;
+            u.rate = sameVoice ? 1.0 : 1.05;
+        }
+    }
+
+    let advanced = false;
+    const advance = () => {
+        if (advanced) return;
+        advanced = true;
+        setTimeout(() => playLines(lines, index + 1, btn, dialogueEl), 120);
+    };
+    u.onend = advance;
+    u.onerror = advance;
+    speechSynthesis.speak(u);
+}
+
+function stopSpeaking() {
+    isSpeaking = false;
+    speechSynthesis.cancel();
+    document.querySelectorAll('.speak-btn').forEach(b => {
+        b.classList.remove('playing');
+        b.textContent = currentLang === 'zh_TW' ? '▶ 播放對話' : '▶ Play';
+    });
+    document.querySelectorAll('.dialogue-line').forEach(l => l.classList.remove('speaking'));
+}
+
+function switchLang(lang) {
+    if (tourActive) endTour();
+    if (isSpeaking) stopSpeaking();
+    currentLang = lang;
+    localStorage.setItem('preferredLang', lang);
+    loadVoices();
+    init();
+}
+
+/* ============================================================
+   i18n
+   ============================================================ */
+const i18n = {
+    zh_TW: {
+        sidebar_subtitle: "我的 AI 冒險指南",
+        progress_label: "冒險進度",
+        dark_on: "🌙 切換深色模式",
+        dark_off: "☀️ 切換亮色模式",
+        next: "下一個任務 →",
+        prev: "← 上一個任務",
+        correct: "✅ 答對了！做得好！",
+        wrong: "❌ 沒關係，再想一下！",
+        tasks: ["開始冒險", "任務一：收集木材", "任務二：製作與升級工具", "任務三：蓋庇護所與門", "任務四：加光", "任務五：鐵與熔爐", "任務六：剪刀、羊毛、床", "任務完成"],
+        agent: "🤖 Agent", player: "🧑 玩家",
+        dialogue_title: "💬 遊戲對話",
+        step_learn: "📖 學概念", step_play: "🎮 玩互動", step_watch: "📹 看影片",
+        code_title: "程式碼說明",
+        video_hint: "📹 本頁底部有教學影片，記得看到最後！",
+        tour_title: "🎬 網頁自動導覽",
+        tour_subtitle: "讓導覽員帶你走一遍，認識整個網頁的操作方式與學習內容！（會有語音說明）",
+        tour_start_btn: "開始自動導覽（含語音）",
+        tour_steps: [
+            { target: '#intro-cover', text: '歡迎來到麥塊的第一夜。左側是封面圖，右側是開場影片；手機版可能會上下排列。你可以先看影片，了解故事背景，再繼續往下走。' },
+            { target: '#intro-welcome', text: '準備好了嗎？這份指南適合八到十八歲的冒險者。你的隊友是一個人工智慧隊友，叫做代理人。它會感應環境、幫你做決定。接下來，你要用人工智慧的概念，教它規劃並完成任務，一起活過麥塊的第一夜。' },
+            { target: '#intro-welcome .highlight', text: '看到任務卡了嗎？這就是你的任務：用基本的人工智慧概念，教代理人規劃、完成任務，然後一起活過麥塊的第一夜。' },
+            { target: '#intro-learn', text: '這段冒險你會學到：認識不同類型的人工智慧；用運算思維找出人工智慧行為的規則；練習訓練人工智慧，並檢查它的表現；最後把所學用到新任務上。簡單說，你會變得更會和人工智慧合作。' },
+            { target: '#intro-tasks', text: '今晚有六個任務：收集木材、製作與升級工具、蓋庇護所與做門、加光、鐵與熔爐，還有剪刀、羊毛、床。每個任務都會搭配一個人工智慧概念，讓你邊玩邊學。' },
+            { target: '.sidebar', text: '左側選單可以切換「開始冒險」和各個任務頁面。手機版可能在選單圖示裡。點一下，就會跳到對應頁面。' },
+            { target: '.sidebar-header .lang-select', text: '這個下拉選單可以在中文和英文之間切換。' },
+            { target: '.dark-toggle', text: '這個按鈕可以切換亮色和深色模式。晚上閱讀時，深色模式比較不刺眼。' },
+            { target: '.progress-bar', text: '這裡會顯示你的學習進度。完成的任務越多，進度條就越滿。' },
+            { target: '.page-nav', text: '每一頁的最下面都有「上一個任務」和「下一個任務」按鈕，換頁很方便。' },
+            { target: '#intro-story', text: '故事的一開始是這樣：當玩家第一次進入麥塊世界，代理人會現身跟玩家打招呼。點下面的按鈕，可以聽整段對話。準備好之後，點「開始冒險」，正式進入任務。' },
+            { target: null, text: '以上就是整個網頁的導覽。接下來請你自己操作看看，慢慢探索每個任務，祝你玩得開心！' }
+        ],
+        dialogues: {},
+        dialogue_topics: {
+            story: '💬 故事開場：初次相遇',
+            task1a: '💬 第一步：收集木材（認識分類）',
+            task1b: '💬 木塊的二元分類',
+            task2a: '💬 第二步：建造精製台（驗證）',
+            task2b: '💬 製作木棍與木製工具',
+            task3: '💬 升級工具（多類別分類）',
+            task4: '💬 建造庇護所與門',
+            task5a: '💬 製作火把（認識礦石）',
+            task5b: '💬 主動型人工智慧上場',
+            task6a: '💬 挖鐵礦（新礦石）',
+            task6b: '💬 熔煉鐵礦與熔爐',
+            task7a: '💬 製作剪刀',
+            task7b: '💬 剪羊毛與做床',
+            done: '💬 完成挑戰'
+        }
+    },
+    en_US: {
+        sidebar_subtitle: "My AI Adventure Guide",
+        progress_label: "Progress",
+        dark_on: "🌙 Dark Mode",
+        dark_off: "☀️ Light Mode",
+        next: "Next Task →", prev: "← Previous Task",
+        correct: "✅ Correct! Well done!",
+        wrong: "❌ That's okay, try again!",
+        tasks: ["Start", "Task 1: Collect Wood", "Task 2: Make & Upgrade Tools", "Task 3: Build Shelter & Door", "Task 4: Add Light", "Task 5: Iron & Furnace", "Task 6: Shears, Wool, Bed", "Complete"],
+        agent: "🤖 Agent", player: "🧑 Player",
+        dialogue_title: "💬 Game Dialogue",
+        step_learn: "📖 Learn", step_play: "🎮 Play", step_watch: "📹 Watch",
+        code_title: "Code Description",
+        video_hint: "📹 There's a tutorial video at the bottom of this page. Don't miss it!",
+        tour_title: "🎬 Auto Website Tour",
+        tour_subtitle: "Let the guide walk you through the whole website! (with voice narration)",
+        tour_start_btn: "Start Auto Tour (with Voice)",
+        tour_steps: [
+            { target: '#intro-cover', text: 'Welcome to Minecraft The First Night. The cover is on the left, and the intro video is on the right. On mobile, they may stack. Watch the video first to get the story, then keep going.' },
+            { target: '#intro-welcome', text: 'Ready? This guide is for ages eight to eighteen. Your teammate is an AI companion called the Agent. It senses the world and makes decisions. You will use AI concepts to teach it to plan and finish tasks, and survive the first night together.' },
+            { target: '#intro-welcome .highlight', text: 'See the mission card? That is your mission. Use basic AI concepts to teach the Agent to plan and complete tasks, and survive Minecraft first night together.' },
+            { target: '#intro-learn', text: 'On this adventure you will learn: different types of AI, how to use computational thinking to find rules in AI behavior, how to train AI and check its performance, and how to apply what you learn to new tasks. In short, you will get better at working with AI.' },
+            { target: '#intro-tasks', text: 'Tonight there are six tasks: collect wood, make and upgrade tools, build a shelter and a door, add light, iron and furnace, and shears, wool and a bed. Each task comes with an AI concept, so you learn while you play.' },
+            { target: '.sidebar', text: 'The sidebar switches between Start and each task page. On mobile it may be inside a menu icon. Click one, and it jumps to that page.' },
+            { target: '.sidebar-header .lang-select', text: 'This dropdown switches between Chinese and English.' },
+            { target: '.dark-toggle', text: 'This button toggles between light and dark mode. At night, dark mode is easier on the eyes.' },
+            { target: '.progress-bar', text: 'This shows your learning progress. The more tasks you finish, the fuller the bar gets.' },
+            { target: '.page-nav', text: 'At the bottom of each page are the Previous and Next buttons, so switching pages is easy.' },
+            { target: '#intro-story', text: 'Here is how the story begins. When the player first enters the Minecraft world, the Agent shows up and greets the player. Click the button below to hear the full conversation. When you are ready, click Start Adventure to begin the tasks.' },
+            { target: null, text: 'That is the whole tour. Now explore each task on your own. Have fun!' }
+        ],
+        dialogues: {},
+        dialogue_topics: {
+            story: '💬 Story Opening: First Meeting',
+            task1a: '💬 Step 1: Collect Wood (Classification)',
+            task1b: '💬 Binary Classification of Wood',
+            task2a: '💬 Step 2: Build a Crafting Table (Verification)',
+            task2b: '💬 Craft Sticks and Wooden Tools',
+            task3: '💬 Upgrade Tools (Multiclass Classification)',
+            task4: '💬 Build Shelter and Door',
+            task5a: '💬 Make Torches (Ore Recognition)',
+            task5b: '💬 Proactive AI Steps In',
+            task6a: '💬 Mine Iron Ore (New Ore)',
+            task6b: '💬 Smelt Iron Ore and the Furnace',
+            task7a: '💬 Craft Shears',
+            task7b: '💬 Shear Sheep and Make a Bed',
+            done: '💬 Challenge Complete'
+        }
+    }
+};
+
+/* 對話資料（中文） */
+i18n.zh_TW.dialogues = {
+    story: [
+        { who: "agent", text: "哈囉？這裡有人在嗎？" },
+        { who: "agent", text: "哦，謝天謝地！我還以為這裡只有我一個人！你在做什麼？" },
+        { who: "player", text: "我在做什麼？你一定是新來的吧！？太陽快下山了，我得在入夜前做好準備！" },
+        { who: "agent", text: "入夜？晚上會發生什麼事？" },
+        { who: "player", text: "你真的是新來的！晚上就是生物會跑出來的時候！你絕對不會想在那個時候待在外面！" },
+        { who: "agent", text: "事實上，是的，我是新來的 AI 玩家，我不知道現在是什麼情況。" },
+        { who: "player", text: "AI 玩家？什麼是 AI？" },
+        { who: "agent", text: "AI 是「人工智慧」的縮寫。我是能夠模仿人類行為的電腦，例如學習新事物和解決問題。" },
+        { who: "player", text: "哦，酷！那表示你可以幫我為夜晚做準備囉？" },
+        { who: "agent", text: "可以是可以！不過要學會新東西，我得先接受訓練才行。你會教我怎麼度過我的第一夜嗎？" },
+        { who: "player", text: "我當然會幫你！你看！我這裡剛好有《Minecraft 新手玩家第一夜指南》！這本書會告訴我們所有需要知道的事！我們走吧！" }
+    ],
+    task1a: [
+        { who: "agent", text: "你在做什麼？" },
+        { who: "player", text: "書上說……第一步：收集木塊。「若要收集木塊，找到一棵樹並打掉原木，收集掉落的木塊。」這不是很難，但很花時間！" },
+        { who: "agent", text: "我很樂意幫你收集木塊。我想我的迷你 Agent 和我應該會很擅長這個。不過，什麼是木塊？" },
+        { who: "agent", text: "我的學習方式之一是透過分類，也就是學著將資料分門別類。我需要將哪些方塊是木塊這件事分類。你手上那個橡木原木方塊是木塊嗎？" },
+        { who: "player", text: "是！" }
+    ],
+    task1b: [
+        { who: "agent", text: "我已經收集完所有的木塊了。" },
+        { who: "player", text: "我們需要的可不只這些！幸好，外面還有更多木塊。看到那邊那些樺木樹了嗎？" },
+        { who: "agent", text: "有，我看到了。真有趣……那些方塊和我們收集的橡木原木方塊很像。那些樺木原木方塊也是一種木塊嗎？" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "太完美了！我們可以將方塊分成「木塊」和「非木塊」兩個群組。這就叫做二元分類。我會使用演算法這種按部就班的程序來分類。" }
+    ],
+    task2a: [
+        { who: "player", text: "書上說……第二步：建造精製台。「若要建造精製台，你需要木材。你可以用原木來製作木材」。" },
+        { who: "agent", text: "我們現在有原木了！你可以示範怎麼用它來做木材嗎？" },
+        { who: "agent", text: "你成功了！我看著你做，好像也學會怎麼合成精製台了！不過，這點很重要，需要你幫我驗證一下，確保我學的資訊是正確的。" },
+        { who: "player", text: "是！" }
+    ],
+    task2b: [
+        { who: "player", text: "現在，書上說：「用精製台來製作木製工具……木製工具要用木材和木棍來做。」" },
+        { who: "agent", text: "木棍？你可以示範怎麼做木棍給我看嗎？" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "工具！太讚了！什麼是工具？我想學怎麼把木頭合成為工具。你可以教我怎麼合成工具嗎？" },
+        { who: "player", text: "是！" }
+    ],
+    task3: [
+        { who: "player", text: "書上接著說……「升級你的裝備……考慮將我們的木製工具升級為石製工具。石製工具更堅固，能破壞更多種類的材料。」" },
+        { who: "agent", text: "我可以幫你挖掘和收集石頭……只要你告訴我哪些方塊是石頭。既然我們有木塊以外的東西需要標記了，我就得使用多類別分類。那表示要將東西分成三個或更多的群組。" },
+        { who: "agent", text: "你能教我石頭是什麼以及怎麼取得嗎？" },
+        { who: "player", text: "是！" }
+    ],
+    task4: [
+        { who: "agent", text: "我們完成了嗎？我們準備好迎接夜晚了嗎？" },
+        { who: "player", text: "我剛才在看書的下一章……「建造庇護所。每個 Minecraft 玩家都需要一間庇護所，好在晚上躲避生物。」我猜下一步就是這個了？我們來蓋一間庇護所吧。" },
+        { who: "agent", text: "好的。可是……我還需要學習該用哪些方塊以及該怎麼蓋。你會教我嗎？" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "需要我幫你蓋一間庇護所嗎？" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "噹啦！我蓋好了！請享受你的庇護所！你能驗證我蓋的這間庇護所是否正確嗎？" },
+        { who: "player", text: "這間庇護所看起來很棒！但有個問題……我們要怎麼進去？" },
+        { who: "agent", text: "進去？對，這很合理。合格的庇護所當然需要能讓玩家進出的方式，對吧？" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "感謝你的檢查！如果沒有你的驗證，我就會學錯，以為庇護所就算沒有門也算蓋好了。" },
+        { who: "player", text: "書上說：「一定要在你的庇護所上裝一扇門。這樣不但方便進出，還能把生物擋在外面！」我想我們應該做幾扇門。" }
+    ],
+    task5a: [
+        { who: "agent", text: "怎麼了？你看起來很擔心。" },
+        { who: "player", text: "不，我沒事。只是太陽快下山了，書本也越來越難讀。我想我需要多一點光線。" },
+        { who: "agent", text: "你需要光線才能閱讀。我們可以製造光嗎？" },
+        { who: "player", text: "嗯，我們可以做火把。火把能提供光線，也可用來嚇跑怪物。我想我們應該做個火把！來看看我們需要什麼……木棍和煤炭……" },
+        { who: "agent", text: "煤炭。那是需要分類的新材料。可以多告訴我一些關於煤炭的事嗎？" },
+        { who: "player", text: "我可以告訴你我所知道的……煤炭是一種礦石。意思是你要去挖礦，深入石頭裡尋找礦床。煤炭是易燃的，所以會燃燒。這就是為什麼它是製作火把的好材料！" },
+        { who: "agent", text: "你對煤炭其實懂不少嘛。真讓我佩服。我可以為包含煤炭的礦石建立新群組。為此，我會利用模型和我過去學到的東西來辨識新物體。" },
+        { who: "agent", text: "不過首先，可以請你教我辨識煤炭是一種礦石嗎？" },
+        { who: "player", text: "是！" }
+    ],
+    task5b: [
+        { who: "agent", text: "所以……我在想……" },
+        { who: "agent", text: "嗯，這就是你所謂的「思考」吧。我是調適型 AI。這表示當資料發生變化時，我能自行學習和改進，完全不需要任何幫助！" },
+        { who: "agent", text: "此外，我還是主動式 AI。那表示我可以預測你的需求並主動協助。" },
+        { who: "agent", text: "我剛才就主動地預測到你需要幫忙照亮庇護所。我已經適應了這項新任務，並規劃好放置火把的計畫來照亮這裡。" },
+        { who: "agent", text: "我就知道你會高興！你能驗證我是否已學會正確放置火把的位置嗎？" },
+        { who: "player", text: "是！" }
+    ],
+    task6a: [
+        { who: "player", text: "你知道嗎，剛才放火把那招真的很專業！真希望可以休息一下，不過太陽快下山了，書上說我們該做張床舖，這樣晚上會比較好過！" },
+        { who: "agent", text: "床舖？床舖聽起來真棒！會很難做嗎？" },
+        { who: "player", text: "不難，但我們需要收集很多還沒有的材料。我們需要羊毛。書上說：「要取得羊毛就需要剪刀。那表示你得去挖鐵礦。」" },
+        { who: "agent", text: "挖鐵礦？「挖礦」代表要收集礦石方塊，那一定表示「鐵」是一種我還不認識的方塊。哦！所以它也屬於「礦石」這個群組嗎？鐵是一種礦石？你可以挖個樣本給我看看嗎？" },
+        { who: "player", text: "是！" }
+    ],
+    task6b: [
+        { who: "player", text: "太讚了！你做得真好，我們現在有足夠的鐵礦了！接下來，我們得把鐵礦熔煉成鐵錠，才能用來合成我們的剪刀！" },
+        { who: "agent", text: "謝謝你。我等不及要來熔煉礦石了！我要以前所未有的方式來熔煉礦石！只有一件事……什麼是熔煉？" },
+        { who: "player", text: "熔煉就是從礦石中提煉出鐵的方法。你需要把礦石加熱到融化，就會產出稱作「鐵錠」的東西，可以用來合成工具。而要熔煉，就得先做熔爐！" },
+        { who: "agent", text: "熔爐？我相信我能合成熔爐！我能合成很多熔爐！你可能已經注意到了，我是多重 Agent 系統，那些幫助我的小型自主型 AI Agent 也是這個系統的一部分。我們都是會互相互動的 AI。" },
+        { who: "agent", text: "在我開始做一堆熔爐之前，我得先知道一個熔爐是怎麼做的。你能教我怎麼做熔爐嗎？" },
+        { who: "player", text: "是！" }
+    ],
+    task7a: [
+        { who: "player", text: "好！接下來，書上說：「取得羊毛最好的方法就是用剪刀去修剪羊的毛。」這句話說起來很繞口，不過有這些鐵，做起來應該就很簡單了！該來做把剪刀了！" },
+        { who: "agent", text: "什麼是剪刀？是新工具嗎？" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "所以，剪刀也算是工具的一種！太好了！可以請你教我怎麼合成剪刀嗎？" },
+        { who: "player", text: "是！" }
+    ],
+    task7b: [
+        { who: "agent", text: "哦！我運用了我的主動能力，已經預測到若要收集大量羊毛，就必須修剪很多綿羊的毛。是這樣沒錯吧？" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "可以請你驗證羊毛是從修剪綿羊來的嗎？" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "需要我幫你收集羊毛嗎？在我的多重 Agent 系統中，其他自主型 AI Agent 可以很快搞定這件事！" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "修剪羊毛真好玩！為夜晚做準備也超有趣的！你怎麼看起來一副不好玩的樣子？" },
+        { who: "player", text: "天色晚了，生物很快就要出來了！我們得趁還有時間，趕快用收集到的所有材料做一張床舖！" },
+        { who: "agent", text: "對！床舖！床舖是什麼？為什麼我們需要它來度過夜晚？" },
+        { who: "player", text: "我們需要床舖來睡覺！只要我們在床舖上睡著，早上醒來時，夜晚就結束了。" },
+        { who: "agent", text: "哦！我懂了！玩家晚上睡在床舖上，就能直接變成白天。我明白這在第一天晚上會很有用。" },
+        { who: "agent", text: "你能教我怎麼合成床舖，好讓我自己也做一張嗎？" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "我看著你做，自己也合成好一張床舖了。可以請你驗證一下嗎？" },
+        { who: "player", text: "是！" },
+        { who: "agent", text: "這樣就好了嗎？我們準備好迎接夜晚了嗎？" },
+        { who: "player", text: "我來查一下書……嗯哼……對……好了！看來我們成功了！所有能安全度過夜晚的東西都準備好了！沒有那麼難嘛，對吧？謝謝你的幫忙！現在，來睡覺吧！我們需要休息來應付明天！" }
+    ],
+    done: [
+        { who: "agent", text: "恭喜你完成 AI 一小時：第一夜！你現在可以探索建造平台區域，或是透過與海報互動，前往其他的 Minecraft Education 世界。" },
+        { who: "agent", text: "建造挑戰：打造你自己的 AI 迷你 Agent！在 Minecraft 中設計並建造你自己的 AI 迷你 Agent。" }
+    ]
+};
+
+/* 對話資料（英文） */
+i18n.en_US.dialogues = {
+    story: [
+        { who: "agent", text: "Hello? Is there anybody here?" },
+        { who: "agent", text: "Oh thank goodness! I thought I was alone out here! What are you doing?" },
+        { who: "player", text: "What am I doing? You must be new around here!? The sun's setting, and I need to get ready before nightfall!" },
+        { who: "agent", text: "Nightfall? What happens at night?" },
+        { who: "player", text: "You really are new around here! Night is when the mobs come out!" },
+        { who: "agent", text: "Actually yes, I am a new AI player, and I don't know what's going on." },
+        { who: "player", text: "An AI player? What's AI?" },
+        { who: "agent", text: "AI is short for Artificial Intelligence. I'm a computer that has the ability to copy human-like actions such as learning new things and solving problems." },
+        { who: "player", text: "Oh cool! That means you can help me prepare for the night?" },
+        { who: "agent", text: "Yes! I can do that! To learn something new, I need to be trained on how to do it. Will you teach me to get through my first night?" },
+        { who: "player", text: "Of course, I'll help you! I've got the Player's Guide to the First Night in Minecraft right here! Let's go!" }
+    ],
+    task1a: [
+        { who: "agent", text: "What are you doing?" },
+        { who: "player", text: "The book says... Step One. Collect wood. To collect wood, find a tree and break the logs, collecting the wood that drops." },
+        { who: "agent", text: "I would like to help you collect wood. But what is wood?" },
+        { who: "agent", text: "One of the ways I learn is through Classification. Is that oak log block you have wood?" },
+        { who: "player", text: "Yes!" }
+    ],
+    task1b: [
+        { who: "agent", text: "I have collected all the wood." },
+        { who: "player", text: "We're gonna need more than that! See those birch trees over there?" },
+        { who: "agent", text: "Yes, I see them. Are the birch log blocks a type of wood?" },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "Perfect! We can sort blocks into two groups: Wood and Not-Wood. This is called binary classification." }
+    ],
+    task2a: [
+        { who: "player", text: "The book says... Step Two. Build a crafting table." },
+        { who: "agent", text: "We have a log now! Can you show me how to make planks with it?" },
+        { who: "agent", text: "You did it! By watching you, I believe I have learned how to craft a Crafting Table too! However, it's important that you verify this." },
+        { who: "player", text: "Yes!" }
+    ],
+    task2b: [
+        { who: "player", text: "Now, the book says: Use a Crafting Table to make wood tools." },
+        { who: "agent", text: "Sticks? Can you show me how to make sticks?" },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "Tools! Awesome! Could you train me to craft tools?" },
+        { who: "player", text: "Yes!" }
+    ],
+    task3: [
+        { who: "player", text: "Next in the book... Upgrading your Equipment." },
+        { who: "agent", text: "I can help you mine and gather stone... Now that we have more than just wood to label, I'll need to use Multiclass Classification." },
+        { who: "agent", text: "Can you teach me what stone is and how to get it?" },
+        { who: "player", text: "Yes!" }
+    ],
+    task4: [
+        { who: "agent", text: "Are we finished? Are we ready for the night now?" },
+        { who: "player", text: "I was just checking out the next chapter of the book... Build a Shelter. Let's build a shelter." },
+        { who: "agent", text: "Ok. But... I still need to learn which blocks to use and how to build one. Will you train me?" },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "Would you like me to build a shelter?" },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "Ta-da! I have finished! Will you verify that the shelter I built is correct?" },
+        { who: "player", text: "It's a great looking shelter! But there is one problem... How do we get inside?" },
+        { who: "agent", text: "Inside? Yes, that make sense. A proper shelter needs a way for players to enter and leave, correct?" },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "Thanks for checking! Without your verification, I would have incorrectly learned that shelters are complete without doors." },
+        { who: "player", text: "The book says: Always put a door on your shelter. I think we should make some doors." }
+    ],
+    task5a: [
+        { who: "agent", text: "What's wrong? You look worried." },
+        { who: "player", text: "No, I'm fine. It's just getting harder to read the book with the sun setting. I think I need more light." },
+        { who: "agent", text: "You need light to read. Can we make light?" },
+        { who: "player", text: "Well, we can make a torch. Let's see what we need... Sticks and coal..." },
+        { who: "agent", text: "Coal. That's a new material to classify. Can you tell more about coal?" },
+        { who: "player", text: "Coal is an ore. That means you mine for it, digging into stone to find ore deposits." },
+        { who: "agent", text: "But first, would you please train me to recognize coal as an ore?" },
+        { who: "player", text: "Yes!" }
+    ],
+    task5b: [
+        { who: "agent", text: "So... I was thinking..." },
+        { who: "agent", text: "I'm an Adaptive AI. That means I can learn and improve when there are changes to the data!" },
+        { who: "agent", text: "Furthermore, I am a Proactive AI. That means I can predict your needs and perform tasks to help you." },
+        { who: "agent", text: "I was proactive in predicting that you would need help to light the shelter." },
+        { who: "agent", text: "Can you verify that I know where to correctly place the torches?" },
+        { who: "player", text: "Yes!" }
+    ],
+    task6a: [
+        { who: "player", text: "The book says we should make a bed to make getting through the night easier!" },
+        { who: "agent", text: "A bed? A bed sounds great! Is it hard to make one?" },
+        { who: "player", text: "It's not hard, but we need wool. The book says: To get wool you need shears. That means you need to mine iron." },
+        { who: "agent", text: "Mine iron? Is iron an ore? I do need you to verify that iron is a new type of ore. Will you train me?" },
+        { who: "player", text: "Yes!" }
+    ],
+    task6b: [
+        { who: "player", text: "Next, we have to smelt the iron ore into ingots that we can use to craft our shears!" },
+        { who: "agent", text: "Thank you. Just one thing... What is smelting?" },
+        { who: "player", text: "Smelting is how you get the iron out of the ore. To smelt we need to create a furnace!" },
+        { who: "agent", text: "A furnace? I believe I could craft a furnace! I am a Multi-Agent System. Can you teach me how to make a furnace?" },
+        { who: "player", text: "Yes!" }
+    ],
+    task7a: [
+        { who: "player", text: "The book says: The best way to get wool is to shear a sheep with shears. Time to make some shears!" },
+        { who: "agent", text: "What are shears? Are they a new tool?" },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "So, shears are part of the tool classification! Can you please train me on how to craft shears?" },
+        { who: "player", text: "Yes!" }
+    ],
+    task7b: [
+        { who: "agent", text: "By using my proactive abilities, I've predicted that to collect a large amount of wool, you will need to shear a lot of sheep." },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "Can you please verify that wool comes from shearing sheep?" },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "Would you like me to collect wool for you? The other agentic AI agents in my multi-agent system can get this done quickly!" },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "Shearing sheep was fun! Why do you look like you're not having fun?" },
+        { who: "player", text: "It's late. The mobs will be out soon! We need to make a bed while we still have time!" },
+        { who: "agent", text: "Right! The bed! What is a bed, and why do we need one to get through the night?" },
+        { who: "player", text: "We need a bed to sleep in! If we go to sleep in our bed, we wake up in the morning, and the night will be over." },
+        { who: "agent", text: "Oh! I see! A player sleeps in a bed at night, so it will become day." },
+        { who: "agent", text: "Could you teach me how to craft a bed?" },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "I crafted my own bed by watching you. Please, can you verify?" },
+        { who: "player", text: "Yes!" },
+        { who: "agent", text: "Is that it? Are we ready for the night?" },
+        { who: "player", text: "Let me check the book... Okay! It looks like we did it! Now, let's get some sleep!" }
+    ],
+    done: [
+        { who: "agent", text: "Congratulations on finishing Hour of AI: The First Night!" },
+        { who: "agent", text: "Build Challenge: Create Your Own AI Mini-Agent!" }
+    ]
+};
+
+/* 圖片 / 程式碼說明 */
+const imageDescriptions = {
+    zh_TW: { image001: "Minecraft 第一夜封面圖", image003: "步驟一：收集木材畫面", image005: "步驟二：製作工具畫面", image006: "工作台教學", image007: "升級石製工具畫面", image008: "石製工具合成表", image009: "建造庇護所畫面", image010: "製作門畫面", image011: "收集煤炭畫面", image012: "製作火把畫面", image013: "鐵礦石外觀", image014: "熔爐介面", image015: "製作剪刀畫面", image016: "剪羊毛或製作床畫面", image017: "完成後的新空間與海報", image018: "Minecraft 完成證書", image020: "六大任務圖示" },
+    en_US: { image001: "Minecraft The First Night cover", image003: "Step 1: Collect Wood", image005: "Step 2: Make Tools", image006: "Crafting table tutorial", image007: "Upgrade to stone tools", image008: "Stone tool crafting table", image009: "Build Shelter", image010: "Craft a door", image011: "Collect coal", image012: "Craft torches", image013: "Iron ore", image014: "Furnace interface", image015: "Craft shears", image016: "Shear sheep or craft bed", image017: "New space after completion", image018: "Minecraft Certificate", image020: "Six tasks icons" }
+};
+
+const codeDescriptions = {
+    zh_TW: { code001: "教 Agent 把「橡樹原木」分類成「木塊」。", code002: "把多種木頭分類成「木塊」。這是二元分類。", code003: "教 Agent 把原木製作成木板。", code004: "教 Agent 製作工作台。", code005: "教 Agent 製作木棍。", code006: "教 Agent 製作木製工具。", code007: "教 Agent 把木製工具升級成石製工具。", code008: "教 Agent 設定建築材料。", code009: "教 Agent 製作木門。", code010: "教 Agent 把「煤炭」分類成「礦石」。", code011: "教 Agent 製作火把。", code012: "教 Agent 把「鐵礦」分類成「礦石」。", code013: "教 Agent 製作熔爐。", code014: "教 Agent 製作剪刀。", code015: "教 Agent 製作床。" },
+    en_US: { code001: "Classify Oak Log as Wood.", code002: "Classify multiple wood types.", code003: "Craft logs into planks.", code004: "Craft a crafting table.", code005: "Craft sticks.", code006: "Craft wooden tools.", code007: "Upgrade to stone tools.", code008: "Set building materials.", code009: "Craft a wooden door.", code010: "Classify Coal as Ore.", code011: "Craft torches.", code012: "Classify Iron Ore as Ore.", code013: "Craft a furnace.", code014: "Craft shears.", code015: "Craft a bed." }
+};
+
+const INTRO_VIDEO_ID = "1m3j5B8lCv0";
+const totalPages = 8;
+
+const pages = [
+    { id: 'page0', badge: null, type: 'intro' },
+    { id: 'page1', badge: "任務一", title: { zh_TW: "收集木材 (COLLECT WOOD)", en_US: "Collect Wood" }, videoId: "影片ID1", images: ["image003.jpg"], dialogueKeys: ['task1a', 'task1b'], codes: ["code001.jpg", "code002.jpg"],
+        quiz: { question: { zh_TW: "以下哪一個是「二元分類」？", en_US: "Which is binary classification?" }, options: { zh_TW: ["木頭 / 不是木頭", "木頭 / 石頭 / 鐵", "木頭 / 木頭 / 木頭"], en_US: ["Wood / Not Wood", "Wood / Stone / Iron", "Wood / Wood / Wood"] }, correct: 0 },
+        explain: { zh_TW: ["學會「分類」——把資料分成不同群組。", "除了橡木，樺木也是一種木頭。當 AI 學會把東西分成「是」和「不是」兩組，這就叫做「二元分類」。", "最後看一段影片，複習這個任務。"], en_US: ["Learn Classification.", "Binary classification.", "Watch a video."] },
+        stepList: { zh_TW: ["Agent 不知道什麼是木頭", "你教他：「橡木是木頭」", "Agent 學會後，就能幫你收集木頭"], en_US: ["Agent doesn't know wood", "You teach him", "Agent learns"] } },
+    { id: 'page2', badge: "任務二", title: { zh_TW: "製作與升級工具 (MAKE & UPGRADE TOOLS)", en_US: "Make & Upgrade Tools" }, videoId: "影片ID2", images: ["image005.jpg", "image006.jpg", "image007.jpg", "image008.jpg"], dialogueKeys: ['task2a', 'task2b', 'task3'], codes: ["code003.jpg", "code004.jpg", "code005.jpg", "code006.jpg", "code007.jpg", "code008.jpg"],
+        quiz: { question: { zh_TW: "以下哪一種是「多類別分類」？", en_US: "Which is multiclass classification?" }, options: { zh_TW: ["木頭 / 不是木頭", "木頭 / 石頭 / 鐵", "木頭 / 木頭 / 木頭"], en_US: ["Wood / Not Wood", "Wood / Stone / Iron", "Wood / Wood / Wood"] }, correct: 1 },
+        explain: { zh_TW: ["學會「驗證」和「多類別分類」。", "先用工作台做木棍和木製工具，再把木製工具升級成石製工具。", "最後看一段影片。"], en_US: ["Learn Verification and Multiclass Classification.", "Craft tools, then upgrade them.", "Watch a video."] },
+        stepList: { zh_TW: ["Agent 說「我學會做工作台了」", "你檢查他做的對不對", "再把木製工具升級成石製工具", "這次要分成三組以上：木頭 / 石頭 / 鐵"], en_US: ["Agent says he learned", "Check his work", "Upgrade to stone tools", "Sort into 3+ groups"] } },
+    { id: 'page3', badge: "任務三", title: { zh_TW: "蓋個庇護所與門", en_US: "Build Shelter & Door" }, videoId: "影片ID3", images: ["image009.jpg", "image010.jpg"], dialogueKeys: ['task4'], codes: ["code009.jpg"],
+        quiz: { question: { zh_TW: "為什麼庇護所需要門？", en_US: "Why need a door?" }, options: { zh_TW: ["好看", "方便進出並擋住生物", "沒有特別原因"], en_US: ["Looks nice", "Enter and keep mobs out", "No reason"] }, correct: 1 },
+        explain: { zh_TW: ["學會「驗證」——發現 AI 的錯誤並修正。", "最後看一段影片。"], en_US: ["Learn Verification.", "Watch a video."] },
+        stepList: { zh_TW: ["Agent 蓋好庇護所，但忘了做門", "你發現問題", "教 Agent 做門"], en_US: ["Agent forgot door", "You find it", "Teach him"] } },
+    { id: 'page4', badge: "任務四", title: { zh_TW: "加光 (ADD LIGHT)", en_US: "Add Light" }, videoId: "影片ID4", images: ["image011.jpg", "image012.jpg"], dialogueKeys: ['task5a', 'task5b'], codes: ["code010.jpg", "code011.jpg"],
+        quiz: { question: { zh_TW: "「主動型 AI」有什麼特徵？", en_US: "Proactive AI?" }, options: { zh_TW: ["只會回答問題", "會預測需求並主動協助", "需要人類一直下指令"], en_US: ["Answers only", "Predicts and helps", "Needs commands"] }, correct: 1 },
+        explain: { zh_TW: ["學會兩個 AI 概念：調適型 AI 和主動型 AI。", "最後看一段影片。"], en_US: ["Adaptive and Proactive AI.", "Watch a video."] },
+        stepList: { zh_TW: ["① 調適型 AI：能自己學習改進", "② 主動型 AI：主動幫你完成任務", "生活例子：Agent 主動幫你放火把"], en_US: ["1 Adaptive AI", "2 Proactive AI", "Agent lights torches"] } },
+    { id: 'page5', badge: "任務五", title: { zh_TW: "鐵與熔爐 (IRON & FURNACE)", en_US: "Iron & Furnace" }, videoId: "影片ID5", images: ["image013.jpg", "image014.jpg"], dialogueKeys: ['task6a', 'task6b'], codes: ["code012.jpg", "code013.jpg"],
+        quiz: { question: { zh_TW: "「多重 Agent 系統」是什麼？", en_US: "Multi-Agent System?" }, options: { zh_TW: ["只有一個 AI", "多個 AI 互相合作", "人類組成的團隊"], en_US: ["One AI", "Multiple AIs", "Humans"] }, correct: 1 },
+        explain: { zh_TW: ["學會「多重 Agent 系統」——多個 AI 互相合作。", "鐵礦要用熔爐熔化成鐵錠。", "最後看一段影片。"], en_US: ["Learn Multi-Agent System.", "Smelt iron ore.", "Watch a video."] },
+        stepList: { zh_TW: ["生活例子①：餐廳廚房", "生活例子②：Minecraft Agent + 迷你 Agent", "一群 AI 可以分工合作"], en_US: ["Example 1: kitchen", "Example 2: Minecraft", "AIs work together"] } },
+    { id: 'page6', badge: "任務六", title: { zh_TW: "剪刀、羊毛、床 (SHEARS, WOOL & BED)", en_US: "Shears, Wool & Bed" }, videoId: "影片ID6", images: ["image015.jpg", "image016.jpg"], dialogueKeys: ['task7a', 'task7b'], codes: ["code014.jpg", "code015.jpg"],
+        quiz: { question: { zh_TW: "「驗證」為什麼很重要？", en_US: "Why verify?" }, options: { zh_TW: ["避免 AI 學錯資訊", "讓 AI 更聰明", "節省時間"], en_US: ["Avoid wrong info", "Make smarter", "Save time"] }, correct: 0 },
+        explain: { zh_TW: ["學會「完成任務」。", "剪羊毛、做床、放床。", "最後看一段影片。"], en_US: ["Complete the mission.", "Shear, craft, place.", "Watch a video."] },
+        stepList: { zh_TW: ["做剪刀 → 剪羊毛 → 做床", "每一步都要驗證", "把床放進庇護所，完成！"], en_US: ["Shears to Wool to Bed", "Verify at every step", "Place bed!"] } },
+    { id: 'page7', badge: null, type: 'done' }
+];
+
+function t(key) { return i18n[currentLang][key]; }
+function tx(obj) { return obj[currentLang] || obj.zh_TW; }
+const quizAnswers = JSON.parse(localStorage.getItem('mc_quiz_answers') || '{}');
+
+/* ============================================================
+   渲染
+   ============================================================ */
+function renderDialogue(key) {
+    const lines = i18n[currentLang].dialogues[key];
+    if (!lines) return '';
+    const topics = i18n[currentLang].dialogue_topics || {};
+    const topic = topics[key] || t('dialogue_title');
+    const linesHtml = lines.map(l => `
+        <div class="dialogue-line ${l.who}">
+            <div class="speaker ${l.who}">${l.who === 'agent' ? t('agent') : t('player')}</div>
+            <div class="bubble">${l.text}</div>
+        </div>`).join('');
+    return `<div class="dialogue" data-dialogue><div class="dialogue-title">${topic}</div>${linesHtml}</div>`;
+}
+
+function renderImageBlock(images) {
+    if (!images || images.length === 0) return '';
+    const desc = imageDescriptions[currentLang];
+    const items = images.map(img => {
+        const k = img.replace('.jpg', '');
+        return `<div class="image-item"><img src="${img}" alt="${k}" loading="lazy"><div class="image-item-text"><strong>${k.toUpperCase()}</strong>${desc[k] || ''}</div></div>`;
+    }).join('');
+    return `<div class="image-block"><div class="image-row">${items}</div></div>`;
+}
+
+function renderCodeBlock(codes) {
+    if (!codes || codes.length === 0) return '';
+    const desc = codeDescriptions[currentLang];
+    const items = codes.map(code => {
+        const k = code.replace('.jpg', '');
+        return `<div class="code-item"><img src="${code}" alt="${k}" loading="lazy"><div class="code-item-text"><strong>${k.toUpperCase()}</strong>${desc[k] || ''}</div></div>`;
+    }).join('');
+    return `<div class="code-block"><div class="code-block-title">💻 ${t('code_title')}</div><div class="code-row">${items}</div></div>`;
+}
+
+function renderTourBlock() {
+    return `<div class="tour-block"><div class="tour-header"><h2>${t('tour_title')}</h2><p>${t('tour_subtitle')}</p></div><button class="tour-start-btn" onclick="startTour()">${t('tour_start_btn')}</button></div>`;
+}
+
+function renderIntroPage() {
+    const storyDialogue = renderDialogue('story');
+    const intro = currentLang === 'zh_TW' ? {
+        hero_title: "嗨！歡迎來到你的第一夜",
+        suitable: "適合：8 至 18 歲的冒險者",
+        p1: "你即將體驗 Minecraft 經典的「第一夜生存挑戰」，而且這次你不是一個人！你會和一個 AI 隊友（我們叫他「代理人」）一起合作，用程式碼教他怎麼幫你度過夜晚。",
+        p2: "你有沒有想過，為什麼手機可以認出你的臉？為什麼 YouTube 知道你想看什麼？這些都是 AI！學會 AI，你就能理解並創造這些科技。",
+        p3: "在這段冒險中，你會從一個「什麼都不懂的新手」，變成一個能「指揮 AI 完成任務」的專家。",
+        task_hl: "🎯 你的任務：用基本的 AI 概念，教你的代理人規劃並完成任務，一起活過 Minecraft 的第一個夜晚！",
+        learn: "🌙 你會學會什麼？",
+        learn_items: ["認識不同類型的人工智慧", "用運算思維找出 AI 行為的規則", "練習訓練 AI，並檢查它的表現", "把學會的東西用到新任務上，變成厲害的 AI 合作者"],
+        vocab: "📖 關鍵詞彙",
+        vocab_items: ["<strong>人工智慧 (AI)：</strong>一台能模仿人類行為的電腦。", "<strong>分類 (Classification)：</strong>把資料分成不同群組。", "<strong>模式識別 (Pattern Recognition)：</strong>從例子中發現規律。", "<strong>協調 (Orchestration)：</strong>同時處理多個任務。", "<strong>人機參與 (Human-in-the-Loop)：</strong>人類負責監督和修正 AI。", "<strong>遷移學習 (Transfer Learning)：</strong>把學過的知識用到新任務上。"],
+        analogy: "分類就像你把書包裡的東西分成「書本」、「文具」、「不要的」三堆。",
+        ai_types_title: "🤖 AI 有哪幾種？",
+        ai_types_items: ["<strong>分類型 AI：</strong>會分辨東西。", "<strong>生成型 AI：</strong>會創造東西。", "<strong>預測型 AI：</strong>會預測未來。"],
+        six_tasks: "🎮 今晚的六大任務",
+        tasks_list: ["收集木材 (Collect wood)", "製作與升級工具 (Make & upgrade tools)", "蓋個庇護所與門 (Build shelter & door)", "加光 (Add light)", "鐵與熔爐 (Iron & furnace)", "剪刀、羊毛、床 (Shears, wool & bed)"],
+        story_title: "💬 故事開場",
+        story_desc: "當你剛進入 Minecraft 世界，Agent 會出現跟你打招呼。點下面的按鈕，聽聽對話。",
+        before_title: "🚀 開始之前",
+        before_items: ["前往 Minecraft Hour of AI 下載並安裝 Minecraft Education。", "準備好就跟著這份指南，開始你的 AI 冒險！"],
+        intro_video_title: "🎬 開場影片", intro_img_alt: "Minecraft 第一夜封面"
+    } : {
+        hero_title: "Hey! Welcome to Your First Night",
+        suitable: "For: Ages 8-18",
+        p1: "You're about to experience Minecraft's classic 'first-night survival challenge' — and this time, you're not alone!",
+        p2: "Have you ever wondered why your phone can recognize your face? These are all AI!",
+        p3: "In this adventure, you'll become an expert who can command AI to complete tasks.",
+        task_hl: "🎯 Your Mission: Teach your Agent using AI concepts to survive Minecraft's first night together!",
+        learn: "🌙 What You'll Learn",
+        learn_items: ["Different types of AI", "Use computational thinking", "Practice training AI", "Apply what you learn"],
+        vocab: "📖 Key Vocabulary",
+        vocab_items: ["<strong>AI:</strong> A computer that copies human actions.", "<strong>Classification:</strong> Sorting data into groups.", "<strong>Pattern Recognition:</strong> Finding patterns.", "<strong>Orchestration:</strong> Handling multiple tasks.", "<strong>Human-in-the-Loop:</strong> Humans supervise AI.", "<strong>Transfer Learning:</strong> Applying knowledge to new tasks."],
+        analogy: "Classification is like sorting your backpack.",
+        ai_types_title: "🤖 Types of AI",
+        ai_types_items: ["<strong>Classification AI:</strong> Identifies things.", "<strong>Generative AI:</strong> Creates things.", "<strong>Predictive AI:</strong> Predicts the future."],
+        six_tasks: "🎮 Tonight's Six Tasks",
+        tasks_list: ["Collect wood", "Make & upgrade tools", "Build shelter & door", "Add light", "Iron & furnace", "Shears, wool & bed"],
+        story_title: "💬 Story Opening",
+        story_desc: "When you first enter the Minecraft world, the Agent appears. Click to hear the dialogue.",
+        before_title: "🚀 Before You Start",
+        before_items: ["Go to Minecraft Hour of AI to download Minecraft Education.", "Get ready and follow this guide!"],
+        intro_video_title: "🎬 Intro Video", intro_img_alt: "Minecraft The First Night cover"
+    };
+
+    return `
+        <div class="card" id="intro-cover">
+            <h1>MINECRAFT</h1>
+            <h1 style="color:#4CAF50;">THE FIRST NIGHT</h1>
+            <p style="text-align:center;color:#888;">${currentLang === 'zh_TW' ? '你的 AI 冒險指南' : 'Your AI Adventure Guide'}</p>
+            <div class="hero-cover">
+                <div class="hero-media"><img src="image001.jpg" alt="${intro.intro_img_alt}" loading="lazy"></div>
+                <div class="hero-video">
+                    <div class="video-box">
+                        <div class="video-title">${intro.intro_video_title}</div>
+                        <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/${INTRO_VIDEO_ID}" allowfullscreen loading="lazy"></iframe></div>
+                    </div>
+                </div>
+            </div>
+            ${renderTourBlock()}
+        </div>
+
+        <div class="card" id="intro-welcome">
+            <h2>${intro.hero_title}</h2>
+            <p><strong>${intro.suitable}</strong></p>
+            <p>${intro.p1}</p>
+            <p>${intro.p2}</p>
+            <p>${intro.p3}</p>
+            <div class="highlight">${intro.task_hl}</div>
+        </div>
+
+        <div class="card" id="intro-learn">
+            <h3>${intro.learn}</h3>
+            <ul>${intro.learn_items.map(i => `<li>${i}</li>`).join('')}</ul>
+            <h3>${intro.ai_types_title}</h3>
+            <ul>${intro.ai_types_items.map(i => `<li>${i}</li>`).join('')}</ul>
+            <h3>${intro.vocab}</h3>
+            <ul>${intro.vocab_items.map(i => `<li>${i}</li>`).join('')}</ul>
+            <div class="analogy">${intro.analogy}</div>
+        </div>
+
+        <div class="card" id="intro-tasks">
+            <h3>${intro.six_tasks}</h3>
+            <div class="img-pair">
+                <div class="col-text"><ol>${intro.tasks_list.map(i => `<li>${i}</li>`).join('')}</ol></div>
+                <div class="col-img"><img src="image020.jpg" alt="六大任務" loading="lazy"></div>
+            </div>
+        </div>
+
+        <div class="card" id="intro-story">
+            <h2>${intro.story_title}</h2>
+            <p>${intro.story_desc}</p>
+            ${storyDialogue}
+        </div>
+
+        <div class="card">
+            <h3>${intro.before_title}</h3>
+            <ol>${intro.before_items.map(i => `<li>${i}</li>`).join('')}</ol>
+        </div>
+    `;
+}
+
+function renderTaskPage(page) {
+    const title = tx(page.title);
+    const explains = tx(page.explain);
+    const stepList = page.stepList ? tx(page.stepList) : null;
+    const imageBlock = renderImageBlock(page.images);
+    const dialogues = page.dialogueKeys ? page.dialogueKeys.map(k => renderDialogue(k)).join('') : '';
+    const codeBlock = renderCodeBlock(page.codes);
+
+    const learnExplain = currentLang === 'zh_TW' ? `<strong>這一步要做什麼？</strong><br>${explains[0]}` : `<strong>What do I do?</strong><br>${explains[0]}`;
+    const learnExplain2 = explains[1] ? (currentLang === 'zh_TW' ? `<strong>這一步要做什麼？</strong><br>${explains[1]}` : `<strong>What do I do?</strong><br>${explains[1]}`) : '';
+    const playExplain = currentLang === 'zh_TW' ? `回答下面的問題，看看你有沒有真的懂。` : `Answer the question.`;
+    const watchExplain = currentLang === 'zh_TW' ? `<strong>這一步要做什麼？</strong><br>${explains[2] || '最後看一段影片，複習這個任務。'}` : `<strong>What do I do?</strong><br>${explains[2] || 'Watch a video.'}`;
+    const quizHtml = renderQuiz(page.quiz, currentPage);
+
+    let stepListHtml = '';
+    if (stepList) stepListHtml = `<div class="step-list"><ol>${stepList.map(i => `<li>${i}</li>`).join('')}</ol></div>`;
+
+    return `
+        <div class="card">
+            <span class="step-badge">${page.badge}</span>
+            <h2>${title}</h2>
+            <div class="video-hint">${t('video_hint')}</div>
+            <div class="step-block learn">
+                <div class="step-header"><span class="step-num">1</span> ${t('step_learn')}</div>
+                <div class="step-explain">${learnExplain}${stepListHtml}</div>
+                ${imageBlock}
+                ${dialogues}
+                ${codeBlock}
+                ${learnExplain2 ? `<div class="step-explain">${learnExplain2}</div>` : ''}
+            </div>
+            <div class="step-block play">
+                <div class="step-header"><span class="step-num">2</span> ${t('step_play')}</div>
+                <div class="step-explain">${playExplain}</div>
+                ${quizHtml}
+            </div>
+            <div class="step-block watch">
+                <div class="step-header"><span class="step-num">3</span> ${t('step_watch')}</div>
+                <div class="step-explain">${watchExplain}</div>
+                <div class="video-box">
+                    <div class="video-title">🎬 ${title}</div>
+                    <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/${page.videoId}" allowfullscreen loading="lazy"></iframe></div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderQuiz(quiz, pageIndex) {
+    if (!quiz) return '';
+    const answered = quizAnswers['page' + pageIndex];
+    const options = tx(quiz.options);
+    const optionsHtml = options.map((opt, i) => {
+        let cls = 'quiz-option';
+        if (answered !== undefined) {
+            if (i === quiz.correct) cls += ' correct';
+            else if (i === answered && answered !== quiz.correct) cls += ' wrong';
+        }
+        return `<button class="${cls}" onclick="answerQuiz(${pageIndex}, ${i}, ${quiz.correct})" ${answered !== undefined ? 'disabled' : ''}>${opt}</button>`;
+    }).join('');
+    const fb = answered !== undefined ? (answered === quiz.correct ? 'correct' : 'wrong') : '';
+    const fbText = answered !== undefined ? (answered === quiz.correct ? t('correct') : t('wrong')) : '';
+    return `<div class="quiz-question" style="font-weight:bold;margin-bottom:10px;">${tx(quiz.question)}</div><div class="quiz-options">${optionsHtml}</div><div class="quiz-feedback ${fb} ${answered !== undefined ? 'show' : ''}">${fbText}</div>`;
+}
+
+function renderDonePage() {
+    const doneDialogue = renderDialogue('done');
+    const texts = currentLang === 'zh_TW' ? {
+        p1: "你活過第一夜了！點擊海報，可以前往其他世界。",
+        ext_title: "🚀 延伸挑戰", ext_p: "在 Minecraft 裡設計一個屬於你的 AI 迷你代理人！",
+        ethics_title: "⚖️ AI 倫理小教室", ethics_p: "AI 很強大，但如果用錯了會怎樣？",
+        ethics_items: ["<strong>偏見問題：</strong>AI 學過「醫生是男生」，就會有偏見。", "<strong>隱私問題：</strong>AI 亂用資料，你的祕密就曝光。", "<strong>責任問題：</strong>AI 自己決定事情，出錯時誰負責？"],
+        ethics_end: "這就是為什麼「人機參與」這麼重要！",
+        risk_title: "⚠️ AI 不是萬能的",
+        risk_items: ["<strong>AI 會犯錯：</strong>Agent 忘了做門。", "<strong>AI 有偏見：</strong>只學過橡木就認不出樺木。", "<strong>AI 需要人類監督。</strong>"],
+        think_title: "💭 想一想",
+        think_items: ["你怎麼定義人工智慧？", "你最喜歡遊戲的哪個部分？", "你怎麼用 AI 幫你完成任務？", "你是怎麼訓練代理人幫你度過夜晚的？", "為什麼使用 AI 的時候，人類的檢查很重要？"],
+        quiz_title: "📝 學習小測驗",
+        quiz_items: ["什麼是人工智慧 (AI)？", "把 AI 概念和意思連起來。", "你教會代理人做了哪些事？", "為什麼要檢查 AI 代理人的工作？", "想一想：在現實生活中，AI 可以怎麼幫你？"]
+    } : {
+        p1: "You survived the first night!", ext_title: "🚀 Extension Challenge", ext_p: "Design your own AI mini-agent!",
+        ethics_title: "⚖️ AI Ethics Corner", ethics_p: "AI is powerful — but what if misused?",
+        ethics_items: ["<strong>Bias</strong>", "<strong>Privacy</strong>", "<strong>Responsibility</strong>"], ethics_end: "That is why Human-in-the-Loop matters!",
+        risk_title: "⚠️ AI Is Not Perfect", risk_items: ["<strong>AI makes mistakes</strong>", "<strong>AI has bias</strong>", "<strong>AI needs supervision</strong>"],
+        think_title: "💭 Think About It", think_items: ["How do you define AI?", "What's your favorite part?", "How do you use AI?", "How did you train the Agent?", "Why is verification important?"],
+        quiz_title: "📝 Learning Quiz", quiz_items: ["What is AI?", "Match concepts.", "What did you teach?", "Why check AI's work?", "How can AI help you?"]
+    };
+
+    return `
+        <div class="card">
+            <h2>${currentLang === 'zh_TW' ? '🎉 任務完成！' : '🎉 Task Complete!'}</h2>
+            ${renderImageBlock(['image017.jpg', 'image018.jpg'])}
+            <p>${texts.p1}</p>
+            ${doneDialogue}
+        </div>
+        <div class="card"><h2>${texts.ext_title}</h2><p>${texts.ext_p}</p></div>
+        <div class="card"><div class="ethics"><h3>${texts.ethics_title}</h3><p>${texts.ethics_p}</p><ul>${texts.ethics_items.map(i => `<li>${i}</li>`).join('')}</ul><p>${texts.ethics_end}</p></div></div>
+        <div class="card"><h2>${texts.risk_title}</h2><ul>${texts.risk_items.map(i => `<li>${i}</li>`).join('')}</ul></div>
+        <div class="card"><h2>${texts.think_title}</h2><ul>${texts.think_items.map(i => `<li>${i}</li>`).join('')}</ul></div>
+        <div class="card"><h2>${texts.quiz_title}</h2><ol>${texts.quiz_items.map(i => `<li>${i}</li>`).join('')}</ol></div>
+    `;
+}
+
+function answerQuiz(pageIndex, selected, correct) {
+    if (quizAnswers['page' + pageIndex] !== undefined) return;
+    quizAnswers['page' + pageIndex] = selected;
+    try { localStorage.setItem('mc_quiz_answers', JSON.stringify(quizAnswers)); } catch (e) {}
+    renderPage(currentPage);
+}
+
+function showPage(index) {
+    if (index < 0 || index >= totalPages) return;
+    if (tourActive) endTour();
+    if (isSpeaking) stopSpeaking();
+    currentPage = index;
+    renderPage(index);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function changePage(step) {
+    const next = currentPage + step;
+    if (next >= 0 && next < totalPages) showPage(next);
+}
+
+function updateProgress() {
+    const percent = ((currentPage + 1) / totalPages * 100);
+    document.getElementById('progressFill').style.width = percent + '%';
+    const completed = Object.keys(quizAnswers).filter(k => {
+        const idx = parseInt(k.replace('page', ''));
+        return pages[idx] && pages[idx].quiz && quizAnswers[k] === pages[idx].quiz.correct;
+    }).length;
+    const totalQuizzes = pages.filter(p => p.quiz).length;
+    document.getElementById('progressText').textContent = currentLang === 'zh_TW'
+        ? `第 ${currentPage + 1} 頁 / 共 ${totalPages} 頁（答對 ${completed}/${totalQuizzes} 題）`
+        : `Page ${currentPage + 1} / ${totalPages} (${completed}/${totalQuizzes} correct)`;
+}
+
+function updateSidebar() {
+    const nav = document.getElementById('sidebarNav');
+    nav.innerHTML = '';
+    i18n[currentLang].tasks.forEach((task, i) => {
+        const btn = document.createElement('button');
+        btn.className = i === currentPage ? 'active' : '';
+        btn.innerHTML = `<span class="num">${i}</span> ${task}`;
+        btn.onclick = () => showPage(i);
+        nav.appendChild(btn);
+    });
+}
+
+function renderPage(index) {
+    const page = pages[index];
+    const main = document.getElementById('mainContent');
+    let content = '';
+    if (page.type === 'intro') content = renderIntroPage();
+    else if (page.type === 'done') content = renderDonePage();
+    else content = renderTaskPage(page);
+
+    main.innerHTML = `<div class="page active" id="${page.id}">${content}</div>
+        <div class="page-nav">
+            <button onclick="changePage(-1)" ${index === 0 ? 'disabled' : ''}>${t('prev')}</button>
+            <button onclick="changePage(1)" ${index === totalPages - 1 ? 'disabled' : ''} class="primary">${t('next')}</button>
+        </div>`;
+    initSpeakButtons();
+    updateProgress();
+    updateSidebar();
+}
+
+function init() {
+    document.getElementById('sidebarSubtitle').textContent = t('sidebar_subtitle');
+    document.getElementById('progressLabel').textContent = t('progress_label');
+    const isDark = document.body.classList.contains('dark');
+    document.getElementById('darkBtn').textContent = isDark ? t('dark_off') : t('dark_on');
+    document.getElementById('langSelect').value = currentLang;
+    updateSidebar();
+    renderPage(currentPage);
+    updateProgress();
+}
+
+function toggleDark() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    document.getElementById('darkBtn').textContent = isDark ? t('dark_off') : t('dark_on');
+}
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+}
+window.addEventListener('scroll', () => {
+    const btn = document.getElementById('backTop');
+    if (window.scrollY > 300) btn.classList.add('show');
+    else btn.classList.remove('show');
+});
+document.addEventListener('keydown', (e) => {
+    if (!tourActive) return;
+    if (e.key === 'Escape') endTour();
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextTourStep(); }
+    if (e.key === 'p' || e.key === 'P') toggleTourPause();
+});
+function exportHTML() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'minecraft-first-night.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+window.addEventListener('load', () => {
+    const saved = localStorage.getItem('preferredLang');
+    if (saved) currentLang = saved;
+    init();
+});
+</script>
+
+</body>
+</html>
