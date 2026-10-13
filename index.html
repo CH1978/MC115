@@ -7,7 +7,6 @@
 <meta name="theme-color" content="#4a8f3c">
 <title>僑仁麥塊學院 ｜ 用方塊蓋出你的程式邏輯</title>
 <style>
-/* ============ 基礎 ============ */
 :root{
   --green:#4a8f3c; --green-d:#356a2b; --green-l:#eef4ea;
   --blue:#5ba3d9; --cyan:#2ec4b6;
@@ -109,7 +108,6 @@ section h2::before{
   background:#fff; border:1px solid var(--border); border-radius:var(--r);
   padding:24px; box-shadow:var(--shadow);
 }
-.panel + .panel{margin-top:16px;}
 
 /* ============ 表單 ============ */
 .field{margin-bottom:14px;}
@@ -134,7 +132,6 @@ select{cursor:pointer;}
 .btn.ghost{background:#fff; color:var(--green-d); border:2px solid var(--green);}
 .btn.ghost:hover{background:var(--green-l);}
 .btn.full{width:100%;}
-.btn.sm{padding:8px 16px; font-size:.86rem;}
 
 .err{color:#c0392b; font-size:.88rem; margin:12px 0 0; min-height:22px; text-align:center;}
 
@@ -207,7 +204,6 @@ select{cursor:pointer;}
   padding:18px; box-shadow:var(--shadow); position:relative;
 }
 .card.spare{opacity:.75; border-style:dashed;}
-.card.mine{border:3px solid var(--green); box-shadow:0 6px 20px rgba(74,143,60,.25);}
 .card .who{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
 .card .who .who-text{flex:1; min-width:0;}
 .card .who b{display:block; font-size:1.12rem;}
@@ -234,12 +230,6 @@ select{cursor:pointer;}
 }
 .iconbtn:hover{background:var(--green); color:#fff; border-color:var(--green);}
 .iconbtn.ok{background:var(--green); color:#fff; border-color:var(--green);}
-.btn-copyall{
-  width:100%; padding:10px; border:none; border-radius:9px; cursor:pointer;
-  background:var(--green); color:#fff; font-weight:700; font-size:.9rem;
-  font-family:inherit; transition:.15s;
-}
-.btn-copyall:hover{background:var(--green-d);}
 
 /* ============ 學生頭像 ============ */
 .avatar-preview{
@@ -270,38 +260,82 @@ select{cursor:pointer;}
 .result-card .hello{font-size:1.25rem; font-weight:800; color:var(--green-d); margin:0 0 4px; text-align:center;}
 .result-card .hello-sub{text-align:center; color:var(--muted); font-size:.88rem; margin:0 0 20px;}
 
-/* ============ 作品牆 ============ */
-.filters{
-  display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;
+/* ============ 3D 相簿 ============ */
+.carousel3d-wrap{
+  perspective: 1600px;
+  height: 440px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+  cursor: grab;
+  user-select: none;
 }
-.filters select{
-  padding:9px 14px; border:2px solid var(--border); border-radius:10px;
-  font-size:.9rem; font-family:inherit; background:#fff; cursor:pointer;
-  min-width:140px;
+.carousel3d-wrap:active{ cursor: grabbing; }
+.carousel3d{
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 220px; height: 320px;
+  margin: -160px 0 0 -110px;
+  transform-style: preserve-3d;
 }
-.filters select:focus{outline:none; border-color:var(--green);}
+.carousel3d .slide{
+  position: absolute; inset: 0;
+  border-radius: 14px; overflow: hidden;
+  background: #eef4ea;
+  box-shadow: 0 14px 40px rgba(0,0,0,.35);
+  backface-visibility: hidden;
+  cursor: pointer;
+  transition: opacity .4s, box-shadow .4s, outline .3s;
+  outline: 0 solid transparent;
+}
+.carousel3d .slide img{
+  width: 100%; height: 100%; object-fit: cover;
+  display: block; pointer-events: none;
+  -webkit-user-drag: none;
+}
+.carousel3d .slide .cap{
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,.75));
+  color: #fff; padding: 30px 12px 12px;
+  font-size: .85rem; font-weight: 700;
+  text-align: center; letter-spacing: .5px;
+}
+.carousel3d .slide.active{
+  outline: 4px solid var(--green);
+  box-shadow: 0 20px 60px rgba(74,143,60,.55);
+}
+.carousel3d-controls{
+  display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+}
+.cbtn{
+  padding: 10px 22px;
+  border: 2px solid var(--green);
+  background: #fff; color: var(--green-d);
+  border-radius: 10px;
+  font-size: .9rem; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  transition: .15s;
+}
+.cbtn:hover{ background: var(--green); color: #fff; }
 
-.work-grid{
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px;
+/* ============ 作品藝廊 iframe ============ */
+.works-iframe-wrap{
+  width: 100%;
+  height: 720px;
+  position: relative;
+  background: #0a0f1a;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.15);
 }
-.work-card{
-  background:#fff; border-radius:14px; overflow:hidden; box-shadow:var(--shadow);
-  border:1px solid var(--border); transition:.2s; cursor:pointer;
-}
-.work-card:hover{transform:translateY(-3px); box-shadow:0 8px 22px rgba(0,0,0,.12);}
-.work-card.mine{border:3px solid var(--green); box-shadow:0 6px 20px rgba(74,143,60,.25);}
-.work-thumb{
-  width:100%; aspect-ratio:1/1; background:#eef4ea; object-fit:cover; display:block;
-}
-.work-info{padding:12px 14px;}
-.work-info b{font-size:.98rem; display:block; margin-bottom:2px;}
-.work-info .meta{font-size:.8rem; color:var(--muted);}
-.work-badge{
-  display:inline-block; font-size:.7rem; padding:2px 8px; border-radius:20px;
-  background:var(--green-l); color:var(--green-d); font-weight:700; margin-top:6px;
+.works-iframe{
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
 }
 
-/* ============ 節慶活動卡 ============ */
+/* ============ 節慶活動 ============ */
 .festival-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px;}
 .festival-card{
   border-radius:16px; padding:26px 24px; color:#fff; position:relative; overflow:hidden;
@@ -356,7 +390,6 @@ select{cursor:pointer;}
 .modalbox button:hover{background:var(--green-d);}
 .modalbox button.ghost{background:#fff; color:var(--green-d); border:2px solid var(--green);}
 
-/* Lightbox */
 .lightbox{
   position:fixed; inset:0; background:rgba(0,0,0,.93); z-index:500;
   display:none; align-items:center; justify-content:center; padding:60px 20px 20px;
@@ -364,19 +397,14 @@ select{cursor:pointer;}
 }
 .lightbox.show{display:flex;}
 .lightbox img{max-width:95vw; max-height:78vh; border-radius:10px; background:#fff;}
-.lightbox .lb-info{color:#fff; text-align:center; font-size:.92rem; opacity:.9;}
+.lightbox .lb-info{color:#fff; text-align:center; font-size:.92rem; opacity:.9; min-height:20px;}
 .lightbox-close{
   position:absolute; top:16px; right:20px; background:rgba(255,255,255,.15);
   color:#fff; border:none; border-radius:50%; width:42px; height:42px;
   font-size:1.3rem; cursor:pointer; transition:.15s;
 }
 .lightbox-close:hover{background:rgba(255,255,255,.3);}
-.lightbox-pdf{
-  background:var(--green); color:#fff; padding:10px 22px;
-  border-radius:10px; text-decoration:none; font-weight:700; font-size:.95rem;
-}
 
-/* Toast */
 #toast{
   position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(80px);
   background:#1f2a1c; color:#fff; padding:12px 24px; border-radius:30px;
@@ -385,14 +413,12 @@ select{cursor:pointer;}
 }
 #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
-/* Footer */
 footer{
   background:#2f3a2b; color:#a9b8a4; text-align:center; padding:28px 18px;
   font-size:.85rem; margin-top:30px;
 }
 footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
 
-/* ============ RWD ============ */
 @media(max-width:768px){
   .menu-toggle{display:block;}
   .topbar nav{
@@ -404,13 +430,14 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
   .hero h1{font-size:1.6rem;}
   .hero{padding:40px 0 44px;}
   .lesson-grid{grid-template-columns:repeat(2,1fr);}
-  .work-grid{grid-template-columns:repeat(2,1fr); gap:10px;}
   .grid{grid-template-columns:1fr;}
-  .filters select{flex:1; min-width:0;}
+  .carousel3d-wrap{ height: 340px; }
+  .carousel3d{ width: 170px; height: 240px; margin: -120px 0 0 -85px; }
+  .works-iframe-wrap{ height: 560px; }
 }
 @media(max-width:480px){
-  .work-grid{grid-template-columns:1fr;}
   .hero .cta a{width:100%;}
+  .works-iframe-wrap{ height: 460px; }
 }
 </style>
 </head>
@@ -426,13 +453,12 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
     <button class="menu-toggle" id="menuToggle">☰</button>
     <nav id="mainNav">
       <a data-go="home">首頁</a>
-      <!-- ★ 遊戲說明連結（完整檔名） -->
       <a href="lesson01/index.html" class="highlight">📖 遊戲說明</a>
       <a data-go="lessons">課程</a>
-      <a data-go="works">作品牆</a>
+      <a data-go="gallery3d">相簿</a>
+      <a data-go="works">藝廊</a>
       <a data-go="festival">節慶</a>
       <a data-go="about">關於</a>
-      <a data-go="contact">聯絡</a>
       <a class="ext" id="fbLink" target="_blank" rel="noopener">📘 FB</a>
       <a class="ext" id="ytLink" target="_blank" rel="noopener">▶️ YT</a>
     </nav>
@@ -446,38 +472,17 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
     <p class="slogan">僑仁國小麥塊社團 ｜ 從玩遊戲到寫程式</p>
     <p class="meta">115 學年度上學期 ｜ 每週三 12:50–14:50 ｜ 指導老師：王景弘老師</p>
     <div class="cta">
-      <!-- ★ 遊戲說明按鈕（完整檔名） -->
       <a href="lesson01/index.html" class="warm">📖 遊戲說明</a>
       <a class="primary" data-go="student-login">🎒 我是學生，領帳號 →</a>
-      <a class="ghost" data-go="works">🏆 看大家作品</a>
+      <a class="ghost" data-go="gallery3d">📸 看相簿</a>
     </div>
   </div>
 </div>
 
-<!-- ============ 節慶 Banner（自動顯示） ============ -->
+<!-- ============ 節慶 Banner ============ -->
 <div id="festivalBanner"></div>
 
-<!-- ============ 公告 ============ -->
-<section id="announce">
-  <div class="wrap">
-    <h2>📢 最新公告</h2>
-    <ul class="announce-list" id="announceList">
-      <li><span class="date">9/23</span><span>9/30 第一堂課開始，請記得帶自己的 Microsoft 帳號密碼卡。</span></li>
-      <li><span class="date">9/30</span><span>本學期共 12 堂課，最後一堂（12/16）。</span></li>
-    </ul>
-  </div>
-</section>
-
-<!-- ============ 課程 ============ -->
-<section id="lessons">
-  <div class="wrap">
-    <h2>📅 課程行事曆</h2>
-    <p class="sub">每堂課的內容會<strong>在上課前一天開放</strong>，點卡片看當週教材。</p>
-    <div class="lesson-grid" id="lessonGrid"></div>
-  </div>
-</section>
-
-<!-- ============ 學生領帳號 ============ -->
+<!-- ============ ★ 領取帳號（最上方） ============ -->
 <section id="student-login">
   <div class="wrap">
     <h2>🔑 領取我的麥塊帳號</h2>
@@ -504,25 +509,70 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
   </div>
 </section>
 
-<!-- ============ 作品牆 ============ -->
-<section id="works">
+<!-- ============ 公告 ============ -->
+<section id="announce">
   <div class="wrap">
-    <h2>🏆 作品牆</h2>
-    <p class="sub">所有學生的作品。可以用下方篩選器找作品，登入後你自己的作品會發光 ✨</p>
+    <h2>📢 最新公告</h2>
+    <ul class="announce-list" id="announceList">
+      <li><span class="date">9/23</span><span>9/30 第一堂課開始，請記得帶自己的 Microsoft 帳號密碼卡。</span></li>
+      <li><span class="date">9/30</span><span>本學期共 12 堂課，最後一堂（12/16）是聖誕成果發表，歡迎家長參加。</span></li>
+    </ul>
+  </div>
+</section>
 
-    <div class="filters">
-      <select id="filterStudent"><option value="">👤 全部學生</option></select>
-      <select id="filterType"><option value="">📦 全部類型</option></select>
-      <select id="filterSort">
-        <option value="new">🕒 最新在前</option>
-        <option value="old">🕒 最舊在前</option>
-      </select>
+<!-- ============ 課程 ============ -->
+<section id="lessons">
+  <div class="wrap">
+    <h2>📅 課程行事曆</h2>
+    <p class="sub">🔒 請先在上方<strong>領取帳號</strong>，登入後才能看課程內容。</p>
+    <div class="lesson-grid" id="lessonGrid"></div>
+  </div>
+</section>
+
+<!-- ============ ★ 3D 相簿 ============ -->
+<section id="gallery3d">
+  <div class="wrap">
+    <h2>📸 3D 相簿</h2>
+    <p class="sub">
+      把照片丟進 <code>gallery/</code> 資料夾（<code>s01.jpg</code>、<code>s02.jpg</code>…）就會自動出現 ✨
+    </p>
+
+    <div class="carousel3d-wrap" id="carousel3dWrap">
+      <div class="carousel3d" id="carousel3d"></div>
     </div>
 
-    <div class="work-grid" id="workGrid"></div>
-    <p class="sub" id="noWork" style="display:none;text-align:center;padding:40px 0;">
-      目前還沒有作品，等大家上傳 🚧
+    <div class="carousel3d-controls">
+      <button class="cbtn" id="prev3d">←</button>
+      <button class="cbtn" id="auto3d">⏸ 暫停</button>
+      <button class="cbtn" id="next3d">→</button>
+    </div>
+
+    <p class="sub" id="galleryEmpty" style="display:none;text-align:center;padding:40px 0;">
+      目前 <code>gallery/</code> 裡還沒有照片 🚧
     </p>
+  </div>
+</section>
+
+<!-- ============ ★ 作品藝廊（3D 流體牆 iframe） ============ -->
+<section id="works" style="padding:0;">
+  <div class="wrap" style="padding-top:38px; padding-bottom:16px;">
+    <h2>🌟 作品藝廊</h2>
+    <p class="sub">
+      照片從 Google Drive 自動同步 ✨
+      <a href="photo-3d.html" target="_blank" style="color:var(--green-d); text-decoration:underline; margin-left:8px;">
+        全螢幕開啟 ↗
+      </a>
+    </p>
+  </div>
+  <div class="wrap" style="padding-bottom:38px;">
+    <div class="works-iframe-wrap">
+      <iframe
+        src="photo-3d.html"
+        class="works-iframe"
+        loading="lazy"
+        allow="fullscreen"
+      ></iframe>
+    </div>
   </div>
 </section>
 
@@ -571,8 +621,6 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
     </div>
   </div>
 </section>
-
-
 
 <!-- ============ 老師區 ============ -->
 <section id="teacherArea" style="display:none;">
@@ -628,7 +676,6 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
   <button id="lightboxClose" class="lightbox-close">✕</button>
   <img id="lightboxImg" src="" alt="">
   <div class="lb-info" id="lightboxInfo"></div>
-  <a id="lightboxPdf" class="lightbox-pdf" href="" target="_blank" rel="noopener" style="display:none;">📄 下載講義</a>
 </div>
 
 <div id="toast">已複製！</div>
@@ -638,56 +685,48 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
    ★★★★★ 設定區 ★★★★★
    ================================================================== */
 const CONFIG = {
-  teacherPassword : "898989",
+  teacherPassword : "0904",
   fb              : "https://www.facebook.com/NovaCraftMinecrafClub?locale=zh_TW",
   yt              : "https://www.youtube.com/@novacraftlab-MCEducation",
   Line            : "Chinghungw",
-  uploadFormUrl   : "https://forms.gle/",
-  worksSheetUrl   : "",
-  email           : "chinghungw@example.com",   // ← 補上，避免 aboutEmail 顯示 undefined
-
-  // ★ 遊戲說明頁網址（未來改路徑只要改這裡）
+  email           : "chinghungw@example.com",
   guideUrl        : "lesson01/index.html",
+  teacherFolder   : "https://drive.google.com/drive/folders/1tBPscAJWA_-qo6QXlHSnLBhcXGaX-j_b",
 };
 
-/* ==================================================================
-   ★★★★★ 12 堂課 ★★★★★
-   ★ 有 url → 卡片可點，跳頁
-   ★ 沒 url → 卡片顯示「準備中」
-   ================================================================== */
+/* ★ 12 堂課 */
 const LESSONS = [
-  { date:"9/30",  unlock:"2026-09-29", img:"lessons/lesson01.png", folder:"", theme:"normal", url:"lesson01/index.html" },
-  { date:"10/7",  unlock:"2026-10-06", img:"lessons/lesson02.png", folder:"", theme:"normal", url:"lesson02/index.html" },
-  { date:"10/14", unlock:"2026-10-13", img:"lessons/lesson03.png", folder:"", theme:"normal", url:"lesson03/index.html" },
-  { date:"10/21", unlock:"2026-10-20", img:"lessons/lesson04.png", folder:"", theme:"normal", url:"lesson04/index.html" },
-  { date:"10/28", unlock:"2026-10-27", img:"lessons/lesson05.png", folder:"", theme:"halloween", url:"lesson05/index.html" },
-  { date:"11/4",  unlock:"2026-11-03", img:"lessons/lesson06.png", folder:"", theme:"normal", url:"lesson06/index.html" },
-  { date:"11/11", unlock:"2026-11-10", img:"lessons/lesson07.png", folder:"", theme:"normal", url:"lesson07/index.html" },
-  { date:"11/18", unlock:"2026-11-17", img:"lessons/lesson08.png", folder:"", theme:"normal", url:"lesson08/index.html" },
-  { date:"11/25", unlock:"2026-11-24", img:"lessons/lesson09.png", folder:"", theme:"normal", url:"lesson09/index.html" },
-  { date:"12/2",  unlock:"2026-12-01", img:"lessons/lesson10.png", folder:"", theme:"normal", url:"lesson10/index.html" },
-  { date:"12/9",  unlock:"2026-12-08", img:"lessons/lesson11.png", folder:"", theme:"normal", url:"lesson11/index.html" },
-  { date:"12/16", unlock:"2026-12-15", img:"lessons/lesson12.png", folder:"", theme:"christmas", url:"lesson12/index.html" },
+  { date:"9/30",  unlock:"2026-09-29", img:"lessons/lesson01.png", theme:"normal", url:"lesson01/index.html" },
+  { date:"10/7",  unlock:"2026-10-06", img:"lessons/lesson02.png", theme:"normal", url:"lesson02/index.html" },
+  { date:"10/14", unlock:"2026-10-13", img:"lessons/lesson03.png", theme:"normal", url:"lesson03/index.html" },
+  { date:"10/21", unlock:"2026-10-20", img:"lessons/lesson04.png", theme:"normal", url:"lesson04/index.html" },
+  { date:"10/28", unlock:"2026-10-27", img:"lessons/lesson05.png", theme:"halloween", url:"lesson05/index.html" },
+  { date:"11/4",  unlock:"2026-11-03", img:"lessons/lesson06.png", theme:"normal", url:"lesson06/index.html" },
+  { date:"11/11", unlock:"2026-11-10", img:"lessons/lesson07.png", theme:"normal", url:"lesson07/index.html" },
+  { date:"11/18", unlock:"2026-11-17", img:"lessons/lesson08.png", theme:"normal", url:"lesson08/index.html" },
+  { date:"11/25", unlock:"2026-11-24", img:"lessons/lesson09.png", theme:"normal", url:"lesson09/index.html" },
+  { date:"12/2",  unlock:"2026-12-01", img:"lessons/lesson10.png", theme:"normal", url:"lesson10/index.html" },
+  { date:"12/9",  unlock:"2026-12-08", img:"lessons/lesson11.png", theme:"normal", url:"lesson11/index.html" },
+  { date:"12/16", unlock:"2026-12-15", img:"lessons/lesson12.png", theme:"christmas", url:"lesson12/index.html" },
 ];
 
-/* ==================================================================
-   ★★★★★ 學生帳號 ★★★★★
-   ================================================================== */
+/* ★ 帳號（含 Drive 上傳資料夾） */
 const ACCOUNTS = [
-  { name:"周韵媞", cls:"三年甲班", user:"user01@happymc.onmicrosoft.com", pw:"G.514259182373ac", pin:"482913", photo:"photos/s01.jpg" },
-  { name:"翁莆博", cls:"四年甲班", user:"user02@happymc.onmicrosoft.com", pw:"X#633180188959ok", pin:"715264", photo:"photos/s02.jpg" },
-  { name:"林昕翰", cls:"四年甲班", user:"user03@happymc.onmicrosoft.com", pw:"M(195823353823uf", pin:"308571", photo:"photos/s03.jpg" },
-  { name:"謝朋洧", cls:"四年丙班", user:"user04@happymc.onmicrosoft.com", pw:"R*131281814086oy", pin:"926480", photo:"photos/s04.jpg" },
-  { name:"黄宥傑", cls:"四年丙班", user:"user05@happymc.onmicrosoft.com", pw:"T!203603413482op", pin:"150739", photo:"photos/s05.jpg" },
-  { name:"何晁寬", cls:"四年戊班", user:"user06@happymc.onmicrosoft.com", pw:"H@835762875765ah", pin:"673825", photo:"photos/s06.jpg" },
-  { name:"陳繹安", cls:"五年乙班", user:"user07@happymc.onmicrosoft.com", pw:"K#242147185847uq", pin:"284196", photo:"photos/s07.jpg" },
-  { name:"翁秉學", cls:"五年丙班", user:"user08@happymc.onmicrosoft.com", pw:"Y^230519532115ap", pin:"539702", photo:"photos/s08.jpg" },
-  { name:"林慕心", cls:"五年丙班", user:"user09@happymc.onmicrosoft.com", pw:"W^871135038610us", pin:"841365", photo:"photos/s09.jpg" },
-  { name:"吳奕霆", cls:"五年丁班", user:"user10@happymc.onmicrosoft.com", pw:"D#515100067433ug", pin:"607248", photo:"photos/s10.jpg" },
-  { name:"林毓橙", cls:"五年丁班", user:"user11@happymc.onmicrosoft.com", pw:"D*050483725621oz", pin:"392517", photo:"photos/s11.jpg" },
-  { name:"陳哲元", cls:"五年戊班", user:"user12@happymc.onmicrosoft.com", pw:"B$220017697635uv", pin:"758430", photo:"photos/s12.jpg" },
-  { name:"賴炵伃", cls:"六年乙班", user:"user13@happymc.onmicrosoft.com", pw:"W/080499984712oq", pin:"214986", photo:"photos/s13.jpg" },
-  { name:"王奕勛", cls:"六年丁班", user:"user14@happymc.onmicrosoft.com", pw:"M(086619973330oh", pin:"630472", photo:"photos/s14.jpg" },
+  { name:"北極熊老師", cls:"示範帳號", user:"teacher@happymc.onmicrosoft.com", pw:"Demo1234!", pin:"000000", photo:"photos/t01.jpg", drive:"https://drive.google.com/drive/folders/1tBPscAJWA_-qo6QXlHSnLBhcXGaX-j_b" },
+  { name:"周韵媞", cls:"三年甲班", user:"user01@happymc.onmicrosoft.com", pw:"G.514259182373ac", pin:"482913", photo:"photos/s01.jpg", drive:"https://drive.google.com/drive/folders/1upjcofyQ61I50OZNEsYJCcj1r6IDzgEc" },
+  { name:"翁莆博", cls:"四年甲班", user:"user02@happymc.onmicrosoft.com", pw:"X#633180188959ok", pin:"715264", photo:"photos/s02.jpg", drive:"https://drive.google.com/drive/folders/1YyTMghPEHIIWsMTt3xfu0rX3o_MCNuzE" },
+  { name:"林昕翰", cls:"四年甲班", user:"user03@happymc.onmicrosoft.com", pw:"M(195823353823uf", pin:"308571", photo:"photos/s03.jpg", drive:"https://drive.google.com/drive/folders/1vigbmJ1bjSMuqDl_VtpCpM1EkYsmFo5C" },
+  { name:"謝朋洧", cls:"四年丙班", user:"user04@happymc.onmicrosoft.com", pw:"R*131281814086oy", pin:"926480", photo:"photos/s04.jpg", drive:"https://drive.google.com/drive/folders/1re3dXUreuZq7D46WkFarYzfXMZyYZkaq" },
+  { name:"黄宥傑", cls:"四年丙班", user:"user05@happymc.onmicrosoft.com", pw:"T!203603413482op", pin:"150739", photo:"photos/s05.jpg", drive:"https://drive.google.com/drive/folders/1A4_2wP2zct-5IZMsHdfZntNudzzwuIOd" },
+  { name:"何晁寬", cls:"四年戊班", user:"user06@happymc.onmicrosoft.com", pw:"H@835762875765ah", pin:"673825", photo:"photos/s06.jpg", drive:"https://drive.google.com/drive/folders/1rkxJVOXEfG1gv4AYGk45OPokS4ZycDHH" },
+  { name:"陳繹安", cls:"五年乙班", user:"user07@happymc.onmicrosoft.com", pw:"K#242147185847uq", pin:"284196", photo:"photos/s07.jpg", drive:"https://drive.google.com/drive/folders/13EbsK4OgJFxGSJgcOFj6b6-0z8qmwjew" },
+  { name:"翁秉學", cls:"五年丙班", user:"user08@happymc.onmicrosoft.com", pw:"Y^230519532115ap", pin:"539702", photo:"photos/s08.jpg", drive:"https://drive.google.com/drive/folders/1FFYUEM6UJleAgSrx9iFMl3tLp66BltfS" },
+  { name:"林慕心", cls:"五年丙班", user:"user09@happymc.onmicrosoft.com", pw:"W^871135038610us", pin:"841365", photo:"photos/s09.jpg", drive:"https://drive.google.com/drive/folders/1RV-oTvtC4wUX88DCq5rd_HtmtsPKFT7t" },
+  { name:"吳奕霆", cls:"五年丁班", user:"user10@happymc.onmicrosoft.com", pw:"D#515100067433ug", pin:"607248", photo:"photos/s10.jpg", drive:"https://drive.google.com/drive/folders/1F6JEyK6mF1vjx8PvNJTVp0NLJie5ArSI" },
+  { name:"林毓橙", cls:"五年丁班", user:"user11@happymc.onmicrosoft.com", pw:"D*050483725621oz", pin:"392517", photo:"photos/s11.jpg", drive:"https://drive.google.com/drive/folders/1RhV-Nhvfk-p9cKiFeM5DoFnQU4UzxouC" },
+  { name:"陳哲元", cls:"五年戊班", user:"user12@happymc.onmicrosoft.com", pw:"B$220017697635uv", pin:"758430", photo:"photos/s12.jpg", drive:"https://drive.google.com/drive/folders/1aXMSkE0J6xhovWXhIAjvaEaBYMZ9TfOB" },
+  { name:"賴炵伃", cls:"六年乙班", user:"user13@happymc.onmicrosoft.com", pw:"W/080499984712oq", pin:"214986", photo:"photos/s13.jpg", drive:"https://drive.google.com/drive/folders/1XAWcRAJ0C5LXOtM40OkZvT-Z1rpLt_Os" },
+  { name:"王奕勛", cls:"六年丁班", user:"user14@happymc.onmicrosoft.com", pw:"M(086619973330oh", pin:"630472", photo:"photos/s14.jpg", drive:"https://drive.google.com/drive/folders/1BwPSEwH4FT4LbY5S_6jzGVevOFWbFMC9" },
 
   { name:"", cls:"備用", user:"user15@happymc.onmicrosoft.com", pw:"L/523997587137ug", pin:"", photo:"" },
   { name:"", cls:"備用", user:"user16@happymc.onmicrosoft.com", pw:"H$081941769045uv", pin:"", photo:"" },
@@ -698,8 +737,6 @@ const ACCOUNTS = [
   { name:"", cls:"備用", user:"user21@happymc.onmicrosoft.com", pw:"N!569984853113um", pin:"", photo:"" },
 ];
 
-const DEMO_WORKS = [];
-
 /* ==================================================================
    以下不用改
    ================================================================== */
@@ -708,14 +745,16 @@ const SPARES   = ACCOUNTS.filter(a => !a.pin);
 
 let isTeacher = sessionStorage.getItem('mc_teacher') === '1';
 let currentStudent = null;
-let allWorks = [];
+const savedName = sessionStorage.getItem('mc_student');
+if (savedName) {
+  currentStudent = STUDENTS.find(s => s.name === savedName) || null;
+}
 
 document.getElementById('fbLink').href = CONFIG.fb;
 document.getElementById('ytLink').href = CONFIG.yt;
 document.getElementById('aboutEmail').href = 'mailto:' + CONFIG.email;
 document.getElementById('aboutEmail').textContent = CONFIG.email;
 
-// 設定導覽列和 Hero 的遊戲說明連結
 document.querySelectorAll('a[href="lesson01/index.html"]').forEach(a => {
   a.href = CONFIG.guideUrl;
 });
@@ -816,7 +855,6 @@ function renderLessons(){
   box.innerHTML = '';
   const today = todayStr();
 
-  // ★ 遊戲說明卡片
   const guideCard = document.createElement('a');
   guideCard.className = 'lesson-card guide-card';
   guideCard.href = CONFIG.guideUrl;
@@ -828,9 +866,18 @@ function renderLessons(){
   `;
   box.appendChild(guideCard);
 
-  // ★ 12 堂課
   LESSONS.forEach((L, i) => {
-    const unlocked = isTeacher || today >= L.unlock;
+    let unlocked, lockMsg = '';
+    if (isTeacher) {
+      unlocked = true;
+    } else if (!currentStudent) {
+      unlocked = false;
+      lockMsg = '🔒 請先登入領取帳號';
+    } else {
+      unlocked = today >= L.unlock;
+      lockMsg = '🔒 上課前一天開放';
+    }
+
     const card = document.createElement('div');
     let cls = 'lesson-card';
     if(!unlocked) cls += ' locked';
@@ -844,36 +891,19 @@ function renderLessons(){
     `;
 
     if(unlocked){
-      // ★ 有 url → 連到獨立頁面
       if(L.url){
         inner += `<a class="lesson-link" href="${L.url}">📖 進入本堂課</a>`;
-      } else if(L.img){
-        // 沒 url 但有圖 → 顯示彈圖按鈕
-        inner += `<button class="lesson-link" data-img="${L.img}" data-idx="${i}">🖼️ 看本堂內容</button>`;
       } else {
         inner += `<div class="lesson-nolink">尚未上傳</div>`;
       }
-      if(L.folder){
-        inner += `<a class="lesson-link" style="background:var(--blue);margin-top:6px;" href="${L.folder}" target="_blank" rel="noopener">📁 課程資料夾</a>`;
-      }
     } else {
-      inner += `<div class="lesson-locked">🔒 上課前一天開放</div>`;
+      inner += `<div class="lesson-locked">${lockMsg}</div>`;
     }
 
     card.innerHTML = inner;
     box.appendChild(card);
   });
 }
-
-document.getElementById('lessonGrid').addEventListener('click', e => {
-  const btn = e.target.closest('[data-img]');
-  if(!btn) return;
-  e.preventDefault();
-  openLightbox({
-    img: btn.dataset.img,
-    info: `第 ${Number(btn.dataset.idx)+1} 堂課 ｜ ${LESSONS[btn.dataset.idx].date}`
-  });
-});
 
 /* ==================================================================
    學生領帳號
@@ -897,9 +927,7 @@ sel.addEventListener('change', () => {
   img.src = s.photo;
   img.alt = s.name;
   img.className = 'avatar-preview';
-  img.onerror = () => {
-    img.replaceWith(makeDefaultAvatar(s.name));
-  };
+  img.onerror = () => { img.replaceWith(makeDefaultAvatar(s.name)); };
   avatarPreview.appendChild(img);
 });
 
@@ -952,11 +980,12 @@ viewBtn.addEventListener('click', () => {
     return;
   }
   currentStudent = s;
+  sessionStorage.setItem('mc_student', s.name);
   showResult(s);
-  renderWorks();
+  renderLessons();
 });
 
-function showResult(s){
+function showResult(s, scroll = true){
   loginPanel.style.display = 'none';
   resultArea.style.display = '';
   resultArea.innerHTML = `
@@ -981,7 +1010,22 @@ function showResult(s){
         <button class="iconbtn" data-copy="pw">📋</button>
       </div>
 
-      <button class="btn-copyall" data-copy="both">⧉ 一次複製帳號 + 密碼</button>
+      ${s.drive ? `
+        <a href="${s.drive}" target="_blank" rel="noopener"
+           class="btn full"
+           style="margin-top:14px;background:#5ba3d9;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;color:#fff;">
+          📤 上傳作品到我的資料夾
+        </a>
+        <p style="text-align:center;margin:8px 0 0;color:var(--muted);font-size:.78rem;">
+          點按鈕進 Google Drive，把作品拖進去就好
+        </p>
+      ` : ''}
+
+      <a href="${CONFIG.teacherFolder}" target="_blank" rel="noopener"
+         class="btn full"
+         style="margin-top:10px;background:#f0c840;color:#1a1a1a;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;">
+        👀 看北極熊老師示範作品
+      </a>
 
       <p style="text-align:center;margin:16px 0 0;color:var(--muted);font-size:.83rem;">
         貼到 Minecraft 登入畫面即可。請勿把帳號給別人。
@@ -1008,147 +1052,181 @@ function showResult(s){
       const type = btn.dataset.copy;
       if(type === 'user') copyText(s.user, btn, '帳號');
       if(type === 'pw')   copyText(s.pw, btn, '密碼');
-      if(type === 'both'){
-        copyText(`帳號：${s.user}\n密碼：${s.pw}`, null, '帳號與密碼');
-        btn.textContent = '✓ 已複製';
-        setTimeout(()=>{ btn.textContent = '⧉ 一次複製帳號 + 密碼'; }, 1400);
-      }
     });
   });
 
   resultArea.querySelector('#backBtn').addEventListener('click', () => {
     currentStudent = null;
+    sessionStorage.removeItem('mc_student');
     resetView();
-    renderWorks();
+    renderLessons();
   });
-  resultArea.scrollIntoView({behavior:'smooth', block:'center'});
+
+  if (scroll) resultArea.scrollIntoView({behavior:'smooth', block:'center'});
 }
 
 /* ==================================================================
-   作品牆
+   📸 3D 相簿（連續慢速旋轉）
    ================================================================== */
-function parseCSV(text){
-  const rows = [];
-  let row = [], cell = '', inQ = false;
-  for(let i = 0; i < text.length; i++){
-    const c = text[i];
-    if(inQ){
-      if(c === '"' && text[i+1] === '"'){ cell += '"'; i++; }
-      else if(c === '"'){ inQ = false; }
-      else cell += c;
-    } else {
-      if(c === '"') inQ = true;
-      else if(c === ','){ row.push(cell); cell = ''; }
-      else if(c === '\n'){ row.push(cell); rows.push(row); row = []; cell = ''; }
-      else if(c === '\r'){ /* ignore */ }
-      else cell += c;
+const GALLERY_FOLDER = 'gallery/';
+const GALLERY_PREFIX = 's';
+const GALLERY_EXTS   = ['jpg','jpeg','png','webp'];
+const GALLERY_MAX    = 60;
+const GALLERY_GAP    = 8;
+const GALLERY_SPEED   = 0.15;
+const GALLERY_TICK_MS = 50;
+
+let galleryPhotos = [];
+let g3dIndex = 0, g3dAngle = 0, g3dTimer = null, g3dAuto = true;
+let g3dRadius = 400, g3dStep = 30;
+
+function imageExists(path){
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = path;
+  });
+}
+
+async function discoverGallery(){
+  const photos = [];
+  let missStreak = 0;
+  for(let i = 1; i <= GALLERY_MAX; i++){
+    const num = GALLERY_PREFIX + String(i).padStart(2, '0');
+    let found = false;
+    for(const ext of GALLERY_EXTS){
+      const path = `${GALLERY_FOLDER}${num}.${ext}`;
+      if(await imageExists(path)){
+        photos.push(path);
+        found = true;
+        break;
+      }
+    }
+    if(found) missStreak = 0;
+    else {
+      missStreak++;
+      if(missStreak >= GALLERY_GAP) break;
     }
   }
-  if(cell || row.length){ row.push(cell); rows.push(row); }
-  return rows;
+  return photos;
 }
 
-async function loadWorks(){
-  if(!CONFIG.worksSheetUrl){
-    allWorks = DEMO_WORKS.slice();
+function buildCarousel3d(){
+  const box   = document.getElementById('carousel3d');
+  const empty = document.getElementById('galleryEmpty');
+  const stage = document.getElementById('carousel3dWrap');
+  const ctrls = document.querySelector('.carousel3d-controls');
+  box.innerHTML = '';
+
+  const N = galleryPhotos.length;
+  if(N === 0){
+    empty.style.display = '';
+    stage.style.display = 'none';
+    if(ctrls) ctrls.style.display = 'none';
     return;
   }
-  try{
-    const res = await fetch(CONFIG.worksSheetUrl);
-    const text = await res.text();
-    const rows = parseCSV(text);
-    allWorks = rows.slice(1).filter(r => r[0]).map(r => ({
-      date:  r[0] || '',
-      name:  r[1] || '',
-      cls:   r[2] || '',
-      title: r[3] || '',
-      type:  r[4] || '',
-      img:   r[5] || '',
-    }));
-  }catch(e){
-    console.warn('作品讀取失敗，改用示範資料', e);
-    allWorks = DEMO_WORKS.slice();
-  }
-}
+  empty.style.display = 'none';
+  stage.style.display = '';
+  if(ctrls) ctrls.style.display = '';
 
-function renderFilterOptions(){
-  const ss = document.getElementById('filterStudent');
-  const curS = ss.value;
-  ss.innerHTML = '<option value="">👤 全部學生</option>';
-  STUDENTS.forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.name;
-    opt.textContent = `${s.name}（${s.cls}）`;
-    ss.appendChild(opt);
-  });
-  ss.value = curS;
+  const CARD_W = window.innerWidth < 768 ? 170 : 220;
+  g3dRadius = N <= 2 ? 320 : Math.max(320, Math.round((CARD_W/2) / Math.tan(Math.PI / N)));
+  g3dStep = 360 / N;
 
-  const ts = document.getElementById('filterType');
-  const curT = ts.value;
-  const types = [...new Set(allWorks.map(w => w.type).filter(Boolean))].sort();
-  ts.innerHTML = '<option value="">📦 全部類型</option>';
-  types.forEach(t => {
-    const opt = document.createElement('option');
-    opt.value = t;
-    opt.textContent = t;
-    ts.appendChild(opt);
-  });
-  ts.value = curT;
-}
-
-function renderWorks(){
-  const grid = document.getElementById('workGrid');
-  const noWork = document.getElementById('noWork');
-  grid.innerHTML = '';
-
-  const fs = document.getElementById('filterStudent').value;
-  const ft = document.getElementById('filterType').value;
-  const sort = document.getElementById('filterSort').value;
-
-  let list = allWorks.slice();
-  if(fs) list = list.filter(w => w.name === fs);
-  if(ft) list = list.filter(w => w.type === ft);
-  list.sort((a,b) => {
-    const da = a.date || '', db = b.date || '';
-    return sort === 'new' ? db.localeCompare(da) : da.localeCompare(db);
-  });
-
-  if(list.length === 0){
-    noWork.style.display = '';
-    return;
-  }
-  noWork.style.display = 'none';
-
-  list.forEach(w => {
-    const isMine = currentStudent && currentStudent.name === w.name;
-    const card = document.createElement('div');
-    card.className = 'work-card' + (isMine ? ' mine' : '');
-    card.innerHTML = `
-      <img class="work-thumb" src="${w.img}" alt="${w.title}"
-           onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect fill=%22%23eef4ea%22 width=%22200%22 height=%22200%22/><text x=%22100%22 y=%22110%22 font-size=%2260%22 text-anchor=%22middle%22>🖼️</text></svg>'">
-      <div class="work-info">
-        <b>${w.title || '未命名作品'}</b>
-        <div class="meta">${w.name} ｜ ${w.cls}</div>
-        <span class="work-badge">${w.type || '其他'}</span>
-      </div>
+  galleryPhotos.forEach((src, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide';
+    div.style.transform = `rotateY(${i * g3dStep}deg) translateZ(${g3dRadius}px)`;
+    div.innerHTML = `
+      <img src="${src}" alt="">
+      <div class="cap">${i + 1} ／ ${N}</div>
     `;
-    card.addEventListener('click', () => {
-      openLightbox({
-        img: w.img,
-        info: `${w.title} ｜ ${w.name}（${w.cls}）｜ ${w.date || ''}`
-      });
+    div.addEventListener('click', () => {
+      openLightbox({ img: src, info: `第 ${i + 1} 張 ／ 共 ${N} 張` });
     });
-    grid.appendChild(card);
+    box.appendChild(div);
+  });
+
+  g3dIndex = 0; g3dAngle = 0;
+  updateActiveSlide();
+  startAuto3d();
+}
+
+function updateActiveSlide(){
+  const box = document.getElementById('carousel3d');
+  box.querySelectorAll('.slide').forEach((s, i) => {
+    s.classList.toggle('active', i === g3dIndex);
+    s.style.opacity = (i === g3dIndex) ? 1 : 0.72;
   });
 }
 
-document.getElementById('filterStudent').addEventListener('change', renderWorks);
-document.getElementById('filterType').addEventListener('change', renderWorks);
-document.getElementById('filterSort').addEventListener('change', renderWorks);
+function startAuto3d(){
+  stopAuto3d();
+  if(!g3dAuto || galleryPhotos.length < 2) return;
+  g3dTimer = setInterval(() => {
+    if(!g3dAuto) return;
+    g3dAngle -= GALLERY_SPEED;
+    const box = document.getElementById('carousel3d');
+    box.style.transform = `rotateY(${g3dAngle}deg)`;
+    const rawIdx = Math.round(-g3dAngle / g3dStep) % galleryPhotos.length;
+    const idx = (rawIdx + galleryPhotos.length) % galleryPhotos.length;
+    if(idx !== g3dIndex){
+      g3dIndex = idx;
+      updateActiveSlide();
+    }
+  }, GALLERY_TICK_MS);
+}
+function stopAuto3d(){
+  if(g3dTimer) clearInterval(g3dTimer);
+  g3dTimer = null;
+}
 
-/* ==================================================================
-   ★ 聯絡表單 JS 已移除（頁面沒有表單，避免 null 錯誤中斷 script）
-   ================================================================== */
+function goToSlide(index){
+  const box = document.getElementById('carousel3d');
+  if(!galleryPhotos.length) return;
+  const targetAngle = -index * g3dStep;
+  const currentNorm = g3dAngle % 360;
+  const targetNorm  = targetAngle % 360;
+  let diff = targetNorm - currentNorm;
+  if(diff > 180)  diff -= 360;
+  if(diff < -180) diff += 360;
+  g3dAngle += diff;
+  g3dIndex = index;
+  box.style.transition = 'transform .9s cubic-bezier(.25,.8,.35,1)';
+  box.style.transform  = `rotateY(${g3dAngle}deg)`;
+  updateActiveSlide();
+  setTimeout(() => {
+    box.style.transition = 'none';
+    if(g3dAuto) startAuto3d();
+  }, 950);
+}
+
+document.getElementById('prev3d').addEventListener('click', () => {
+  goToSlide((g3dIndex - 1 + galleryPhotos.length) % galleryPhotos.length);
+});
+document.getElementById('next3d').addEventListener('click', () => {
+  goToSlide((g3dIndex + 1) % galleryPhotos.length);
+});
+document.getElementById('auto3d').addEventListener('click', e => {
+  g3dAuto = !g3dAuto;
+  e.target.textContent = g3dAuto ? '⏸ 暫停' : '▶ 播放';
+  if(g3dAuto) startAuto3d();
+  else stopAuto3d();
+});
+
+const g3dWrap = document.getElementById('carousel3dWrap');
+let g3dTouchX = 0;
+g3dWrap.addEventListener('touchstart', e => {
+  g3dTouchX = e.touches[0].clientX;
+}, { passive: true });
+g3dWrap.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - g3dTouchX;
+  if(Math.abs(dx) > 40){
+    if(dx > 0) goToSlide((g3dIndex - 1 + galleryPhotos.length) % galleryPhotos.length);
+    else       goToSlide((g3dIndex + 1) % galleryPhotos.length);
+  }
+}, { passive: true });
 
 /* ==================================================================
    老師模式
@@ -1253,6 +1331,14 @@ function renderTeacherView(){
         <button class="iconbtn" data-eye="${i}">👁️</button>
         <button class="iconbtn" data-copy="pw" data-i="${i}">📋</button>
       </div>
+
+      ${a.drive ? `
+      <a href="${a.drive}" target="_blank" rel="noopener"
+         style="display:block;margin-top:8px;padding:8px;text-align:center;
+                background:#eaf4fc;color:#2a6fa8;border-radius:8px;
+                text-decoration:none;font-size:.85rem;font-weight:700;">
+        📁 開啟作品資料夾
+      </a>` : ''}
     `;
     (isSpare ? boxP : boxS).appendChild(card);
   });
@@ -1287,14 +1373,10 @@ document.getElementById('teacherArea').addEventListener('click', e => {
 /* ==================================================================
    Lightbox
    ================================================================== */
-function openLightbox({img, info, pdf}){
+function openLightbox({img, info}){
   const lb = document.getElementById('lightbox');
   document.getElementById('lightboxImg').src = img;
   document.getElementById('lightboxInfo').textContent = info || '';
-  const dl = document.getElementById('lightboxPdf');
-  if(pdf){ dl.href = pdf; dl.style.display = ''; }
-  else { dl.style.display = 'none'; }
-
   lb.classList.add('show');
   document.body.style.overflow = 'hidden';
 }
@@ -1316,9 +1398,11 @@ document.addEventListener('keydown', e => {
 (async function init(){
   renderFestivalBanner();
   renderLessons();
-  await loadWorks();
-  renderFilterOptions();
-  renderWorks();
+
+  galleryPhotos = await discoverGallery();
+  buildCarousel3d();
+
+  if(currentStudent) showResult(currentStudent, false);
 
   if(isTeacher){
     renderTeacherView();
