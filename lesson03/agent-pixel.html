@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent 像素畫</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --primary: #4CAF50; --primary-dark: #388E3C; --sidebar-bg: #1a2a3a; --bg: #eef2f5; --card-bg: #ffffff; --text: #2c3e50; --text-heading: #1a2a3a; --text-muted: #888; --border: #e0e0e0; }
+    body { font-family: 'Segoe UI', 'Microsoft JhengHei', Arial, sans-serif; line-height: 1.7; color: var(--text); background: var(--bg); }
+    body.dark { --bg: #0f1720; --card-bg: #1a2533; --text: #e2e8f0; --text-heading: #f1f5f9; --border: #2d3e52; --sidebar-bg: #0a1420; }
+
+    .sidebar { width: 270px; background: var(--sidebar-bg); color: #ecf0f1; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100; transition: transform 0.3s ease; display: flex; flex-direction: column; }
+    .sidebar-header { padding: 22px 20px 14px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar-header h3 { font-size: 1.05em; color: #fff; margin-bottom: 4px; }
+    .sidebar-header p { font-size: 0.78em; color: #8899aa; }
+    .lang-select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #4CAF50; background: #ffffff; color: #1a2a3a; font-family: inherit; font-size: 0.9em; font-weight: bold; margin-top: 12px; cursor: pointer; outline: none; }
+    .sidebar-nav { padding: 15px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .sidebar-nav button { font-family: inherit; font-size: 0.86em; color: #c8d4e0; background: transparent; border: none; text-align: left; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+    .sidebar-nav button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sidebar-nav button.active { background: var(--primary); color: #fff; font-weight: bold; }
+    .sidebar-nav button .num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.12); font-size: 0.75em; font-weight: bold; flex-shrink: 0; }
+    .sidebar-nav button.active .num { background: rgba(255,255,255,0.3); }
+    .sidebar-footer { padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .progress-label { font-size: 0.75em; color: #8899aa; margin-bottom: 6px; display: flex; justify-content: space-between; }
+    .progress-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-bottom: 12px; }
+    .progress-bar-fill { height: 100%; background: var(--primary); width: 20%; transition: width 0.4s ease; }
+    .dark-toggle { padding: 9px 12px; background: rgba(255,255,255,0.08); border: none; color: #c8d4e0; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.82em; width: 100%; text-align: left; }
+
+    .main-content { margin-left: 270px; flex: 1; min-width: 0; padding: 25px 20px 60px; }
+    .page { display: none; max-width: 1000px; margin: 0 auto; }
+    .page.active { display: block; }
+    .card { background: var(--card-bg); border-radius: 14px; padding: 28px 30px; margin-bottom: 22px; box-shadow: 0 4px 18px rgba(0,0,0,0.07); }
+    h1 { font-size: 2em; text-align: center; color: var(--text-heading); margin-bottom: 8px; }
+    h2 { font-size: 1.55em; color: var(--text-heading); border-left: 5px solid var(--primary); padding-left: 14px; margin-bottom: 18px; }
+    h3 { font-size: 1.15em; color: var(--text); margin: 22px 0 10px; }
+    h4 { font-size: 1.02em; color: var(--primary); margin: 16px 0 8px; }
+    p { margin: 8px 0; }
+    ul, ol { margin: 8px 0 8px 22px; }
+    li { margin-bottom: 4px; }
+
+    .hero-cover { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; margin-top: 18px; }
+    .hero-media { flex: 1 1 320px; min-width: 0; }
+    .hero-video { flex: 1 1 340px; min-width: 0; }
+    .hero-video .video-box { margin: 0; }
+
+    .video-box { margin: 18px 0; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.15); background: #000; }
+    .video-title { background: var(--primary); color: #fff; padding: 10px 16px; font-size: 0.95em; font-weight: bold; }
+    .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; }
+    .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .video-hint { background: #fff3e0; border-left: 5px solid #ff9800; padding: 12px 16px; border-radius: 8px; margin: 14px 0; font-size: 0.9em; color: #e65100; font-weight: bold; }
+
+    .tour-block { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-radius: 14px; padding: 18px 26px; margin-top: 22px; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; box-shadow: 0 4px 14px rgba(76,175,80,0.15); }
+    body.dark .tour-block { background: linear-gradient(135deg, #1e3a2a 0%, #2d4a3a 100%); }
+    .tour-header { flex: 1 1 320px; min-width: 0; }
+    .tour-header h2 { border: none; padding: 0; color: #1b5e20; font-size: 1.25em; margin-bottom: 4px; text-align: left; }
+    body.dark .tour-header h2 { color: #a5d6a7; }
+    .tour-header p { color: #2e7d32; font-size: 0.9em; margin: 0; }
+    body.dark .tour-header p { color: #c8e6c9; }
+    .tour-start-btn { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #4CAF50, #388E3C); color: #fff; border: none; padding: 13px 28px; border-radius: 30px; font-family: inherit; font-size: 1em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(76,175,80,0.4); transition: all 0.25s; flex-shrink: 0; white-space: nowrap; }
+    .tour-start-btn::before { content: "🎬"; font-size: 1.2em; }
+    .tour-start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76,175,80,0.5); }
+
+    .tour-overlay { position: fixed; inset: 0; z-index: 9999; display: none; pointer-events: none; }
+    .tour-overlay.active { display: block; pointer-events: auto; }
+    .tour-spotlight { position: fixed; border-radius: 12px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75); transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; border: 3px solid #a78bfa; z-index: 10000; }
+    .tour-cursor { position: fixed; width: 44px; height: 44px; z-index: 10002; pointer-events: none; transform: translate(-50%, -50%); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0; }
+    .tour-cursor.show { opacity: 1; }
+    .tour-cursor::before { content: ""; display: block; width: 100%; height: 100%; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="%23333" stroke-width="1.5"><path d="M3 2l7.07 18.97 2.12-7.07 7.07-2.12L3 2z"/></svg>') no-repeat center center; background-size: contain; filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); }
+    .tour-panel { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10001; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 60px; padding: 12px 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.25); display: none; align-items: center; gap: 20px; border: 1px solid rgba(76,175,80,0.3); }
+    .tour-panel.active { display: flex; }
+    .tour-stop-float { position: fixed; top: 20px; right: 20px; z-index: 10003; padding: 12px 20px; background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; border-radius: 30px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 0 8px 24px rgba(220, 38, 38, 0.5); display: none; }
+    .tour-stop-float.show { display: block; }
+    .tour-stop-float:hover { transform: scale(1.05); }
+    .sound-wave { display: flex; align-items: center; justify-content: center; gap: 4px; height: 36px; width: 60px; }
+    .sound-wave span { display: block; width: 5px; height: 8px; background: var(--primary); border-radius: 3px; }
+    .sound-wave.playing span { animation: wave 1s ease-in-out infinite; }
+    .sound-wave.playing span:nth-child(1) { animation-delay: 0s; }
+    .sound-wave.playing span:nth-child(2) { animation-delay: 0.15s; }
+    .sound-wave.playing span:nth-child(3) { animation-delay: 0.3s; }
+    .sound-wave.playing span:nth-child(4) { animation-delay: 0.45s; }
+    .sound-wave.playing span:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave { 0%, 100% { height: 8px; opacity: 0.6; } 50% { height: 28px; opacity: 1; } }
+    .tour-panel-btns { display: flex; gap: 8px; align-items: center; }
+    .tour-panel-btn { font-family: inherit; font-size: 0.85em; padding: 8px 16px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; }
+    .tour-panel-btn-skip { background: #f5f5f5; color: #666; }
+    .tour-panel-btn-pause { background: #ff9800; color: #fff; }
+    .tour-panel-btn-next { background: var(--primary); color: #fff; }
+
+    .step-block { border: 2px solid var(--border); border-radius: 12px; padding: 20px 22px; margin: 20px 0; background: #fafbfc; }
+    body.dark .step-block { background: #16202c; }
+    .step-block.watch { border-color: #ffb74d; background: #fffaf2; }
+    body.dark .step-block.watch { background: #2a2016; }
+    .step-block.learn { border-color: #81c784; background: #f5fbf5; }
+    body.dark .step-block.learn { background: #1a2e1e; }
+    .step-block.play { border-color: #ce93d8; background: #faf5fb; }
+    body.dark .step-block.play { background: #2a1e2e; }
+    .step-header { display: flex; align-items: center; gap: 10px; font-size: 1.05em; font-weight: bold; margin-bottom: 12px; }
+    .step-block.watch .step-header { color: #e65100; }
+    .step-block.learn .step-header { color: #2e7d32; }
+    .step-block.play .step-header { color: #7b1fa2; }
+    .step-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; color: #fff; font-size: 0.8em; font-weight: bold; flex-shrink: 0; }
+    .step-block.watch .step-num { background: #ff9800; }
+    .step-block.learn .step-num { background: #4CAF50; }
+    .step-block.play .step-num { background: #9c27b0; }
+    .step-explain { background: rgba(255,255,255,0.6); border-radius: 8px; padding: 12px 16px; margin: 10px 0 14px; font-size: 0.93em; line-height: 1.7; border-left: 3px solid currentColor; }
+    body.dark .step-explain { background: rgba(0,0,0,0.2); }
+    .step-block.watch .step-explain { color: #b26a00; border-left-color: #ff9800; }
+    .step-block.learn .step-explain { color: #2e7d32; border-left-color: #4CAF50; }
+    .step-block.play .step-explain { color: #6a1b9a; border-left-color: #9c27b0; }
+
+    .dialogue { background: #f8f9fa; border-radius: 12px; padding: 18px 20px; margin: 14px 0; border-left: 5px solid var(--primary); position: relative; }
+    body.dark .dialogue { background: #16202c; }
+    .dialogue-title { font-size: 0.95em; font-weight: bold; color: var(--primary); margin-bottom: 14px; padding-right: 130px; padding-bottom: 8px; border-bottom: 2px solid rgba(76,175,80,0.25); }
+    .dialogue-line { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+    .dialogue-line.player { flex-direction: row-reverse; }
+    .speaker { font-size: 0.82em; font-weight: bold; flex-shrink: 0; width: 65px; text-align: center; padding-top: 10px; }
+    .speaker.agent { color: var(--primary); }
+    .speaker.player { color: #2196F3; }
+    .bubble { background: var(--card-bg); border-radius: 12px; padding: 12px 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); flex: 1; font-size: 0.95em; }
+    .dialogue-line.player .bubble { background: #e3f2fd; }
+    body.dark .dialogue-line.player .bubble { background: #1e3a5f; color: #e2e8f0; }
+    .dialogue-line.agent .bubble { background: #e8f5e9; }
+    body.dark .dialogue-line.agent .bubble { background: #1e3a2a; color: #e2e8f0; }
+    .dialogue-line.speaking .bubble { box-shadow: 0 0 0 3px #4CAF50; transform: scale(1.02); }
+    .speak-btn { position: absolute; top: 12px; right: 12px; background: var(--primary); color: #fff; border: none; padding: 7px 14px; border-radius: 20px; cursor: pointer; font-family: inherit; font-size: 0.8em; font-weight: bold; }
+    .speak-btn.playing { background: #e91e63; }
+
+    .highlight { background: #fff8e1; border-left: 5px solid #ffc107; padding: 14px 18px; border-radius: 6px; margin: 16px 0; }
+    body.dark .highlight { background: #3a3018; color: #ffe082; }
+    .step-badge { display: inline-block; background: var(--primary); color: #fff; font-size: 0.8em; font-weight: bold; padding: 3px 12px; border-radius: 20px; margin-bottom: 10px; }
+
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .quiz-option { background: var(--card-bg); border: 2px solid var(--border); border-radius: 10px; padding: 12px 16px; cursor: pointer; font-family: inherit; font-size: 0.95em; text-align: left; color: var(--text); }
+    .quiz-option:hover { border-color: var(--primary); }
+    .quiz-option.correct { background: #e8f5e9; border-color: #4CAF50; color: #2e7d32; font-weight: bold; }
+    body.dark .quiz-option.correct { background: #1a3a1e; }
+    .quiz-option.wrong { background: #ffebee; border-color: #e53935; color: #c62828; }
+    body.dark .quiz-option.wrong { background: #3a1e1e; }
+    .quiz-option:disabled { cursor: default; }
+    .quiz-feedback { margin-top: 12px; padding: 12px 16px; border-radius: 8px; font-weight: bold; display: none; }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.correct { background: #e8f5e9; color: #2e7d32; }
+    .quiz-feedback.wrong { background: #ffebee; color: #c62828; }
+
+    .page-nav { display: flex; justify-content: space-between; max-width: 1000px; margin: 0 auto; gap: 10px; }
+    .page-nav button { font-family: inherit; font-size: 0.95em; background: var(--card-bg); color: var(--text-heading); border: 2px solid var(--primary); padding: 10px 24px; border-radius: 25px; cursor: pointer; }
+    .page-nav button:disabled { opacity: 0.35; cursor: not-allowed; border-color: #ccc; }
+    .page-nav button.primary { background: var(--primary); color: #fff; }
+
+    .back-top { position: fixed; bottom: 25px; right: 25px; width: 48px; height: 48px; border-radius: 50%; background: var(--primary); color: #fff; border: none; cursor: pointer; font-size: 1.2em; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 90; }
+    .back-top.show { opacity: 1; pointer-events: auto; }
+
+    .hamburger { display: none; position: fixed; top: 15px; left: 15px; z-index: 110; background: var(--sidebar-bg); color: #fff; border: none; width: 44px; height: 44px; border-radius: 10px; cursor: pointer; font-size: 1.3em; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 95; }
+    .overlay.show { display: block; }
+
+    .pattern-grid { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 18px 0; padding: 18px; background: #0f172a; border-radius: 12px; overflow-x: auto; }
+    .pattern-row { display: flex; gap: 4px; align-items: center; }
+    .pattern-layer-label { color: #94a3b8; font-family: monospace; font-size: 12px; width: 60px; text-align: right; padding-right: 8px; }
+    .pixel { width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 13px; font-weight: 700; }
+
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 14px; }
+    .pattern-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; }
+    .pattern-preview { display: grid; grid-template-columns: repeat(8, 20px); gap: 2px; margin-bottom: 10px; padding: 8px; background: #0f172a; border-radius: 6px; align-self: center; }
+    .pattern-preview .cell { width: 20px; height: 20px; border-radius: 2px; }
+    .pattern-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .pattern-desc { font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px; }
+    .btn-copy { display: inline-flex; align-items: center; gap: 6px; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; justify-content: center; margin-top: 4px; }
+    .btn-copy:hover { opacity: 0.9; }
+
+    @media (max-width: 900px) {
+        .sidebar { transform: translateX(-100%); }
+        .sidebar.open { transform: translateX(0); }
+        .main-content { margin-left: 0; padding-top: 75px; }
+        .hamburger { display: flex; align-items: center; justify-content: center; }
+        .page-nav { flex-direction: column; }
+        .page-nav button { width: 100%; }
+        .card { padding: 22px 18px; }
+        .speaker { width: 50px; font-size: 0.75em; }
+        .hero-media, .hero-video { flex: 1 1 100%; }
+        .tour-block { flex-direction: column; align-items: stretch; text-align: center; }
+        .tour-start-btn { justify-content: center; width: 100%; }
+        .tour-panel { padding: 10px 16px; gap: 12px; bottom: 20px; width: 92%; justify-content: space-between; }
+    }
+</style>
+</head>
+<body>
+
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h3>🎨 Agent 像素畫</h3>
+        <p id="sidebarSubtitle">Pixel Art Guide</p>
+        <select class="lang-select" id="langSelect" onchange="switchLang(this.value)">
+            <option value="zh_TW">繁體中文</option>
+            <option value="en_US">English</option>
+        </select>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-footer">
+        <div class="progress-label">
+            <span id="progressLabel">進度</span>
+            <span id="progressText">第 1 頁 / 共 5 頁</span>
+        </div>
+        <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+        <button class="dark-toggle" onclick="toggleDark()" id="darkBtn">🌙 深色模式</button>
+    </div>
+</aside>
+
+<main class="main-content" id="mainContent"></main>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+
+<div class="tour-overlay" id="tourOverlay">
+    <div class="tour-spotlight" id="tourSpotlight"></div>
+    <div class="tour-cursor" id="tourCursor"></div>
+</div>
+
+<button class="tour-stop-float" id="tourStopFloat" onclick="endTour()">✕ 停止導覽</button>
+
+<div class="tour-panel" id="tourPanel">
+    <div class="sound-wave" id="soundWave"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="tour-panel-btns">
+        <button class="tour-panel-btn tour-panel-btn-skip" onclick="endTour()">跳過</button>
+        <button class="tour-panel-btn tour-panel-btn-pause" id="tourPauseBtn" onclick="toggleTourPause()">⏸</button>
+        <button class="tour-panel-btn tour-panel-btn-next" onclick="nextTourStep()">下一步</button>
+    </div>
+</div>
+
+<script>
+/* ============================================================
+   全域狀態
+   ============================================================ */
+let currentLang = 'zh_TW';
+let currentPage = 0;
+let isSpeaking = false;
+let allVoices = [];
+let voiceZhAgent = null, voiceZhPlayer = null;
+let voiceEnAgent = null, voiceEnPlayer = null;
+
+function getChineseVoice() {
+    return allVoices.find(v => /zh-(tw|hk)/i.test(v.lang)) || allVoices.find(v => /^zh/i.test(v.lang)) || null;
+}
+function getEnglishVoice() {
+    return allVoices.find(v => /en-(us|gb)/i.test(v.lang)) || allVoices.find(v => /^en/i.test(v.lang)) || null;
+}
+function loadVoices() {
+    allVoices = speechSynthesis.getVoices();
+    const zh = allVoices.filter(x => x.lang.toLowerCase().startsWith('zh'));
+    if (zh.length >= 2) { voiceZhAgent = zh[0]; voiceZhPlayer = zh.find(x => x.voiceURI !== zh[0].voiceURI) || zh[0]; }
+    else if (zh.length === 1) { voiceZhAgent = voiceZhPlayer = zh[0]; }
+    const en = allVoices.filter(x => x.lang.toLowerCase().startsWith('en'));
+    if (en.length >= 2) { voiceEnAgent = en[0]; voiceEnPlayer = en.find(x => x.voiceURI !== en[0].voiceURI) || en[0]; }
+    else if (en.length === 1) { voiceEnAgent = voiceEnPlayer = en[0]; }
+}
+if (typeof speechSynthesis.onvoiceschanged !== 'undefined') speechSynthesis.onvoiceschanged = loadVoices;
+(function waitVoices(retry) {
+    retry = retry || 0;
+    if (speechSynthesis.getVoices().length || retry > 20) { loadVoices(); return; }
+    setTimeout(() => waitVoices(retry + 1), 250);
+})();
+
+/* ============================================================
+   i18n
+   ============================================================ */
+const i18n = {
+    zh_TW: {
+        sidebar_subtitle: "像素畫教學",
+        progress_label: "學習進度",
+        dark_on: "🌙 深色模式",
+        dark_off: "☀️ 淺色模式",
+        next: "下一頁 →", prev: "← 上一頁",
+        correct: "✅ 答對了！", wrong: "❌ 再想一下～",
+        tasks: ["開始", "小雞教學", "圖案庫", "編輯器", "完成"],
+        agent: "🤖 Agent", player: "🧑 玩家",
+        dialogue_title: "💬 遊戲對話",
+        step_learn: "📖 學概念", step_play: "🎮 玩互動", step_watch: "📹 看影片",
+        code_title: "程式碼說明",
+        video_hint: "📹 本頁底部有教學影片！",
+        tour_title: "🎬 網頁自動導覽",
+        tour_subtitle: "讓導覽員帶你走一遍，會有語音說明！",
+        tour_start_btn: "開始自動導覽（含語音）",
+        tour_steps: [
+            { page: 0, target: '#intro-cover', text: '哈囉！歡迎來到 Agent 像素畫！準備好了嗎？我們要教機器人蓋圖案囉！' },
+            { page: 0, target: '#intro-cover .hero-media', text: '你看！這隻就是我們今天要蓋的小雞！是不是超可愛？' },
+            { page: 0, target: '#intro-welcome', text: '這裡會告訴你今天要做什麼。我們要教一個叫 Agent 的機器人，用聊天指令蓋出八乘八的圖案！' },
+            { page: 0, target: '#intro-story', text: '故事是這樣開始的！Agent 想學蓋小雞，來看看它跟玩家說什麼。點「播放對話」可以聽整段喔！' },
+            { page: 1, target: '.step-block.learn', text: '現在進到教學頁！這裡會一步一步教你怎麼蓋小雞！先看圖案，每一層要放什麼顏色。' },
+            { page: 1, target: '.step-block.play', text: '再來玩個小測驗！看看你懂不懂。答對會有綠色打勾喔！' },
+            { page: 1, target: '.step-block.watch', text: '最後看一段影片，複習整個任務！' },
+            { page: 2, target: '.card', text: '這裡是圖案庫！有狐狸、苦力怕、蘋果、豬，超多圖案任你選！' },
+            { page: 2, target: '.pattern-card', text: '每一張卡片都是一個圖案！按藍色按鈕複製程式，按綠色按鈕複製聊天指令！' },
+            { page: 3, target: '#pattern-selector', text: '這裡是編輯器！先選一個圖案載入，再選顏色，然後點畫布就可以改顏色！' },
+            { page: 3, target: '#editor-canvas', text: '你看！點格子就會變成你選的顏色！畫錯了，按右鍵就能清掉。' },
+            { page: 4, target: '.card', text: '導覽結束啦！現在換你自己試試看。加油喔！你一定可以的！' }
+        ],
+        dialogues: {},
+        dialogue_topics: {
+            story: '💬 故事開場',
+            learn1: '💬 認識像素畫',
+            learn2: '💬 圖案是什麼',
+            learn3: '💬 材料與方向',
+            done: '💬 完成'
+        }
+    },
+    en_US: {
+        sidebar_subtitle: "Pixel Art Tutorial",
+        progress_label: "Progress",
+        dark_on: "🌙 Dark Mode",
+        dark_off: "☀️ Light Mode",
+        next: "Next →", prev: "← Previous",
+        correct: "✅ Correct!", wrong: "❌ Try again!",
+        tasks: ["Start", "Chicken Tutorial", "Gallery", "Editor", "Complete"],
+        agent: "🤖 Agent", player: "🧑 Player",
+        dialogue_title: "💬 Dialogue",
+        step_learn: "📖 Learn", step_play: "🎮 Play", step_watch: "📹 Watch",
+        code_title: "Code",
+        video_hint: "📹 There's a tutorial video at the bottom!",
+        tour_title: "🎬 Auto Website Tour",
+        tour_subtitle: "Let the guide walk you through! (with voice)",
+        tour_start_btn: "Start Auto Tour (with Voice)",
+        tour_steps: [
+            { page: 0, target: '#intro-cover', text: 'Hi there! Welcome to Agent Pixel Art! Ready? We are going to teach a robot to build pictures!' },
+            { page: 0, target: '#intro-cover .hero-media', text: 'Look! This is the chicken we are going to build today! Isn\'t it cute?' },
+            { page: 0, target: '#intro-welcome', text: 'This tells you what we will do today. We will teach a robot called the Agent to build 8 by 8 pictures with chat commands!' },
+            { page: 0, target: '#intro-story', text: 'Here is how the story begins! The Agent wants to learn to build a chicken. Click Play to hear the whole thing!' },
+            { page: 1, target: '.step-block.learn', text: 'Now the tutorial page! Here we teach you step by step. First, look at the pattern — which color goes in each layer.' },
+            { page: 1, target: '.step-block.play', text: 'Now a small quiz! See if you get it. A green check means correct!' },
+            { page: 1, target: '.step-block.watch', text: 'Finally, watch a video to review the whole mission!' },
+            { page: 2, target: '.card', text: 'This is the Gallery! Fox, Creeper, Apple, Pig — lots of patterns to pick from!' },
+            { page: 2, target: '.pattern-card', text: 'Each card is one pattern! Click the blue button to copy code, green to copy the chat command!' },
+            { page: 3, target: '#pattern-selector', text: 'This is the Editor! First pick a pattern to load, then pick a color, then click to paint!' },
+            { page: 3, target: '#editor-canvas', text: 'See? Click a cell and it changes to your color! If you make a mistake, right-click to clear it.' },
+            { page: 4, target: '.card', text: 'That\'s the tour! Now it\'s your turn to try. You can do it! Go go go!' }
+        ],
+        dialogues: {},
+        dialogue_topics: {
+            story: '💬 Story Opening',
+            learn1: '💬 Pixel Art',
+            learn2: '💬 What is a pattern',
+            learn3: '💬 Materials and directions',
+            done: '💬 Complete'
+        }
+    }
+};
+
+/* 對話（中文） */
+i18n.zh_TW.dialogues = {
+    story: [
+        { who: "agent", text: "哈囉！聽說你會用程式碼蓋圖案？" },
+        { who: "player", text: "會啊！你想學嗎？" },
+        { who: "agent", text: "想！我想蓋一隻小雞！可是我不知道從哪開始。" },
+        { who: "player", text: "沒問題，我教你。我們先從一個簡單的概念開始——像素畫。" },
+        { who: "agent", text: "像素畫？聽起來很酷！是什麼？" },
+        { who: "player", text: "就是用一個個方格拼成的圖案，像 Minecraft 的方塊那樣！" }
+    ],
+    learn1: [
+        { who: "agent", text: "所以像素畫就是很多小格子？" },
+        { who: "player", text: "對！8 乘 8 就是 8 格寬、8 格高，總共 64 格。" },
+        { who: "agent", text: "那我怎麼知道每一格要放什麼？" },
+        { who: "player", text: "我們用一張「圖案表」告訴你，每格的數字代表要用哪種方塊。" },
+        { who: "agent", text: "數字 0 是什麼？" },
+        { who: "player", text: "0 就是不放，留空！" }
+    ],
+    learn2: [
+        { who: "agent", text: "所以圖案表就像一張設計圖？" },
+        { who: "player", text: "沒錯！而且我們從最下面那層開始蓋，一層一層往上。" },
+        { who: "agent", text: "為什麼不從上面開始？" },
+        { who: "player", text: "因為下面的要先蓋好，上面的才能疊上去呀！就像蓋房子。" }
+    ],
+    learn3: [
+        { who: "agent", text: "材料呢？我要準備什麼？" },
+        { who: "player", text: "小雞會用到黑色、橘色、黃色、粉紅色。每種放在背包不同格子。" },
+        { who: "agent", text: "我要怎麼放？" },
+        { who: "player", text: "用 agent.setItem(方塊, 數量, 格子編號)。例如 setItem(BLACK_CONCRETE, 64, 1)。" },
+        { who: "agent", text: "懂了！那蓋的動作呢？" },
+        { who: "player", text: "用 agent.place(FORWARD) 往前放一格，用 move(RIGHT, 1) 往右走。" }
+    ],
+    done: [
+        { who: "agent", text: "我學會了！謝謝你！" },
+        { who: "player", text: "不客氣！你已經能用程式碼蓋出小雞了！" }
+    ]
+};
+
+/* 對話（英文） */
+i18n.en_US.dialogues = {
+    story: [
+        { who: "agent", text: "Hi! I heard you can build pixel art with code?" },
+        { who: "player", text: "Yes! Want to learn?" },
+        { who: "agent", text: "Sure! I want to build a chicken! But I don't know where to start." },
+        { who: "player", text: "No problem. Let's start with a simple idea — pixel art." },
+        { who: "agent", text: "Pixel art? Sounds cool! What is it?" },
+        { who: "player", text: "It's art made of small squares, just like Minecraft blocks!" }
+    ],
+    learn1: [
+        { who: "agent", text: "So pixel art is many small squares?" },
+        { who: "player", text: "Yes! 8 by 8 means 8 wide and 8 tall, 64 squares total." },
+        { who: "agent", text: "How do I know what to place in each square?" },
+        { who: "player", text: "We use a pattern table. Each number means a certain block." },
+        { who: "agent", text: "What is 0?" },
+        { who: "player", text: "0 means nothing — leave it empty!" }
+    ],
+    learn2: [
+        { who: "agent", text: "So the pattern table is a blueprint?" },
+        { who: "player", text: "Exactly! And we start from the bottom layer, going up." },
+        { who: "agent", text: "Why not start from the top?" },
+        { who: "player", text: "Because the bottom must be built first so the top can stack on it, like a house." }
+    ],
+    learn3: [
+        { who: "agent", text: "What materials do I need?" },
+        { who: "player", text: "The chicken uses black, orange, yellow, and pink. Put each in a different slot." },
+        { who: "agent", text: "How do I do that?" },
+        { who: "player", text: "Use agent.setItem(block, count, slot). Like setItem(BLACK_CONCRETE, 64, 1)." },
+        { who: "agent", text: "Got it! What about the placing?" },
+        { who: "player", text: "Use agent.place(FORWARD) to place forward, and move(RIGHT, 1) to go right." }
+    ],
+    done: [
+        { who: "agent", text: "I learned it! Thank you!" },
+        { who: "player", text: "You're welcome! Now you can build a chicken with code!" }
+    ]
+};
+
+/* ============================================================
+   48 色系統
+   ============================================================ */
+const CATEGORIES = {
+  concrete: { label_zh: '🟦 混凝土', label_en: '🟦 Concrete', start: 1, colors: [
+      { name: 'WHITE_CONCRETE',       label_zh: '白',   label_en: 'White',   hex: '#CFD5D6' },
+      { name: 'LIGHT_GRAY_CONCRETE',  label_zh: '淡灰', label_en: 'Lt Gray', hex: '#7D7D73' },
+      { name: 'GRAY_CONCRETE',        label_zh: '灰',   label_en: 'Gray',    hex: '#36393D' },
+      { name: 'BLACK_CONCRETE',       label_zh: '黑',   label_en: 'Black',   hex: '#080A0D' },
+      { name: 'BROWN_CONCRETE',       label_zh: '棕',   label_en: 'Brown',   hex: '#603B1F' },
+      { name: 'RED_CONCRETE',         label_zh: '紅',   label_en: 'Red',     hex: '#8E2121' },
+      { name: 'ORANGE_CONCRETE',      label_zh: '橘',   label_en: 'Orange',  hex: '#E06100' },
+      { name: 'YELLOW_CONCRETE',      label_zh: '黃',   label_en: 'Yellow',  hex: '#F1AF15' },
+      { name: 'LIME_CONCRETE',        label_zh: '萊姆', label_en: 'Lime',    hex: '#5EA818' },
+      { name: 'GREEN_CONCRETE',       label_zh: '綠',   label_en: 'Green',   hex: '#495B24' },
+      { name: 'CYAN_CONCRETE',        label_zh: '青',   label_en: 'Cyan',    hex: '#157788' },
+      { name: 'LIGHT_BLUE_CONCRETE',  label_zh: '淡藍', label_en: 'Lt Blue', hex: '#2489C7' },
+      { name: 'BLUE_CONCRETE',        label_zh: '藍',   label_en: 'Blue',    hex: '#2C2E8F' },
+      { name: 'PURPLE_CONCRETE',      label_zh: '紫',   label_en: 'Purple',  hex: '#64209C' },
+      { name: 'MAGENTA_CONCRETE',     label_zh: '洋紅', label_en: 'Magenta', hex: '#A9309F' },
+      { name: 'PINK_CONCRETE',        label_zh: '粉紅', label_en: 'Pink',    hex: '#D6658F' }
+  ]},
+  wool: { label_zh: '🧶 羊毛', label_en: '🧶 Wool', start: 17, colors: [
+      { name: 'WOOL',             label_zh: '白',   label_en: 'White',   hex: '#E9ECEC' },
+      { name: 'LIGHT_GRAY_WOOL',  label_zh: '淡灰', label_en: 'Lt Gray', hex: '#8E8E86' },
+      { name: 'GRAY_WOOL',        label_zh: '灰',   label_en: 'Gray',    hex: '#3E4447' },
+      { name: 'BLACK_WOOL',       label_zh: '黑',   label_en: 'Black',   hex: '#1D1D21' },
+      { name: 'BROWN_WOOL',       label_zh: '棕',   label_en: 'Brown',   hex: '#724728' },
+      { name: 'RED_WOOL',         label_zh: '紅',   label_en: 'Red',     hex: '#A12722' },
+      { name: 'ORANGE_WOOL',      label_zh: '橘',   label_en: 'Orange',  hex: '#F07613' },
+      { name: 'YELLOW_WOOL',      label_zh: '黃',   label_en: 'Yellow',  hex: '#F8C627' },
+      { name: 'LIME_WOOL',        label_zh: '萊姆', label_en: 'Lime',    hex: '#70B919' },
+      { name: 'GREEN_WOOL',       label_zh: '綠',   label_en: 'Green',   hex: '#546D1B' },
+      { name: 'CYAN_WOOL',        label_zh: '青',   label_en: 'Cyan',    hex: '#158991' },
+      { name: 'LIGHT_BLUE_WOOL',  label_zh: '淡藍', label_en: 'Lt Blue', hex: '#3AAFD9' },
+      { name: 'BLUE_WOOL',        label_zh: '藍',   label_en: 'Blue',    hex: '#35399D' },
+      { name: 'PURPLE_WOOL',      label_zh: '紫',   label_en: 'Purple',  hex: '#792AAC' },
+      { name: 'MAGENTA_WOOL',     label_zh: '洋紅', label_en: 'Magenta', hex: '#BD4AB9' },
+      { name: 'PINK_WOOL',        label_zh: '粉紅', label_en: 'Pink',    hex: '#ED8DAC' }
+  ]},
+  terracotta: { label_zh: '🏺 陶瓦', label_en: '🏺 Terracotta', start: 33, colors: [
+      { name: 'WHITE_TERRACOTTA',       label_zh: '白',   label_en: 'White',   hex: '#D1B1A1' },
+      { name: 'LIGHT_GRAY_TERRACOTTA',  label_zh: '淡灰', label_en: 'Lt Gray', hex: '#8A7273' },
+      { name: 'GRAY_TERRACOTTA',        label_zh: '灰',   label_en: 'Gray',    hex: '#3A2A24' },
+      { name: 'BLACK_TERRACOTTA',       label_zh: '黑',   label_en: 'Black',   hex: '#251610' },
+      { name: 'BROWN_TERRACOTTA',       label_zh: '棕',   label_en: 'Brown',   hex: '#4D3223' },
+      { name: 'RED_TERRACOTTA',         label_zh: '紅',   label_en: 'Red',     hex: '#8E3C34' },
+      { name: 'ORANGE_TERRACOTTA',      label_zh: '橘',   label_en: 'Orange',  hex: '#A15325' },
+      { name: 'YELLOW_TERRACOTTA',      label_zh: '黃',   label_en: 'Yellow',  hex: '#B98423' },
+      { name: 'LIME_TERRACOTTA',        label_zh: '萊姆', label_en: 'Lime',    hex: '#68732E' },
+      { name: 'GREEN_TERRACOTTA',       label_zh: '綠',   label_en: 'Green',   hex: '#4C522A' },
+      { name: 'CYAN_TERRACOTTA',        label_zh: '青',   label_en: 'Cyan',    hex: '#575B5B' },
+      { name: 'LIGHT_BLUE_TERRACOTTA',  label_zh: '淡藍', label_en: 'Lt Blue', hex: '#727E89' },
+      { name: 'BLUE_TERRACOTTA',        label_zh: '藍',   label_en: 'Blue',    hex: '#4A3B5B' },
+      { name: 'PURPLE_TERRACOTTA',      label_zh: '紫',   label_en: 'Purple',  hex: '#75485D' },
+      { name: 'MAGENTA_TERRACOTTA',     label_zh: '洋紅', label_en: 'Magenta', hex: '#96586D' },
+      { name: 'PINK_TERRACOTTA',        label_zh: '粉紅', label_en: 'Pink',    hex: '#A14E4E' }
+  ]}
+};
+
+const COLORS = { 0: { name: null, hex: '#1e293b', text: '#64748b' } };
+function isLight(hex) {
+  const r = parseInt(hex.slice(1,3), 16), g = parseInt(hex.slice(3,5), 16), b = parseInt(hex.slice(5,7), 16);
+  return (r * 0.299 + g * 0.587 + b * 0.114) > 128;
+}
+Object.keys(CATEGORIES).forEach(k => {
+  CATEGORIES[k].colors.forEach((c, i) => {
+    const num = CATEGORIES[k].start + i;
+    COLORS[num] = { name: c.name, label_zh: c.label_zh, label_en: c.label_en, hex: c.hex, text: isLight(c.hex) ? '#0f172a' : '#fff', category: k };
+  });
+});
+
+/* ============================================================
+   圖案
+   ============================================================ */
+const patterns = {
+  chick: { name_zh: '🐔 小雞', name_en: '🐔 Chicken', chat: 'chick',
+    data: [[0,0,0,0,0,0,0,32],[0,0,24,24,24,0,0,0],[0,24,24,24,24,24,0,0],[0,24,4,24,4,24,0,0],[24,32,32,24,32,32,24,0],[24,24,24,24,24,24,24,0],[0,24,24,24,24,24,0,0],[0,0,23,0,23,0,0,0]] },
+  fox: { name_zh: '🦊 狐狸', name_en: '🦊 Fox', chat: 'fox',
+    data: [[4,4,4,4,4,4,4,4],[4,4,8,10,4,8,4,4],[4,4,10,5,4,10,5,4],[4,4,4,4,4,4,4,4],[23,23,23,23,23,23,23,23],[20,20,23,23,23,23,20,20],[2,2,18,4,4,2,18,18],[18,2,2,18,18,18,2,18]] },
+  sheep: { name_zh: '🐑 羊', name_en: '🐑 Sheep', chat: 'sheep',
+    data: [[17,17,17,17,17,17,17,17],[17,17,17,17,17,17,17,17],[17,33,33,33,33,33,33,17],[17,4,1,33,33,1,4,17],[17,33,33,33,33,33,33,17],[17,17,33,32,32,33,17,17],[17,17,33,6,6,33,17,17],[17,17,17,17,17,17,17,17]] },
+  smith: { name_zh: '👤 史密斯', name_en: '👤 Smith', chat: 'smith',
+    data: [[21,21,21,21,21,21,21,21],[21,21,21,21,21,21,21,21],[21,33,33,33,33,33,33,21],[33,33,33,33,33,33,33,33],[33,1,13,33,33,13,1,33],[33,33,33,34,34,33,33,33],[33,33,21,33,33,21,33,33],[33,33,21,21,21,21,33,33]] },
+  bee: { name_zh: '🦋 蜜蜂', name_en: '🦋 Bee', chat: 'bee',
+    data: [[24,24,24,24,24,24,24,24],[24,20,24,24,24,24,20,24],[24,24,20,24,24,20,24,24],[24,24,24,24,24,24,24,24],[4,12,24,24,24,24,12,4],[2,4,24,24,24,24,4,2],[4,2,24,24,24,24,2,4],[24,24,24,24,24,24,24,24]] },
+  chicken: { name_zh: '🐣 雞', name_en: '🐣 Chick', chat: 'chicken',
+    data: [[17,17,17,17,17,17,17,17],[17,17,17,17,17,17,17,17],[17,17,4,17,17,4,17,17],[17,17,24,24,24,24,17,17],[17,17,21,21,21,21,17,17],[17,17,17,22,22,17,17,17],[17,17,17,22,22,17,17,17],[17,17,17,17,17,17,17,17]] },
+  panda: { name_zh: '🐼 熊貓', name_en: '🐼 Panda', chat: 'panda',
+    data: [[20,20,20,17,17,20,20,20],[20,20,17,17,17,17,20,20],[17,17,17,17,17,17,17,17],[17,20,12,17,17,12,20,17],[20,20,20,17,17,20,20,20],[20,20,17,17,17,17,20,20],[17,17,17,20,20,17,17,17],[17,17,17,17,17,17,17,17]] },
+  panda2: { name_zh: '🐼 熊貓2', name_en: '🐼 Panda 2', chat: 'panda2',
+    data: [[20,20,20,17,17,20,20,20],[20,20,17,17,17,17,20,20],[17,17,17,17,17,17,17,17],[17,20,20,17,17,20,20,17],[20,20,20,17,17,20,20,20],[20,20,17,17,17,17,20,20],[40,17,17,20,20,17,17,40],[40,40,17,17,17,17,40,40]] },
+  creeper: { name_zh: '💚 苦力怕', name_en: '💚 Creeper', chat: 'creeper',
+    data: [[0,0,9,9,9,9,0,0],[0,9,9,9,9,9,9,0],[9,9,4,4,9,4,4,9],[9,9,4,4,9,4,4,9],[9,9,9,9,9,9,9,9],[9,9,4,4,4,4,9,9],[9,9,4,9,9,4,9,9],[0,9,9,9,9,9,9,0]] },
+  apple: { name_zh: '🍎 蘋果', name_en: '🍎 Apple', chat: 'apple',
+    data: [[0,0,0,5,0,0,0,0],[0,0,5,5,10,0,0,0],[0,6,6,6,6,6,6,0],[6,6,6,6,6,6,6,6],[6,1,1,6,6,6,6,6],[6,1,6,6,6,6,6,6],[0,6,6,6,6,6,6,0],[0,0,6,6,6,6,0,0]] },
+  allcolors: {
+    name_zh: '🎨 全色方塊', name_en: '🎨 All Colors', chat: 'allcolors',
+    special: 'allcolors',
+    data: [
+      [43,44,45,46,47,48,0,0],
+      [37,38,39,40,41,42,0,0],
+      [31,32,33,34,35,36,0,0],
+      [25,26,27,28,29,30,0,0],
+      [19,20,21,22,23,24,0,0],
+      [13,14,15,16,17,18,0,0],
+      [ 7, 8, 9,10,11,12,0,0],
+      [ 1, 2, 3, 4, 5, 6,0,0]
+    ]
+  }
+};
+
+/* ★ 產出 JavaScript 程式（自動映射 slot 1~27） */
+function generateJS(pattern, chatCommand) {
+  const used = {};
+  pattern.forEach(row => row.forEach(v => { if (v > 0) used[v] = true; }));
+  const sorted = Object.keys(used).map(Number).sort((a,b)=>a-b);
+
+  const slotMap = {};
+  sorted.forEach((colorNum, idx) => { slotMap[colorNum] = idx + 1; });
+
+  let code = 'player.onChat("' + chatCommand + '", function () {\n';
+
+  if (sorted.length === 0) {
+    code += '    // （沒有用到任何材料）\n';
+  } else {
+    sorted.forEach(c => {
+      code += '    agent.setItem(' + COLORS[c].name + ', 64, ' + slotMap[c] + ')\n';
+    });
+  }
+
+  code += '\n    agent.teleportToPlayer()\n    agent.move(FORWARD, 3)\n\n';
+  code += '    const pattern = [\n';
+  pattern.forEach(row => { code += '        [' + row.join(', ') + '],\n'; });
+  code += '    ]\n\n';
+
+  code += '    for (let layer = 7; layer >= 0; layer--) {\n';
+  code += '        for (let col = 0; col < 8; col++) {\n';
+  code += '            const v = pattern[layer][col]\n';
+  code += '            if (v > 0) {\n';
+  code += '                let slot = 0\n';
+
+  sorted.forEach(c => {
+    code += '                if (v === ' + c + ') slot = ' + slotMap[c] + '\n';
+  });
+
+  code += '                if (slot > 0) {\n';
+  code += '                    agent.setSlot(slot)\n';
+  code += '                    agent.place(FORWARD)\n';
+  code += '                }\n';
+  code += '            }\n';
+  code += '            if (col < 7) agent.move(RIGHT, 1)\n';
+  code += '        }\n';
+  code += '        agent.move(LEFT, 7)\n';
+  code += '        agent.move(UP, 1)\n';
+  code += '    }\n';
+  code += '})\n';
+  return code;
+}
+
+/* ★ 全色方塊：6 欄 × 8 層垂直牆，與網頁預覽一致
+      每格重裝 slot 1，避開 27 格限制 */
+function generateAllColorsJS() {
+  let code = '';
+  code += '// ==========================================================\n';
+  code += '// 🎨 Agent 全色方塊牆（6 欄 × 8 層 = 48 種）\n';
+  code += '// 聊天欄輸入：allcolors\n';
+  code += '// 排列與網頁預覽一致（從下往上，每層 6 格）\n';
+  code += '// ==========================================================\n\n';
+
+  code += 'const BLOCK_BY_NUM = [\n';
+  code += '    null,\n';
+  code += '    WHITE_CONCRETE,           // 1\n';
+  code += '    LIGHT_GRAY_CONCRETE,      // 2\n';
+  code += '    GRAY_CONCRETE,            // 3\n';
+  code += '    BLACK_CONCRETE,           // 4\n';
+  code += '    BROWN_CONCRETE,           // 5\n';
+  code += '    RED_CONCRETE,             // 6\n';
+  code += '    ORANGE_CONCRETE,          // 7\n';
+  code += '    YELLOW_CONCRETE,          // 8\n';
+  code += '    LIME_CONCRETE,            // 9\n';
+  code += '    GREEN_CONCRETE,           // 10\n';
+  code += '    CYAN_CONCRETE,            // 11\n';
+  code += '    LIGHT_BLUE_CONCRETE,      // 12\n';
+  code += '    BLUE_CONCRETE,            // 13\n';
+  code += '    PURPLE_CONCRETE,          // 14\n';
+  code += '    MAGENTA_CONCRETE,         // 15\n';
+  code += '    PINK_CONCRETE,            // 16\n';
+  code += '    WOOL,                     // 17\n';
+  code += '    LIGHT_GRAY_WOOL,          // 18\n';
+  code += '    GRAY_WOOL,                // 19\n';
+  code += '    BLACK_WOOL,               // 20\n';
+  code += '    BROWN_WOOL,               // 21\n';
+  code += '    RED_WOOL,                 // 22\n';
+  code += '    ORANGE_WOOL,              // 23\n';
+  code += '    YELLOW_WOOL,              // 24\n';
+  code += '    LIME_WOOL,                // 25\n';
+  code += '    GREEN_WOOL,               // 26\n';
+  code += '    CYAN_WOOL,                // 27\n';
+  code += '    LIGHT_BLUE_WOOL,          // 28\n';
+  code += '    BLUE_WOOL,                // 29\n';
+  code += '    PURPLE_WOOL,              // 30\n';
+  code += '    MAGENTA_WOOL,             // 31\n';
+  code += '    PINK_WOOL,                // 32\n';
+  code += '    WHITE_TERRACOTTA,         // 33\n';
+  code += '    LIGHT_GRAY_TERRACOTTA,    // 34\n';
+  code += '    GRAY_TERRACOTTA,          // 35\n';
+  code += '    BLACK_TERRACOTTA,         // 36\n';
+  code += '    BROWN_TERRACOTTA,         // 37\n';
+  code += '    RED_TERRACOTTA,           // 38\n';
+  code += '    ORANGE_TERRACOTTA,        // 39\n';
+  code += '    YELLOW_TERRACOTTA,        // 40\n';
+  code += '    LIME_TERRACOTTA,          // 41\n';
+  code += '    GREEN_TERRACOTTA,         // 42\n';
+  code += '    CYAN_TERRACOTTA,          // 43\n';
+  code += '    LIGHT_BLUE_TERRACOTTA,    // 44\n';
+  code += '    BLUE_TERRACOTTA,          // 45\n';
+  code += '    PURPLE_TERRACOTTA,        // 46\n';
+  code += '    MAGENTA_TERRACOTTA,       // 47\n';
+  code += '    PINK_TERRACOTTA           // 48\n';
+  code += ']\n\n';
+
+  code += '// GRID[0] 是最上層（43~48），GRID[7] 是最下層（1~6）\n';
+  code += 'const GRID = [\n';
+  code += '    [43, 44, 45, 46, 47, 48],\n';
+  code += '    [37, 38, 39, 40, 41, 42],\n';
+  code += '    [31, 32, 33, 34, 35, 36],\n';
+  code += '    [25, 26, 27, 28, 29, 30],\n';
+  code += '    [19, 20, 21, 22, 23, 24],\n';
+  code += '    [13, 14, 15, 16, 17, 18],\n';
+  code += '    [ 7,  8,  9, 10, 11, 12],\n';
+  code += '    [ 1,  2,  3,  4,  5,  6]\n';
+  code += ']\n\n';
+
+  code += 'player.onChat("allcolors", function () {\n';
+  code += '    // ① 離開玩家\n';
+  code += '    agent.teleportToPlayer()\n';
+  code += '    agent.turn(TurnDirection.Left)\n';
+  code += '    agent.setAssist(DESTROY_OBSTACLES, true)\n';
+  code += '    agent.move(UP, 1)\n';
+  code += '    agent.move(FORWARD, 5)\n';
+  code += '    agent.setAssist(DESTROY_OBSTACLES, false)\n\n';
+  code += '    // ② 從最底層往上蓋（與網頁預覽相同排列）\n';
+  code += '    for (let layer = 7; layer >= 0; layer--) {\n';
+  code += '        const row = GRID[layer]\n\n';
+  code += '        for (let col = 0; col < 6; col++) {\n';
+  code += '            agent.setItem(BLOCK_BY_NUM[row[col]], 1, 1)  // ★ 每格重裝 slot 1\n';
+  code += '            agent.setSlot(1)\n';
+  code += '            agent.place(FORWARD)\n';
+  code += '            if (col < 5) {\n';
+  code += '                agent.move(RIGHT, 1)\n';
+  code += '            }\n';
+  code += '        }\n\n';
+  code += '        // 回到最左邊\n';
+  code += '        agent.move(LEFT, 5)\n\n';
+  code += '        // 升一層（最後一層不用升）\n';
+  code += '        if (layer > 0) {\n';
+  code += '            agent.move(UP, 1)\n';
+  code += '        }\n';
+  code += '    }\n\n';
+  code += '    player.say("§a✔ 完成！共 48 種方塊")\n';
+  code += '})\n';
+  return code;
+}
+
+/* ============================================================
+   頁面定義
+   ============================================================ */
+const pages = [
+    { id: 'page0', type: 'intro' },
+    { id: 'page1', type: 'tutorial' },
+    { id: 'page2', type: 'gallery' },
+    { id: 'page3', type: 'editor' },
+    { id: 'page4', type: 'done' }
+];
+
+const quizAnswers = JSON.parse(localStorage.getItem('agent_pixel_quiz') || '{}');
+
+function t(key) { return i18n[currentLang][key]; }
+
+/* ============================================================
+   對話
+   ============================================================ */
+function renderDialogue(key) {
+    const lines = i18n[currentLang].dialogues[key];
+    if (!lines) return '';
+    const topic = i18n[currentLang].dialogue_topics[key] || t('dialogue_title');
+    const html = lines.map(l => `
+        <div class="dialogue-line ${l.who}">
+            <div class="speaker ${l.who}">${l.who === 'agent' ? t('agent') : t('player')}</div>
+            <div class="bubble">${l.text}</div>
+        </div>`).join('');
+    return `<div class="dialogue" data-dialogue><div class="dialogue-title">${topic}</div>${html}</div>`;
+}
+
+/* ============================================================
+   圖案格
+   ============================================================ */
+function renderPatternGrid(pattern) {
+    let html = '<div class="pattern-grid">';
+    for (let layer = 0; layer < 8; layer++) {
+        const layerNum = 8 - layer;
+        html += '<div class="pattern-row">';
+        html += `<div class="pattern-layer-label">${currentLang === 'zh_TW' ? '第' + layerNum + '層' : 'Layer ' + layerNum}</div>`;
+        for (let col = 0; col < 8; col++) {
+            const v = pattern[layer][col];
+            const info = COLORS[v] || COLORS[0];
+            html += `<div class="pixel" style="background:${info.hex};color:${info.text};">${v === 0 ? '' : v}</div>`;
+        }
+        html += '</div>';
+    }
+    html += '</div>';
+    return html;
+}
+
+/* ============================================================
+   圖案庫
+   ============================================================ */
+function renderGallery() {
+    let html = `<div class="gallery">`;
+    Object.keys(patterns).forEach(key => {
+        const p = patterns[key];
+        const name = currentLang === 'zh_TW' ? p.name_zh : p.name_en;
+        html += `<div class="pattern-card">`;
+        html += `<div class="pattern-preview">`;
+        for (let layer = 0; layer < 8; layer++) {
+            for (let col = 0; col < 8; col++) {
+                const v = p.data[layer][col];
+                const info = COLORS[v] || COLORS[0];
+                html += `<div class="cell" style="background:${info.hex};"></div>`;
+            }
+        }
+        html += `</div>`;
+        html += `<div class="pattern-name">${name}</div>`;
+        html += `<div class="pattern-desc">${currentLang === 'zh_TW' ? '聊天指令：' : 'Chat: '}${p.chat}</div>`;
+        if (p.special === 'allcolors') {
+            html += `<div style="font-size:11px;color:#7b1fa2;font-weight:700;margin-bottom:6px;">✨ 特殊：48 色一次排完（6 欄 × 8 層）</div>`;
+        }
+        html += `<button class="btn-copy" style="background:#eab308;" onclick="copyCode('${key}')">🟨 ${currentLang === 'zh_TW' ? '複製 JavaScript' : 'Copy JavaScript'}</button>`;
+        html += `<button class="btn-copy" style="background:#10b981;" onclick="copyText('${p.chat}')">💬 ${currentLang === 'zh_TW' ? '複製指令' : 'Copy Chat'}</button>`;
+        html += `</div>`;
+    });
+    html += `</div>`;
+    return html;
+}
+
+function copyCode(key) {
+    const p = patterns[key];
+    let code;
+    if (p.special === 'allcolors') {
+        code = generateAllColorsJS();
+    } else {
+        code = generateJS(p.data, p.chat);
+    }
+    copyText(code);
+}
+function copyText(text) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => alert(currentLang === 'zh_TW' ? '已複製！' : 'Copied!'));
+    } else {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        alert(currentLang === 'zh_TW' ? '已複製！' : 'Copied!');
+    }
+}
+
+/* ============================================================
+   測驗
+   ============================================================ */
+const quizData = {
+    question_zh: "小雞圖案從哪一層開始蓋？",
+    question_en: "Which layer of the chicken is built first?",
+    options_zh: ["第 1 層（最下面）", "第 8 層（最上面）", "第 4 層（中間）"],
+    options_en: ["Layer 1 (bottom)", "Layer 8 (top)", "Layer 4 (middle)"],
+    correct: 0
+};
+
+function renderQuiz() {
+    const answered = quizAnswers['tutorial'];
+    const options = currentLang === 'zh_TW' ? quizData.options_zh : quizData.options_en;
+    const optionsHtml = options.map((opt, i) => {
+        let cls = 'quiz-option';
+        if (answered !== undefined) {
+            if (i === quizData.correct) cls += ' correct';
+            else if (i === answered && answered !== quizData.correct) cls += ' wrong';
+        }
+        return `<button class="${cls}" onclick="answerQuiz(${i})" ${answered !== undefined ? 'disabled' : ''}>${opt}</button>`;
+    }).join('');
+    const fb = answered !== undefined ? (answered === quizData.correct ? 'correct' : 'wrong') : '';
+    const fbText = answered !== undefined ? (answered === quizData.correct ? t('correct') : t('wrong')) : '';
+    return `<div style="font-weight:bold;margin-bottom:10px;">${currentLang === 'zh_TW' ? quizData.question_zh : quizData.question_en}</div><div class="quiz-options">${optionsHtml}</div><div class="quiz-feedback ${fb} ${answered !== undefined ? 'show' : ''}">${fbText}</div>`;
+}
+
+function answerQuiz(selected) {
+    if (quizAnswers['tutorial'] !== undefined) return;
+    quizAnswers['tutorial'] = selected;
+    try { localStorage.setItem('agent_pixel_quiz', JSON.stringify(quizAnswers)); } catch (e) {}
+    renderPage(currentPage);
+}
+
+function renderTourBlock() {
+    return `<div class="tour-block"><div class="tour-header"><h2>${t('tour_title')}</h2><p>${t('tour_subtitle')}</p></div><button class="tour-start-btn" onclick="startTour()">${t('tour_start_btn')}</button></div>`;
+}
+
+/* ============================================================
+   首頁
+   ============================================================ */
+function renderIntroPage() {
+    const txt = currentLang === 'zh_TW' ? {
+        title: "Agent 像素畫",
+        subtitle: "Pixel Art Guide",
+        welcome: "歡迎！",
+        p1: "這是一份教你用聊天指令，讓 Agent 蓋出 8×8 像素圖案的指南。",
+        p2: "你會學到：怎麼讀圖案表、怎麼選方塊、怎麼讓 Agent 從下往上蓋圖。",
+        task: "🎯 你的任務：用聊天指令讓 Agent 蓋出小雞！",
+        story_title: "💬 故事開場",
+        story_desc: "Agent 想學蓋小雞，來看看它跟玩家說什麼。"
+    } : {
+        title: "Agent Pixel Art",
+        subtitle: "Pixel Art Guide",
+        welcome: "Welcome!",
+        p1: "This guide teaches you to use chat commands to make the Agent build 8x8 pixel art.",
+        p2: "You will learn: how to read the pattern table, pick blocks, and make the Agent build from bottom to top.",
+        task: "🎯 Your Mission: Use chat commands to make the Agent build a chicken!",
+        story_title: "💬 Story Opening",
+        story_desc: "The Agent wants to learn to build a chicken. Let us see what it says."
+    };
+
+    return `
+        <div class="card" id="intro-cover">
+            <h1>${txt.title}</h1>
+            <p style="text-align:center;color:#888;margin-bottom:18px;">${txt.subtitle}</p>
+            <div class="hero-cover">
+                <div class="hero-media">${renderPatternGrid(patterns.chick.data)}</div>
+                <div class="hero-video">
+                    <h3 style="margin-top:0;">${currentLang === 'zh_TW' ? '🐔 小雞預覽' : '🐔 Chicken Preview'}</h3>
+                    <p style="font-size:0.9em;">${currentLang === 'zh_TW' ? '這是我們今天要蓋的圖案' : 'This is what we will build today'}</p>
+                </div>
+            </div>
+            ${renderTourBlock()}
+        </div>
+        <div class="card" id="intro-welcome">
+            <h2>${txt.welcome}</h2>
+            <p>${txt.p1}</p>
+            <p>${txt.p2}</p>
+            <div class="highlight">${txt.task}</div>
+        </div>
+        <div class="card" id="intro-story">
+            <h2>${txt.story_title}</h2>
+            <p>${txt.story_desc}</p>
+            ${renderDialogue('story')}
+        </div>
+    `;
+}
+
+/* ============================================================
+   教學頁
+   ============================================================ */
+function renderTutorialPage() {
+    const txt = currentLang === 'zh_TW' ? {
+        badge: "教學",
+        title: "小雞教學",
+        learnExplain: "<strong>這一步要做什麼？</strong><br>認識像素畫——用 8×8 的方格拼出圖案。每一層從下往上蓋，數字代表要放的方塊。",
+        playExplain: "回答下面的問題，看看你有沒有真的懂。",
+        watchExplain: "<strong>這一步要做什麼？</strong><br>最後看一段影片，複習整個任務。",
+        patternTitle: "🐔 小雞圖案（8 層 × 8 格）",
+        codeName: "chick.js",
+        codeDesc: "完整程式碼，複製到 MakeCode 就能用"
+    } : {
+        badge: "Tutorial",
+        title: "Chicken Tutorial",
+        learnExplain: "<strong>What to do?</strong><br>Learn pixel art — 8x8 squares make a picture. Build layer by layer from the bottom, numbers mean blocks.",
+        playExplain: "Answer the question to check your understanding.",
+        watchExplain: "<strong>What to do?</strong><br>Watch a video to review the whole mission.",
+        patternTitle: "🐔 Chicken Pattern (8x8)",
+        codeName: "chick.js",
+        codeDesc: "Full code, paste to MakeCode"
+    };
+
+    const chickenGrid = renderPatternGrid(patterns.chick.data);
+    const codeSample = generateJS(patterns.chick.data, 'chick');
+
+    return `
+        <div class="card">
+            <span class="step-badge">${txt.badge}</span>
+            <h2>${txt.title}</h2>
+            <div class="video-hint">${t('video_hint')}</div>
+
+            <div class="step-block learn">
+                <div class="step-header"><span class="step-num">1</span> ${t('step_learn')}</div>
+                <div class="step-explain">${txt.learnExplain}</div>
+                <h3>${txt.patternTitle}</h3>
+                ${chickenGrid}
+                ${renderDialogue('learn1')}
+                ${renderDialogue('learn2')}
+                ${renderDialogue('learn3')}
+                <div style="margin:16px 0;padding:16px;background:#f8f9fa;border-radius:10px;border:1px solid #e0e0e0;">
+                    <div style="font-size:0.95em;font-weight:bold;color:#7b1fa2;margin-bottom:12px;">💻 ${t('code_title')}</div>
+                    <pre style="margin:0;background:#1e1e1e;color:#e2e8f0;padding:12px;border-radius:6px;font-family:'Courier New',monospace;font-size:0.82em;line-height:1.6;overflow-x:auto;white-space:pre;">${codeSample.replace(/</g,'&lt;')}</pre>
+                    <div style="font-size:0.88em;line-height:1.6;color:#555;padding:8px 2px 4px;"><strong style="color:#7b1fa2;display:block;margin-bottom:4px;">${txt.codeName}</strong>${txt.codeDesc}</div>
+                </div>
+            </div>
+
+            <div class="step-block play">
+                <div class="step-header"><span class="step-num">2</span> ${t('step_play')}</div>
+                <div class="step-explain">${txt.playExplain}</div>
+                ${renderQuiz()}
+            </div>
+
+            <div class="step-block watch">
+                <div class="step-header"><span class="step-num">3</span> ${t('step_watch')}</div>
+                <div class="step-explain">${txt.watchExplain}</div>
+                <div class="video-box">
+                    <div class="video-title">🎬 ${txt.title}</div>
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/OAlvYqkqVPU" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/* ============================================================
+   圖案庫頁
+   ============================================================ */
+function renderGalleryPage() {
+    return `
+        <div class="card">
+            <h2>${currentLang === 'zh_TW' ? '📚 圖案庫' : '📚 Pattern Gallery'}</h2>
+            <p>${currentLang === 'zh_TW' ? '點按鈕可以複製程式或聊天指令。' : 'Click a button to copy the code or chat command.'}</p>
+            ${renderGallery()}
+        </div>
+    `;
+}
+
+/* ============================================================
+   編輯器頁
+   ============================================================ */
+function renderEditorPage() {
+    return `
+        <div class="card">
+            <h2>${currentLang === 'zh_TW' ? '✏️ 編輯器' : '✏️ Editor'}</h2>
+            <p style="font-size:0.9em;color:#888;margin-bottom:14px;">
+                ${currentLang === 'zh_TW' ? '① 選圖案 ② 選顏色（或選 0 留空） ③ 點畫布改（右鍵清空格子） ④ 複製程式' : '① Pick pattern ② Pick color (or 0 = empty) ③ Click to paint (right-click clears) ④ Copy code'}
+            </p>
+
+            <div id="pattern-selector" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:18px;"></div>
+
+            <div id="palette-container"></div>
+
+            <div style="display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;margin-top:18px;">
+                <div id="editor-canvas" style="display:grid;grid-template-columns:repeat(8,42px);gap:3px;background:#0f172a;padding:12px;border-radius:12px;"></div>
+                <div style="display:flex;flex-direction:column;gap:8px;min-width:200px;">
+                    <button onclick="clearEditorCanvas()" style="border:none;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer;background:#f1f5f9;color:#64748b;font-family:inherit;">🗑️ ${currentLang === 'zh_TW' ? '清空畫布' : 'Clear'}</button>
+                    <button onclick="copyEditorCode()" style="border:none;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer;background:#eab308;color:#fff;font-family:inherit;">📋 ${currentLang === 'zh_TW' ? '複製 JavaScript' : 'Copy JavaScript'}</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/* ============================================================
+   完成頁
+   ============================================================ */
+function renderDonePage() {
+    const txt = currentLang === 'zh_TW' ? {
+        title: "🎉 完成！",
+        p1: "你已經學會用聊天指令讓 Agent 蓋出小雞！",
+        p2: "試試看其他圖案：狐狸、苦力怕、蘋果、豬……",
+        p3: "你也可以用編輯器畫出自己的圖案！"
+    } : {
+        title: "🎉 Complete!",
+        p1: "You learned to use chat commands to make the Agent build a chicken!",
+        p2: "Try other patterns: fox, creeper, apple, pig...",
+        p3: "You can also draw your own pattern in the editor!"
+    };
+
+    return `
+        <div class="card">
+            <h2>${txt.title}</h2>
+            <p>${txt.p1}</p>
+            <p>${txt.p2}</p>
+            <p>${txt.p3}</p>
+            ${renderDialogue('done')}
+        </div>
+    `;
+}
+
+/* ============================================================
+   渲染主頁
+   ============================================================ */
+function renderPage(index) {
+    const page = pages[index];
+    const main = document.getElementById('mainContent');
+    let content = '';
+    if (page.type === 'intro') content = renderIntroPage();
+    else if (page.type === 'tutorial') content = renderTutorialPage();
+    else if (page.type === 'gallery') content = renderGalleryPage();
+    else if (page.type === 'editor') content = renderEditorPage();
+    else if (page.type === 'done') content = renderDonePage();
+
+    main.innerHTML = `<div class="page active" id="${page.id}">${content}</div>
+        <div class="page-nav">
+            <button onclick="changePage(-1)" ${index === 0 ? 'disabled' : ''}>${t('prev')}</button>
+            <button onclick="changePage(1)" ${index === pages.length - 1 ? 'disabled' : ''} class="primary">${t('next')}</button>
+        </div>`;
+    initSpeakButtons();
+    updateProgress();
+    updateSidebar();
+
+    if (page.type === 'editor') {
+        initEditor();
+    }
+}
+
+function updateSidebar() {
+    const nav = document.getElementById('sidebarNav');
+    nav.innerHTML = '';
+    i18n[currentLang].tasks.forEach((task, i) => {
+        const btn = document.createElement('button');
+        btn.className = i === currentPage ? 'active' : '';
+        btn.innerHTML = `<span class="num">${i}</span> ${task}`;
+        btn.onclick = () => showPage(i);
+        nav.appendChild(btn);
+    });
+}
+
+function updateProgress() {
+    const percent = ((currentPage + 1) / pages.length * 100);
+    document.getElementById('progressFill').style.width = percent + '%';
+    document.getElementById('progressText').textContent = currentLang === 'zh_TW'
+        ? `第 ${currentPage + 1} 頁 / 共 ${pages.length} 頁`
+        : `Page ${currentPage + 1} / ${pages.length}`;
+}
+
+function showPage(index) {
+    if (index < 0 || index >= pages.length) return;
+    if (tourActive) endTour();
+    if (isSpeaking) stopSpeaking();
+    currentPage = index;
+    renderPage(index);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function changePage(step) {
+    const next = currentPage + step;
+    if (next >= 0 && next < pages.length) showPage(next);
+}
+
+/* ============================================================
+   對話語音
+   ============================================================ */
+function initSpeakButtons() {
+    document.querySelectorAll('.dialogue').forEach(dialogue => {
+        if (dialogue.querySelector('.speak-btn')) return;
+        const btn = document.createElement('button');
+        btn.className = 'speak-btn';
+        btn.textContent = currentLang === 'zh_TW' ? '▶ 播放對話' : '▶ Play';
+        btn.onclick = () => toggleSpeak(dialogue, btn);
+        dialogue.appendChild(btn);
+    });
+}
+
+function toggleSpeak(dialogue, btn) {
+    if (isSpeaking) { stopSpeaking(); return; }
+    const lines = dialogue.querySelectorAll('.dialogue-line');
+    if (lines.length === 0) return;
+    isSpeaking = true;
+    btn.classList.add('playing');
+    btn.textContent = currentLang === 'zh_TW' ? '⏸ 停止' : '⏸ Stop';
+    playLines(lines, 0, btn, dialogue);
+}
+
+function playLines(lines, index, btn, dialogueEl) {
+    if (index >= lines.length || !isSpeaking) { stopSpeaking(); return; }
+    const line = lines[index];
+    const bubble = line.querySelector('.bubble');
+    const speaker = line.querySelector('.speaker');
+    if (!bubble) { playLines(lines, index + 1, btn, dialogueEl); return; }
+    if (dialogueEl) dialogueEl.querySelectorAll('.dialogue-line').forEach(l => l.classList.remove('speaking'));
+    line.classList.add('speaking');
+    line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    const isZh = currentLang === 'zh_TW';
+    const isAgent = speaker && speaker.classList.contains('agent');
+    const text = bubble.textContent.trim();
+    const u = new SpeechSynthesisUtterance(text);
+
+    if (isZh) {
+        u.lang = 'zh-TW';
+        const voice = isAgent ? voiceZhAgent : voiceZhPlayer;
+        if (voice) u.voice = voice;
+        const same = voiceZhAgent && voiceZhPlayer && voiceZhAgent.voiceURI === voiceZhPlayer.voiceURI;
+        u.pitch = isAgent ? (same ? 0.6 : 0.95) : (same ? 1.4 : 1.05);
+        u.rate = isAgent ? 1.25 : 1.45;
+    } else {
+        u.lang = 'en-US';
+        const voice = isAgent ? voiceEnAgent : voiceEnPlayer;
+        if (voice) u.voice = voice;
+        const same = voiceEnAgent && voiceEnPlayer && voiceEnAgent.voiceURI === voiceEnPlayer.voiceURI;
+        u.pitch = isAgent ? (same ? 0.7 : 1.0) : (same ? 1.3 : 1.0);
+        u.rate = same ? 0.9 : 1.0;
+    }
+
+    let advanced = false;
+    const advance = () => {
+        if (advanced) return; advanced = true;
+        setTimeout(() => playLines(lines, index + 1, btn, dialogueEl), 120);
+    };
+    u.onend = advance; u.onerror = advance;
+    speechSynthesis.speak(u);
+}
+
+function stopSpeaking() {
+    isSpeaking = false;
+    speechSynthesis.cancel();
+    document.querySelectorAll('.speak-btn').forEach(b => {
+        b.classList.remove('playing');
+        b.textContent = currentLang === 'zh_TW' ? '▶ 播放對話' : '▶ Play';
+    });
+    document.querySelectorAll('.dialogue-line').forEach(l => l.classList.remove('speaking'));
+}
+
+/* ============================================================
+   編輯器
+   ============================================================ */
+let editorColor = 1;
+let editorPatternKey = 'chick';
+let editorPattern = [];
+
+function initEditor() {
+    if (editorPattern.length === 0) {
+        loadEditorPattern('chick');
+    }
+    renderEditorSelector();
+    renderEditorPalette();
+    renderEditorCanvas();
+}
+
+function loadEditorPattern(key) {
+    const src = patterns[key].data;
+    editorPattern = [];
+    for (let i = 0; i < 8; i++) editorPattern.push(src[i].slice());
+    editorPatternKey = key;
+}
+
+function renderEditorSelector() {
+    const container = document.getElementById('pattern-selector');
+    if (!container) return;
+    container.innerHTML = '';
+    Object.keys(patterns).forEach(key => {
+        const p = patterns[key];
+        const btn = document.createElement('button');
+        const active = key === editorPatternKey;
+        btn.style.cssText = 'border:2px solid transparent;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;background:' + (active ? '#3b82f6' : '#dbeafe') + ';color:' + (active ? '#fff' : '#1e40af') + ';';
+        btn.textContent = currentLang === 'zh_TW' ? p.name_zh : p.name_en;
+        btn.onclick = () => {
+            loadEditorPattern(key);
+            renderEditorSelector();
+            renderEditorCanvas();
+        };
+        container.appendChild(btn);
+    });
+}
+
+function renderEditorPalette() {
+    const container = document.getElementById('palette-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const emptySection = document.createElement('div');
+    emptySection.style.marginBottom = '16px';
+
+    const emptyTitle = document.createElement('div');
+    emptyTitle.style.cssText = 'font-size:13px;font-weight:700;margin-bottom:6px;';
+    emptyTitle.textContent = currentLang === 'zh_TW'
+        ? '⬜ 留空（不蓋方塊）'
+        : '⬜ Empty (no block)';
+    emptySection.appendChild(emptyTitle);
+
+    const emptyPalette = document.createElement('div');
+    emptyPalette.style.cssText = 'display:grid;grid-template-columns:repeat(16,1fr);gap:4px;';
+
+    const emptyItem = document.createElement('div');
+    const emptyActive = editorColor === 0;
+    emptyItem.style.cssText =
+        'aspect-ratio:1;border-radius:5px;cursor:pointer;' +
+        'display:flex;align-items:center;justify-content:center;' +
+        'font-family:monospace;font-size:11px;font-weight:700;' +
+        'color:#475569;transition:all .1s;' +
+        'border:' + (emptyActive ? '3px solid #0f172a' : '3px solid #94a3b8') + ';' +
+        'background:repeating-linear-gradient(45deg,#e2e8f0 0 6px,#f8fafc 6px 12px);';
+    emptyItem.textContent = '0';
+    emptyItem.title = currentLang === 'zh_TW'
+        ? '留空（按格子可清除）'
+        : 'Empty (click cell to clear)';
+    emptyItem.onmouseenter = () => { emptyItem.style.transform = 'scale(1.15)'; emptyItem.style.zIndex = '1'; };
+    emptyItem.onmouseleave = () => { emptyItem.style.transform = 'scale(1)'; emptyItem.style.zIndex = '0'; };
+    emptyItem.onclick = () => {
+        editorColor = 0;
+        renderEditorPalette();
+    };
+    emptyPalette.appendChild(emptyItem);
+    emptySection.appendChild(emptyPalette);
+    container.appendChild(emptySection);
+
+    Object.keys(CATEGORIES).forEach(key => {
+        const cat = CATEGORIES[key];
+        const section = document.createElement('div');
+        section.style.marginBottom = '14px';
+
+        const title = document.createElement('div');
+        title.style.cssText = 'font-size:13px;font-weight:700;margin-bottom:6px;';
+        title.textContent = (currentLang === 'zh_TW' ? cat.label_zh : cat.label_en) + ' (' + cat.start + '~' + (cat.start + 15) + ')';
+        section.appendChild(title);
+
+        const palette = document.createElement('div');
+        palette.style.cssText = 'display:grid;grid-template-columns:repeat(16,1fr);gap:4px;';
+
+        cat.colors.forEach((c, i) => {
+            const num = cat.start + i;
+            const info = COLORS[num];
+            const item = document.createElement('div');
+            const active = num === editorColor;
+            item.style.cssText = 'aspect-ratio:1;border-radius:5px;border:' + (active ? '3px solid #0f172a' : '3px solid transparent') + ';cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:10px;font-weight:700;background:' + info.hex + ';color:' + info.text + ';transition:all .1s;';
+            item.textContent = num;
+            item.onmouseenter = () => { item.style.transform = 'scale(1.15)'; item.style.zIndex = '1'; };
+            item.onmouseleave = () => { item.style.transform = 'scale(1)'; item.style.zIndex = '0'; };
+            item.onclick = () => {
+                editorColor = num;
+                renderEditorPalette();
+            };
+            palette.appendChild(item);
+        });
+        section.appendChild(palette);
+        container.appendChild(section);
+    });
+}
+
+function renderEditorCanvas() {
+    const container = document.getElementById('editor-canvas');
+    if (!container) return;
+    container.innerHTML = '';
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            (function (row, col) {
+                const v = editorPattern[row][col];
+                const info = COLORS[v] || COLORS[0];
+                const cell = document.createElement('div');
+                let cellBg = info.hex;
+                if (v === 0) {
+                    cellBg = 'repeating-linear-gradient(45deg,#1e293b 0 6px,#0f172a 6px 12px)';
+                }
+                cell.style.cssText = 'width:42px;height:42px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:11px;font-weight:700;background:' + cellBg + ';color:' + info.text + ';border:2px solid transparent;transition:all .1s;';
+                cell.textContent = v === 0 ? '' : v;
+                cell.onclick = () => {
+                    editorPattern[row][col] = editorColor;
+                    renderEditorCanvas();
+                };
+                cell.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    editorPattern[row][col] = 0;
+                    renderEditorCanvas();
+                };
+                container.appendChild(cell);
+            })(row, col);
+        }
+    }
+}
+
+function clearEditorCanvas() {
+    for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) editorPattern[i][j] = 0;
+    renderEditorCanvas();
+    alert(currentLang === 'zh_TW' ? '已清空' : 'Cleared');
+}
+
+function copyEditorCode() {
+    const hasContent = editorPattern.some(row => row.some(v => v > 0));
+    if (!hasContent) {
+        alert(currentLang === 'zh_TW' ? '畫布是空的！' : 'Canvas is empty!');
+        return;
+    }
+    const code = generateJS(editorPattern, 'myart');
+    copyText(code);
+}
+
+/* ============================================================
+   導覽（跨頁版）
+   ============================================================ */
+let tourActive = false;
+let tourStepIndex = 0;
+let tourPaused = false;
+let tourFallbackTimer = null;
+const TOUR_FALLBACK_MS = 30000;
+
+function speakTourText(text, onDone) {
+    speechSynthesis.cancel();
+    const wave = document.getElementById('soundWave');
+    if (wave) wave.classList.add('playing');
+    setTimeout(() => {
+        if (!text) { if (wave) wave.classList.remove('playing'); if (onDone) onDone(); return; }
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = currentLang === 'zh_TW' ? 'zh-TW' : 'en-US';
+        const v = currentLang === 'zh_TW' ? getChineseVoice() : getEnglishVoice();
+        if (v) u.voice = v;
+        u.pitch = 1.05; u.rate = 1.05;
+        let advanced = false;
+        const advance = () => { if (advanced) return; advanced = true; if (wave) wave.classList.remove('playing'); if (onDone) onDone(); };
+        u.onend = advance; u.onerror = advance;
+        speechSynthesis.speak(u);
+    }, 300);
+}
+
+function startTour() {
+    if (isSpeaking) stopSpeaking();
+    if (currentPage !== 0) { showPage(0); setTimeout(_beginTour, 700); }
+    else _beginTour();
+}
+
+function _beginTour() {
+    tourActive = true;
+    tourStepIndex = 0;
+    tourPaused = false;
+    document.getElementById('tourOverlay').classList.add('active');
+    document.getElementById('tourPanel').classList.add('active');
+    document.getElementById('tourStopFloat').classList.add('show');
+    document.getElementById('tourPauseBtn').textContent = '⏸';
+    goToTourStep(0);
+}
+
+function goToTourStep(index) {
+    if (!tourActive) return;
+    const steps = t('tour_steps');
+    if (index >= steps.length) { endTour(); return; }
+    tourStepIndex = index;
+    const step = steps[index];
+    const myIndex = index;
+    clearTimeout(tourFallbackTimer);
+
+    const targetPage = (step.page !== undefined) ? step.page : currentPage;
+    if (targetPage !== currentPage) {
+        if (isSpeaking) stopSpeaking();
+        currentPage = targetPage;
+        renderPage(targetPage);
+        setTimeout(() => {
+            if (!tourActive || tourPaused || tourStepIndex !== myIndex) return;
+            _tourSpeakAndHighlight(step, myIndex);
+        }, 900);
+    } else {
+        _tourSpeakAndHighlight(step, myIndex);
+    }
+}
+
+function _tourSpeakAndHighlight(step, myIndex) {
+    speakTourText(step.text, () => {
+        if (!tourActive || tourPaused || tourStepIndex !== myIndex) return;
+        setTimeout(() => {
+            if (tourActive && !tourPaused && tourStepIndex === myIndex) {
+                goToTourStep(tourStepIndex + 1);
+            }
+        }, 600);
+    });
+    tourFallbackTimer = setTimeout(() => {
+        if (tourActive && !tourPaused && tourStepIndex === myIndex) {
+            speechSynthesis.cancel();
+            goToTourStep(tourStepIndex + 1);
+        }
+    }, TOUR_FALLBACK_MS);
+
+    if (!step.target) {
+        document.getElementById('tourSpotlight').style.width = '0px';
+        document.getElementById('tourCursor').classList.remove('show');
+        return;
+    }
+    const el = document.querySelector(step.target);
+    if (!el) { goToTourStep(myIndex + 1); return; }
+
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+        if (!tourActive || tourStepIndex !== myIndex) return;
+        const rect = el.getBoundingClientRect();
+        const pad = 12;
+        const sp = document.getElementById('tourSpotlight');
+        sp.style.left = (rect.left - pad) + 'px';
+        sp.style.top = (rect.top - pad) + 'px';
+        sp.style.width = (rect.width + pad * 2) + 'px';
+        sp.style.height = (rect.height + pad * 2) + 'px';
+        const cursor = document.getElementById('tourCursor');
+        cursor.style.left = (rect.left + rect.width / 2) + 'px';
+        cursor.style.top = (rect.top + rect.height / 2) + 'px';
+        cursor.classList.add('show');
+    }, 700);
+}
+
+function nextTourStep() {
+    clearTimeout(tourFallbackTimer);
+    speechSynthesis.cancel();
+    document.getElementById('soundWave').classList.remove('playing');
+    goToTourStep(tourStepIndex + 1);
+}
+
+function toggleTourPause() {
+    tourPaused = !tourPaused;
+    document.getElementById('tourPauseBtn').textContent = tourPaused ? '▶' : '⏸';
+    const wave = document.getElementById('soundWave');
+    if (tourPaused) {
+        clearTimeout(tourFallbackTimer);
+        speechSynthesis.cancel();
+        if (wave) wave.classList.remove('playing');
+    } else {
+        const step = t('tour_steps')[tourStepIndex];
+        if (!step) return;
+        const myIndex = tourStepIndex;
+        _tourSpeakAndHighlight(step, myIndex);
+    }
+}
+
+function endTour() {
+    tourActive = false;
+    tourPaused = false;
+    clearTimeout(tourFallbackTimer);
+    speechSynthesis.cancel();
+    document.getElementById('tourOverlay').classList.remove('active');
+    document.getElementById('tourPanel').classList.remove('active');
+    document.getElementById('tourStopFloat').classList.remove('show');
+    document.getElementById('soundWave').classList.remove('playing');
+    document.getElementById('tourCursor').classList.remove('show');
+}
+
+/* ============================================================
+   其他
+   ============================================================ */
+function init() {
+    document.getElementById('sidebarSubtitle').textContent = t('sidebar_subtitle');
+    document.getElementById('progressLabel').textContent = t('progress_label');
+    const isDark = document.body.classList.contains('dark');
+    document.getElementById('darkBtn').textContent = isDark ? t('dark_off') : t('dark_on');
+    document.getElementById('langSelect').value = currentLang;
+    updateSidebar();
+    renderPage(currentPage);
+    updateProgress();
+}
+
+function switchLang(lang) {
+    if (tourActive) endTour();
+    if (isSpeaking) stopSpeaking();
+    currentLang = lang;
+    localStorage.setItem('agent_pixel_lang', lang);
+    loadVoices();
+    init();
+}
+
+function toggleDark() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    document.getElementById('darkBtn').textContent = isDark ? t('dark_off') : t('dark_on');
+    localStorage.setItem('agent_pixel_dark', isDark ? '1' : '0');
+}
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+}
+window.addEventListener('scroll', () => {
+    document.getElementById('backTop').classList.toggle('show', window.scrollY > 300);
+});
+document.addEventListener('keydown', (e) => {
+    if (!tourActive) return;
+    if (e.key === 'Escape') endTour();
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextTourStep(); }
+    if (e.key === 'p' || e.key === 'P') toggleTourPause();
+});
+
+window.addEventListener('load', () => {
+    const savedLang = localStorage.getItem('agent_pixel_lang');
+    if (savedLang) currentLang = savedLang;
+    if (localStorage.getItem('agent_pixel_dark') === '1') document.body.classList.add('dark');
+    init();
+});
+</script>
+
+</body>
+</html>
