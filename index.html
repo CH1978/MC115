@@ -44,6 +44,16 @@ img{max-width:100%; display:block;}
 .topbar nav a.ext{background:rgba(0,0,0,.18); font-weight:600;}
 .topbar nav a.highlight{background:var(--warm); color:#1a1a1a; font-weight:700;}
 .topbar nav a.highlight:hover{background:#ffe066;}
+
+/* MakeCode 導覽按鈕 */
+.topbar nav a.makecode{
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  color: #fff; font-weight: 700;
+}
+.topbar nav a.makecode:hover{
+  background: linear-gradient(135deg, #4a92c9, #25b3a6);
+}
+
 .menu-toggle{display:none; background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; margin-left:auto;}
 
 /* ============ Hero ============ */
@@ -76,6 +86,8 @@ img{max-width:100%; display:block;}
 .hero .cta a.ghost:hover{background:rgba(255,255,255,.25);}
 .hero .cta a.warm{background:var(--warm); color:#1a1a1a;}
 .hero .cta a.warm:hover{background:#ffe066; transform:translateY(-2px);}
+.hero .cta a.makecode{background:linear-gradient(135deg,var(--blue),var(--cyan)); color:#fff; border:2px solid rgba(255,255,255,.4);}
+.hero .cta a.makecode:hover{filter:brightness(1.08); transform:translateY(-2px);}
 
 /* ============ 節慶 banner ============ */
 .festival-banner{
@@ -185,6 +197,27 @@ select{cursor:pointer;}
 .lesson-card.guide-card .lesson-link:hover{
   background:#f0f8ec;
 }
+
+/* 課程表裡的 MakeCode 卡片 */
+.lesson-card.makecode-card{
+  background: linear-gradient(135deg, #5ba3d9, #2ec4b6);
+  color: #fff; border: none;
+}
+.lesson-card.makecode-card:hover{
+  box-shadow: 0 8px 24px rgba(91,163,217,.4);
+}
+.lesson-card.makecode-card .num{ color: rgba(255,255,255,.95); }
+.lesson-card.makecode-card .date{ color: #fff; }
+.lesson-card.makecode-card .guide-sub{
+  font-size: .85rem; color: rgba(255,255,255,.9); margin-bottom: 12px;
+}
+.lesson-card.makecode-card .lesson-link{
+  background: #fff; color: #2a6fa8;
+}
+.lesson-card.makecode-card .lesson-link:hover{
+  background: #eaf4fc;
+}
+
 .lesson-card .num{font-size:.75rem; font-weight:800; color:var(--green-d); letter-spacing:1px; margin-bottom:4px;}
 .lesson-card.locked .num{color:#aaa;}
 .lesson-card .date{font-size:1.28rem; font-weight:800; margin-bottom:12px;}
@@ -335,6 +368,28 @@ select{cursor:pointer;}
   display: block;
 }
 
+/* ============ MakeCode 專屬區塊 ============ */
+.makecode-panel{
+  background: #fff;
+  border: 2px solid var(--blue);
+  border-radius: 16px;
+  padding: 36px 32px;
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+  box-shadow: 0 8px 24px rgba(91,163,217,.15);
+}
+.makecode-icon-big{ font-size: 3.5rem; margin-bottom: 12px; }
+.makecode-panel h3{ margin: 0 0 12px; font-size: 1.3rem; color: var(--text); }
+.makecode-panel p{ color: var(--muted); margin: 0 0 20px; line-height: 1.7; }
+.makecode-panel .makecode-actions{ margin: 20px 0 10px; }
+.makecode-panel .btn{
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 32px; font-size: 1rem; background: var(--blue);
+}
+.makecode-panel .btn:hover{ background: #4a92c9; }
+.makecode-panel .small{ font-size: .82rem; color: var(--muted); margin: 16px 0 0; }
+
 /* ============ 節慶活動 ============ */
 .festival-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px;}
 .festival-card{
@@ -434,6 +489,7 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
   .carousel3d-wrap{ height: 340px; }
   .carousel3d{ width: 170px; height: 240px; margin: -120px 0 0 -85px; }
   .works-iframe-wrap{ height: 560px; }
+  .makecode-panel{ padding: 28px 20px; }
 }
 @media(max-width:480px){
   .hero .cta a{width:100%;}
@@ -455,6 +511,7 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
       <a data-go="home">首頁</a>
       <a href="lesson01/index.html" class="highlight">📖 遊戲說明</a>
       <a data-go="lessons">課程</a>
+      <a href="https://minecraft.makecode.com/" target="_blank" rel="noopener" class="makecode">🧩 MakeCode</a>
       <a data-go="gallery3d">相簿</a>
       <a data-go="works">藝廊</a>
       <a data-go="festival">節慶</a>
@@ -474,6 +531,7 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
     <div class="cta">
       <a href="lesson01/index.html" class="warm">📖 遊戲說明</a>
       <a class="primary" data-go="student-login">🎒 我是學生，領帳號 →</a>
+      <a href="https://minecraft.makecode.com/" target="_blank" rel="noopener" class="makecode">🧩 MakeCode 編輯器</a>
       <a class="ghost" data-go="gallery3d">📸 看相簿</a>
     </div>
   </div>
@@ -516,6 +574,7 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
     <ul class="announce-list" id="announceList">
       <li><span class="date">9/23</span><span>9/30 第一堂課開始，請記得帶自己的 Microsoft 帳號密碼卡。</span></li>
       <li><span class="date">9/30</span><span>本學期共 12 堂課，最後一堂（12/16）。</span></li>
+      <li><span class="date">10/01</span><span>🧩 新增 MakeCode 積木程式編輯器入口，點導覽列就能用瀏覽器寫程式！</span></li>
     </ul>
   </div>
 </section>
@@ -526,6 +585,32 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
     <h2>📅 課程行事曆</h2>
     <p class="sub">🔒 請先在上方<strong>領取帳號</strong>，登入後才能看課程內容。</p>
     <div class="lesson-grid" id="lessonGrid"></div>
+  </div>
+</section>
+
+<!-- ============ MakeCode 編程平台 ============ -->
+<section id="makecode">
+  <div class="wrap">
+    <h2>🧩 MakeCode 積木程式</h2>
+    <p class="sub">
+      用積木寫程式，直接命令 Minecraft 裡的 Agent 蓋房子、挖礦、種田。
+    </p>
+
+    <div class="makecode-panel">
+      <div class="makecode-icon-big">🧩</div>
+      <h3>Minecraft 積木程式編輯器</h3>
+      <p>
+        打開瀏覽器就能寫程式，不用安裝任何東西。<br>
+        從拖拉積木開始，慢慢進階到 JavaScript，<br>
+        搭配教育版帳號，程式碼可以直接在遊戲裡執行。
+      </p>
+      <div class="makecode-actions">
+        <a href="https://minecraft.makecode.com/" target="_blank" rel="noopener" class="btn">
+          🚀 開啟 MakeCode 編輯器 ↗
+        </a>
+      </div>
+      <p class="small">💡 登入 Microsoft 帳號後可以存檔、分享作品</p>
+    </div>
   </div>
 </section>
 
@@ -595,6 +680,12 @@ footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
         <span class="cta">看第 12 堂課 →</span>
       </div>
     </div>
+    <p class="sub" style="text-align:center;margin-top:20px;">
+      🧩 做節慶機關時可以打開
+      <a href="https://minecraft.makecode.com/" target="_blank" rel="noopener"
+         style="color:var(--green-d);text-decoration:underline;font-weight:700;">MakeCode 編輯器</a>
+      邊做邊試
+    </p>
   </div>
 </section>
 
@@ -692,6 +783,7 @@ const CONFIG = {
   email           : "chinghungw@example.com",
   guideUrl        : "lesson01/index.html",
   teacherFolder   : "https://drive.google.com/drive/folders/1tBPscAJWA_-qo6QXlHSnLBhcXGaX-j_b",
+  makecode        : "https://minecraft.makecode.com/",
 };
 
 /* ★ 12 堂課 */
@@ -866,6 +958,21 @@ function renderLessons(){
   `;
   box.appendChild(guideCard);
 
+  // ↓ MakeCode 卡片
+  const mcCard = document.createElement('a');
+  mcCard.className = 'lesson-card makecode-card';
+  mcCard.href = CONFIG.makecode;
+  mcCard.target = '_blank';
+  mcCard.rel = 'noopener';
+  mcCard.innerHTML = `
+    <div class="num">🧩 積木程式</div>
+    <div class="date">MakeCode</div>
+    <div class="guide-sub">Minecraft 程式編輯器</div>
+    <div class="lesson-link">▶ 開啟 ↗</div>
+  `;
+  box.appendChild(mcCard);
+  // ↑ MakeCode 卡片
+
   LESSONS.forEach((L, i) => {
     let unlocked, lockMsg = '';
     if (isTeacher) {
@@ -1025,6 +1132,12 @@ function showResult(s, scroll = true){
          class="btn full"
          style="margin-top:10px;background:#f0c840;color:#1a1a1a;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;">
         👀 看北極熊老師示範作品
+      </a>
+
+      <a href="${CONFIG.makecode}" target="_blank" rel="noopener"
+         class="btn full"
+         style="margin-top:10px;background:linear-gradient(135deg,#5ba3d9,#2ec4b6);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;">
+        🧩 打開 MakeCode 寫程式 ↗
       </a>
 
       <p style="text-align:center;margin:16px 0 0;color:var(--muted);font-size:.83rem;">
