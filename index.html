@@ -982,7 +982,7 @@ function renderLessons(){
       lockMsg = '🔒 請先登入領取帳號';
     } else {
       unlocked = today >= L.unlock;
-      lockMsg = '🔒 上課前一天開放';
+      lockMsg = '';   // 已登入但未解鎖：不顯示任何提示
     }
 
     const card = document.createElement('div');
@@ -1003,7 +1003,7 @@ function renderLessons(){
       } else {
         inner += `<div class="lesson-nolink">尚未上傳</div>`;
       }
-    } else {
+    } else if(lockMsg){
       inner += `<div class="lesson-locked">${lockMsg}</div>`;
     }
 
