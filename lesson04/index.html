@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🎃 萬聖節像素畫展示盒 v2.6</title>
+<style>
+:root { --primary:#FF8C00; --primary-hover:#E67E22; --secondary:#8A2BE2; --secondary-hover:#7A1BCC; --bg:#1A0B2E; --card:#2D1B4E; --text:#F8F8F2; --heading:#FFD700; --border:#4A2C82; --muted:#A995C4; --sidebar:#12061F; --panel-bg:rgba(0,0,0,0.15); --empty-a:#1A0B2E; --empty-b:#2D1B4E; }
+body.light-mode { --bg:#F3E8FF; --card:#FFFFFF; --text:#4A2C82; --heading:#FF8C00; --border:#D8B4E2; --muted:#8A2BE2; --sidebar:#E9D5FF; --panel-bg:rgba(0,0,0,0.03); --empty-a:#E9D5FF; --empty-b:#D8B4E2; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Segoe UI','Microsoft JhengHei',sans-serif; background:var(--bg); color:var(--text); display:flex; margin:0; height:100vh; overflow:hidden; }
+.sidebar { width:260px; background:var(--sidebar); padding:20px 10px; box-sizing:border-box; overflow-y:auto; flex-shrink:0; border-right:2px solid var(--border); }
+.sidebar button { width:100%; padding:15px; margin-bottom:8px; background:rgba(255,255,255,0.05); border:2px solid transparent; color:var(--text); text-align:left; cursor:pointer; border-radius:12px; font-size:15px; font-family:inherit; font-weight:bold; transition:.2s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sidebar button:hover { background:rgba(255,255,255,0.1); border-color:var(--secondary); transform:translateX(5px); }
+.sidebar button.active { background:var(--primary); color:#000; border-color:#FFF; box-shadow:0 4px 0 #B35A00; transform:translateY(-2px); }
+.main { flex:1; padding:25px; display:flex; flex-direction:column; overflow-y:auto; }
+h1 { margin-bottom:15px; color:var(--heading); font-size:1.9em; text-shadow:2px 2px 0 rgba(0,0,0,0.5); }
+.card { background:var(--card); border-radius:20px; padding:25px; max-width:1400px; margin:0 auto; box-shadow:0 10px 30px rgba(0,0,0,0.5); border:2px solid var(--border); display:flex; gap:25px; align-items:stretch; min-height:600px; }
+.left-panel { flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; align-items:center; }
+.right-panel { flex:0 0 380px; background:var(--panel-bg); padding:20px; border-radius:15px; border:2px dashed var(--border); display:flex; flex-direction:column; gap:15px; overflow-y:auto; }
+.canvas-wrap { display:flex; justify-content:center; margin:20px 0; padding:20px; background:rgba(0,0,0,0.3); border-radius:15px; border:2px inset var(--border); box-shadow:inset 0 0 20px rgba(0,0,0,0.8); overflow:auto; width:100%; min-height:400px; align-items:center; flex:1; }
+.canvas { display:grid; gap:2px; background:var(--border); padding:2px; border-radius:6px; width:var(--canvas-px, 512px); height:var(--canvas-px, 512px); margin:auto; flex-shrink:0; }
+.cell { width:100%; height:100%; min-width:0; min-height:0; display:flex; align-items:center; justify-content:center; font-size:var(--cell-fs, 12px); font-family:monospace; font-weight:bold; border-radius:3px; cursor:pointer; transition:.1s; }
+.cell:hover { transform:scale(1.3) rotate(5deg); outline:2px solid #FFF; z-index:10; box-shadow:0 0 15px var(--primary); }
+.cell.empty { background:repeating-linear-gradient(45deg, var(--empty-a) 0 4px, var(--empty-b) 4px 8px); }
+.btn { margin-top:10px; padding:12px 25px; background:var(--primary); color:#000; border:none; border-radius:12px; cursor:pointer; font-size:1.05em; font-weight:bold; font-family:inherit; box-shadow:0 4px 0 #B35A00; transition:.15s; display:flex; align-items:center; justify-content:center; gap:8px; width:100%; }
+.btn:hover { background:#FFA533; transform:translateY(-2px); }
+.btn:active { transform:translateY(4px); box-shadow:none; }
+.hover-info { background:rgba(138,43,226,0.2); border:2px solid var(--secondary); padding:10px; border-radius:20px; font-family:monospace; font-size:1.05em; margin:15px auto; max-width:600px; color:var(--heading); text-align:center; font-weight:bold; flex-shrink:0; }
+.palette { display:grid; grid-template-columns:repeat(auto-fill, minmax(38px,1fr)); gap:8px; }
+.swatch { aspect-ratio:1; border-radius:10px; cursor:pointer; border:3px solid transparent; display:flex; align-items:center; justify-content:center; font-family:monospace; font-size:14px; font-weight:bold; transition:all .15s; user-select:none; box-shadow:0 3px 0 rgba(0,0,0,0.4); }
+.swatch.active { border-color:#FFF; box-shadow:0 0 0 3px var(--primary), 0 3px 0 rgba(0,0,0,0.4); transform:translateY(-2px) scale(1.1); }
+.swatch:hover { transform:translateY(-2px) scale(1.1); z-index:2; }
+.batch-panel { background:rgba(138,43,226,0.15); border:2px dashed var(--secondary); border-radius:15px; padding:15px; display:flex; flex-direction:column; gap:10px; }
+.batch-row { display:flex; align-items:center; gap:10px; }
+.batch-row label { font-size:.9em; font-weight:bold; color:var(--heading); white-space:nowrap; }
+.batch-row select { padding:8px; border-radius:8px; border:2px solid var(--border); font-family:inherit; font-size:13px; background:var(--bg); color:var(--text); outline:none; cursor:pointer; flex:1; }
+@media (max-width:1100px) { .card { flex-direction:column; min-height:auto; } .right-panel { flex:1 1 auto; width:100%; } .canvas-wrap { min-height:300px; } }
+
+/* 🌟 小朋友版魔法彈窗 */
+.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); }
+.modal.show { display:flex; }
+.magic-box { background:linear-gradient(135deg, #2D1B4E 0%, #4A2C82 100%); border-radius:25px; padding:30px; max-width:640px; width:100%; max-height:92vh; overflow-y:auto; border:3px solid var(--primary); box-shadow:0 0 40px rgba(255,140,0,0.5); text-align:center; animation:pop 0.3s ease-out; }
+@keyframes pop { 0% { transform:scale(0.8); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+.magic-header { font-size:1.5em; color:var(--heading); font-weight:bold; margin-bottom:20px; text-shadow:2px 2px 0 rgba(0,0,0,0.5); }
+.magic-steps { display:flex; flex-direction:column; gap:14px; margin:20px 0; text-align:left; }
+.magic-step { background:rgba(255,255,255,0.08); padding:15px 18px; border-radius:15px; border-left:6px solid var(--primary); display:flex; align-items:flex-start; gap:12px; font-size:1.05em; color:#FFF; }
+.magic-step .num { font-size:1.5em; flex-shrink:0; font-weight:bold; color:var(--heading); }
+.magic-step .txt { flex:1; line-height:1.5; }
+.magic-step strong { color:var(--heading); background:rgba(0,0,0,0.3); padding:2px 8px; border-radius:6px; font-family:monospace; }
+.magic-tip { background:rgba(46,204,113,0.15); border:2px dashed #2ECC71; padding:12px 15px; border-radius:12px; margin:15px 0; font-size:.95em; color:#FFF; text-align:left; line-height:1.7; }
+.magic-tip strong { color:#2ECC71; }
+.magic-btns { display:flex; gap:12px; margin-top:20px; }
+.magic-btn { flex:1; padding:15px 20px; border:none; border-radius:15px; cursor:pointer; font-family:inherit; font-size:1.1em; font-weight:bold; transition:all .15s; box-shadow:0 5px 0 rgba(0,0,0,0.4); }
+.magic-btn:active { transform:translateY(5px); box-shadow:none; }
+.magic-btn-copy { background:#16a085; color:#FFF; box-shadow:0 5px 0 #0e6655; }
+.magic-btn-copy:hover { background:#1abc9c; transform:translateY(-2px); }
+.magic-btn-close { background:var(--primary); color:#000; box-shadow:0 5px 0 #B35A00; }
+.magic-btn-close:hover { background:#FFA533; transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="sidebar" id="nav"></div>
+<div class="main">
+    <div class="card">
+        <div class="left-panel">
+            <h1 id="title" style="align-self:flex-start;"></h1>
+            <div class="hover-info" id="hover-info">🔮 將滑鼠移到方塊上看看它是什麼！</div>
+            <div class="canvas-wrap" id="canvasWrap"></div>
+        </div>
+        <div class="right-panel">
+            <div style="font-weight:bold; color:var(--heading);">🎨 魔法調色盤</div><div class="palette" id="paletteWrap"></div>
+        <div class="batch-panel">
+            <div style="font-weight:bold; color:var(--secondary);">🪄 快速變身</div>
+            <div class="batch-row"><label>把</label><select id="batchSource"></select></div>
+            <div class="batch-row"><label>變成</label><select id="batchTarget"></select></div>
+            <button class="btn" onclick="batchReplace()" style="background:var(--secondary); color:#FFF; box-shadow:0 4px 0 #5A108A;">✨ 施展替換</button>
+        </div><div style="display:flex; flex-direction:column; gap:10px; margin-top:auto;">
+            <div class="batch-row" style="margin-bottom:10px; background:rgba(0,0,0,0.2); padding:10px; border-radius:10px;">
+                <label>機器人面向</label>
+                <select id="exportFacing">
+                    <option value="NORTH">北方</option><option value="EAST">東方</option>
+                    <option value="SOUTH">南方</option><option value="WEST">西方</option>
+                </select>
+            </div>
+            <button class="btn" onclick="runMagic()" style="background:#16a085; color:#FFF; box-shadow:0 4px 0 #0e6655; font-size:1.15em; padding:16px;">✨ 執行魔法</button><button class="btn" onclick="flipHorizontal()" style="background:var(--secondary); color:#FFF; box-shadow:0 4px 0 #5A108A;">↔️ 左右翻轉</button></div>
+        </div>
+    </div>
+</div>
+
+<!-- 🌟 小朋友版魔法彈窗 -->
+<div class="modal" id="magicModal">
+    <div class="magic-box">
+        <div class="magic-header" id="magicHeader">✅ 魔法咒語已經偷偷複製好囉！</div>
+        
+        <div style="font-size:1.1em; color:#FFF; margin-bottom:8px;">🎉 太棒了！你完成了一張魔法畫！</div>
+        <div style="font-size:1em; color:var(--muted); margin-bottom:10px;">接下來跟著做，就能讓機器人幫你蓋出來～</div>
+
+        <div class="magic-steps">
+            <div class="magic-step">
+                <div class="num">1️⃣</div>
+                <div class="txt">打開 <strong>Minecraft</strong> 遊戲</div>
+            </div>
+            <div class="magic-step">
+                <div class="num">2️⃣</div>
+                <div class="txt">打開 <strong>Code Builder</strong>（按 <strong>C</strong> 鍵，或點背包裡的小機器人）</div>
+            </div>
+            <div class="magic-step">
+                <div class="num">3️⃣</div>
+                <div class="txt">把剛剛複製的「魔法咒語」貼進去 <br><span style="font-size:.85em; color:var(--muted);">（Windows 按 <strong>Ctrl + V</strong>，Mac 按 <strong>Command + V</strong>）</span></div>
+            </div>
+            <div class="magic-step">
+                <div class="num">4️⃣</div>
+                <div class="txt">按一下 <strong>執行</strong> 或 <strong>Run</strong> 按鈕</div>
+            </div>
+            <div class="magic-step">
+                <div class="num">5️⃣</div>
+                <div class="txt">回到遊戲，按 <strong>T</strong> 打開聊天框，打上 <strong>build_art</strong></div>
+            </div>
+            <div class="magic-step">
+                <div class="num">6️⃣</div>
+                <div class="txt">按下 <strong>Enter</strong> 送出！🤖 機器人就會幫你蓋出魔法畫啦！</div>
+            </div>
+        </div>
+
+        <div class="magic-tip">
+            <strong>💡 小提醒：</strong><br>
+            · 機器人的背包要先清空，不然會蓋錯顏色喔！<br>
+            · 站在空地上，四周留一點空間比較好蓋～<br>
+            · 想再蓋一次，再打一次 <strong style="color:#F1C40F;">build_art</strong> 就好啦！
+        </div>
+
+        <div class="magic-btns">
+            <button class="magic-btn magic-btn-copy" onclick="copyMagicAgain()">📋 再複製一次</button>
+            <button class="magic-btn magic-btn-close" onclick="document.getElementById('magicModal').classList.remove('show')">✅ 好，我去玩啦！</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const MATERIALS = [{"id":1,"name":"WHITE_CONCRETE","hex":"#CFD5D6","r":207,"g":213,"b":214,"dark":false,"type":"混凝土"},{"id":2,"name":"LIGHT_GRAY_CONCRETE","hex":"#7D7D73","r":125,"g":125,"b":115,"dark":true,"type":"混凝土"},{"id":3,"name":"GRAY_CONCRETE","hex":"#36393D","r":54,"g":57,"b":61,"dark":true,"type":"混凝土"},{"id":4,"name":"BLACK_CONCRETE","hex":"#080A0D","r":8,"g":10,"b":13,"dark":true,"type":"混凝土"},{"id":5,"name":"BROWN_CONCRETE","hex":"#603B1F","r":96,"g":59,"b":31,"dark":true,"type":"混凝土"},{"id":6,"name":"RED_CONCRETE","hex":"#8E2121","r":142,"g":33,"b":33,"dark":true,"type":"混凝土"},{"id":7,"name":"ORANGE_CONCRETE","hex":"#E06100","r":224,"g":97,"b":0,"dark":true,"type":"混凝土"},{"id":8,"name":"YELLOW_CONCRETE","hex":"#F1AF15","r":241,"g":175,"b":21,"dark":false,"type":"混凝土"},{"id":9,"name":"LIME_CONCRETE","hex":"#5EA818","r":94,"g":168,"b":24,"dark":true,"type":"混凝土"},{"id":10,"name":"GREEN_CONCRETE","hex":"#495B24","r":73,"g":91,"b":36,"dark":true,"type":"混凝土"},{"id":11,"name":"CYAN_CONCRETE","hex":"#157788","r":21,"g":119,"b":136,"dark":true,"type":"混凝土"},{"id":12,"name":"LIGHT_BLUE_CONCRETE","hex":"#2489C7","r":36,"g":137,"b":199,"dark":true,"type":"混凝土"},{"id":13,"name":"BLUE_CONCRETE","hex":"#2C2E8F","r":44,"g":46,"b":143,"dark":true,"type":"混凝土"},{"id":14,"name":"PURPLE_CONCRETE","hex":"#64209C","r":100,"g":32,"b":156,"dark":true,"type":"混凝土"},{"id":15,"name":"MAGENTA_CONCRETE","hex":"#A9309F","r":169,"g":48,"b":159,"dark":true,"type":"混凝土"},{"id":16,"name":"PINK_CONCRETE","hex":"#D6658F","r":214,"g":101,"b":143,"dark":false,"type":"混凝土"},{"id":17,"name":"WOOL","hex":"#E9ECEC","r":233,"g":236,"b":236,"dark":false,"type":"羊毛"},{"id":18,"name":"LIGHT_GRAY_WOOL","hex":"#8E8E86","r":142,"g":142,"b":134,"dark":true,"type":"羊毛"},{"id":19,"name":"GRAY_WOOL","hex":"#3E4447","r":62,"g":68,"b":71,"dark":true,"type":"羊毛"},{"id":20,"name":"BLACK_WOOL","hex":"#141519","r":20,"g":21,"b":25,"dark":true,"type":"羊毛"},{"id":21,"name":"BROWN_WOOL","hex":"#724728","r":114,"g":71,"b":40,"dark":true,"type":"羊毛"},{"id":22,"name":"RED_WOOL","hex":"#A12722","r":161,"g":39,"b":34,"dark":true,"type":"羊毛"},{"id":23,"name":"ORANGE_WOOL","hex":"#F07613","r":240,"g":118,"b":19,"dark":true,"type":"羊毛"},{"id":24,"name":"YELLOW_WOOL","hex":"#F8C627","r":248,"g":198,"b":39,"dark":false,"type":"羊毛"},{"id":25,"name":"LIME_WOOL","hex":"#70B919","r":112,"g":185,"b":25,"dark":true,"type":"羊毛"},{"id":26,"name":"GREEN_WOOL","hex":"#546D1B","r":84,"g":109,"b":27,"dark":true,"type":"羊毛"},{"id":27,"name":"CYAN_WOOL","hex":"#157C89","r":21,"g":124,"b":137,"dark":true,"type":"羊毛"},{"id":28,"name":"LIGHT_BLUE_WOOL","hex":"#3AAFD9","r":58,"g":175,"b":217,"dark":true,"type":"羊毛"},{"id":29,"name":"BLUE_WOOL","hex":"#35399D","r":53,"g":57,"b":157,"dark":true,"type":"羊毛"},{"id":30,"name":"PURPLE_WOOL","hex":"#792AAC","r":121,"g":42,"b":172,"dark":true,"type":"羊毛"},{"id":31,"name":"MAGENTA_WOOL","hex":"#BD44B3","r":189,"g":68,"b":179,"dark":true,"type":"羊毛"},{"id":32,"name":"PINK_WOOL","hex":"#ED8DAC","r":237,"g":141,"b":172,"dark":false,"type":"羊毛"}];
+const COLOR_MAP = { 0: { name:'清除', hex:'#1A0B2E', dark:true, type:'無' } };
+MATERIALS.forEach(c => COLOR_MAP[c.id] = c);
+const DATA = {"page1":{"name":"✨ 魔法 01","size":32,"facing":"NORTH","data":[[0,0,0,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,23,23,23,18,17,17,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,23,16,23,23,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,23,16,23,23,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,17,17,4,4,17,17,17,17,17,17,17,17,17,17,17,17,23,23,23,17,17,17,0,0,0],[0,0,0,17,17,17,17,17,4,4,4,4,17,17,17,17,17,17,17,17,17,17,17,17,23,23,23,23,17,0,0,0],[0,0,0,17,17,17,17,17,17,4,4,17,17,17,17,17,17,17,17,17,17,17,17,17,23,8,23,23,17,0,0,0],[0,0,0,17,17,17,17,17,17,4,4,17,17,23,23,17,17,17,17,17,17,17,17,17,23,23,23,23,23,0,0,0],[0,0,0,17,17,17,17,17,17,4,4,17,17,23,23,17,17,17,17,17,17,17,17,17,23,23,23,23,23,0,0,0],[0,0,0,17,17,17,17,17,4,4,4,4,17,23,23,17,17,17,17,17,17,17,17,17,23,23,23,23,23,0,0,0],[0,0,0,17,17,17,17,4,4,4,4,4,4,23,23,23,17,17,17,17,17,17,17,23,23,23,23,23,23,0,0,0],[0,0,0,17,17,17,4,4,4,4,4,4,4,4,20,23,17,17,17,17,17,23,18,23,23,23,23,23,17,0,0,0],[0,0,0,17,20,4,4,4,4,4,4,4,4,4,4,4,16,16,32,18,16,4,4,23,16,32,32,16,17,0,0,0],[0,0,0,17,4,4,4,4,4,4,4,4,4,4,4,4,23,23,23,23,23,4,4,23,23,23,23,23,17,0,0,0],[0,0,0,17,17,17,17,4,23,4,4,23,4,17,17,17,23,23,23,23,4,4,4,4,23,23,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,23,4,4,23,4,17,17,17,23,23,23,23,23,4,4,23,23,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,4,4,4,4,4,17,17,17,17,17,17,23,23,4,4,17,17,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,4,4,4,4,4,17,17,17,17,17,17,17,4,4,4,4,17,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,23,4,4,23,4,17,17,17,17,17,17,4,4,4,4,4,4,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,23,4,4,23,4,17,17,17,17,4,4,4,4,4,4,4,4,4,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,4,4,4,4,4,17,17,17,4,4,4,4,4,4,4,4,4,4,4,4,17,0,0,0],[0,0,0,17,17,17,17,4,4,4,4,4,4,17,17,17,4,4,4,4,4,4,4,4,4,4,4,4,17,0,0,0],[0,0,0,17,17,17,17,4,4,4,4,4,4,17,17,17,17,17,17,4,23,4,4,23,4,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,23,4,4,23,4,17,17,17,17,17,17,4,23,4,4,23,4,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,23,4,4,23,4,17,17,17,17,17,17,4,4,4,4,4,4,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,4,4,4,4,4,17,17,4,4,17,17,4,4,4,4,4,4,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,4,4,4,4,4,17,17,4,4,17,17,4,4,4,4,4,4,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,4,4,4,4,4,17,17,17,17,17,17,4,23,4,4,23,4,17,17,17,17,0,0,0],[0,0,0,17,17,17,17,4,4,4,4,4,4,17,17,17,17,17,17,4,23,4,4,23,4,17,17,17,17,0,0,0],[0,0,0,17,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,17,0,0,0],[0,0,0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0,0,0],[0,0,0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0,0,0],[0,0,0,17,4,4,4,4,4,17,17,17,17,17,17,4,4,17,17,17,17,17,17,4,4,4,4,4,17,0,0,0]]},"page2":{"name":"✨ 魔法 02","size":32,"facing":"NORTH","data":[[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,1,1,1,1,1,19,19,19,19,19,19,19,1,1,1,1,1,1,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,1,19,19,19,19,17,17,17,17,17,17,17,19,19,19,1,1,1,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,1,19,19,19,19,17,17,17,17,17,17,17,19,19,19,1,1,1,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,19,17,17,17,17,17,17,17,17,17,17,17,17,17,17,19,19,1,1,1,1,1,1,1,0],[0,1,1,1,1,1,19,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,19,1,1,1,1,1,1,0],[0,1,1,1,1,1,19,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,19,1,1,1,1,1,1,0],[0,1,1,1,1,1,19,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,19,1,1,1,1,1,1,0],[0,1,1,1,19,19,17,17,19,19,19,19,17,17,17,19,19,17,17,17,17,17,17,17,17,19,1,1,1,1,1,0],[0,1,1,1,19,19,17,17,19,19,19,19,17,17,17,19,19,17,17,17,17,17,17,17,17,19,1,1,1,1,1,0],[0,1,1,1,19,19,17,19,19,19,19,19,17,17,17,19,19,19,19,17,17,17,17,17,17,19,1,1,1,1,1,0],[0,1,1,1,19,19,17,19,19,19,19,19,17,17,17,19,19,19,19,17,17,17,17,17,17,19,1,1,1,1,1,0],[0,1,1,1,19,19,17,19,19,19,19,19,17,17,17,19,19,19,19,17,17,17,17,17,17,19,1,1,1,1,1,0],[0,1,1,1,19,19,17,19,19,19,17,17,17,17,17,17,19,19,19,17,17,17,17,17,17,19,1,1,1,1,1,0],[0,1,1,1,19,19,17,19,19,19,17,17,17,17,17,17,19,19,19,17,17,17,17,17,17,19,1,1,1,1,1,0],[0,1,1,1,19,19,17,17,17,17,17,17,19,19,19,17,17,17,17,19,19,19,17,17,17,19,1,1,1,1,1,0],[0,1,1,1,19,19,17,17,17,17,17,17,19,19,19,17,17,17,17,19,19,19,17,17,17,19,1,1,1,1,1,0],[0,1,1,19,17,17,19,17,17,17,17,17,19,19,19,17,17,19,19,17,17,17,17,17,17,19,1,1,1,1,1,0],[0,1,1,19,17,17,19,17,17,17,17,17,19,19,19,17,17,19,19,17,17,17,17,17,17,19,1,1,1,1,1,0],[0,1,1,19,17,17,21,19,17,17,17,17,17,17,17,17,17,19,19,17,19,19,17,17,17,17,19,19,1,1,1,0],[0,1,1,1,21,1,1,21,19,19,19,19,17,17,17,17,17,19,19,19,17,17,17,17,17,17,17,17,19,1,1,0],[0,1,1,1,21,21,1,21,19,19,19,19,17,17,17,17,17,19,19,19,17,17,17,17,17,17,17,17,19,1,1,0],[0,1,1,1,5,21,1,21,1,1,1,1,19,19,19,19,17,17,17,17,17,17,17,17,17,17,19,19,1,1,1,0],[0,1,1,1,21,21,1,21,1,1,1,1,19,19,19,19,17,17,17,17,17,17,17,17,17,17,19,19,1,1,1,0],[0,1,1,1,24,8,8,8,1,1,1,1,1,1,1,1,19,19,19,19,19,19,19,19,19,19,1,1,1,1,1,0],[0,1,1,8,8,23,8,8,8,8,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],[0,1,1,8,5,19,8,19,8,8,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],[0,1,1,32,19,5,8,5,1,8,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],[0,1,1,1,32,8,8,8,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]]},"page3":{"name":"✨ 魔法 03","size":32,"facing":"NORTH","data":[[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,4,4,4,4,4,4,4,4,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,4,4,4,4,4,4,4,4,4,4,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,4,4,4,4,4,4,4,4,4,4,4,4,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,4,4,4,4,4,4,4,4,4,4,4,4,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,4,4,4,4,4,4,4,4,4,4,4,4,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,4,4,12,12,4,4,12,4,12,12,4,4,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,4,12,12,12,12,12,12,12,12,12,12,4,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,4,12,12,12,12,12,12,12,12,12,12,4,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,4,12,4,12,28,28,12,12,12,12,28,28,12,4,12,4,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,4,12,4,12,28,28,12,12,12,12,28,28,12,4,12,4,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,4,12,12,12,12,12,12,12,12,12,12,4,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,4,12,12,12,12,12,12,12,12,12,12,4,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,4,12,12,12,12,12,12,12,12,4,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,4,4,4,4,4,4,4,4,4,4,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,4,13,13,13,4,12,12,4,13,13,13,4,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,13,13,13,13,13,4,4,13,13,13,13,13,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,4,13,13,13,13,13,13,13,13,13,13,4,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,4,12,12,4,13,13,13,13,13,13,13,13,4,12,12,4,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,4,12,12,4,13,13,4,13,13,13,13,13,4,12,12,4,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,4,12,12,4,13,4,12,4,13,13,13,13,4,12,12,4,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,4,4,4,21,4,21,4,4,4,4,4,4,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,4,21,21,21,21,21,21,21,21,4,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,4,21,21,21,4,4,21,4,21,4,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,4,4,4,4,25,25,4,12,4,4,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,4,12,4,25,25,4,12,4,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,4,4,4,25,25,4,4,4,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25]]},"page4":{"name":"✨ 魔法 04","size":32,"facing":"NORTH","data":[[25,25,25,25,25,25,22,22,22,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,22,16,16,22,22,25,3,3,3,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,22,22,22,22,22,22,3,14,31,14,14,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,22,22,22,8,8,8,22,22,3,14,14,14,14,3,25,25,20,20,20,20,20,20,25,25,25,25,25,25,25,25],[25,22,16,22,8,1,24,24,8,13,3,14,14,14,14,3,20,20,14,14,14,14,14,14,20,20,25,25,25,25,25,25],[25,22,22,22,8,1,24,24,8,29,29,22,22,14,3,20,14,14,14,14,14,14,14,14,14,14,20,25,25,25,25,25],[25,22,22,13,8,24,24,24,8,29,22,23,7,22,20,14,14,14,14,14,14,14,14,14,14,14,14,20,25,25,25,25],[25,22,13,28,29,8,24,8,29,22,23,7,7,20,14,14,20,20,20,20,14,14,14,14,14,14,14,14,20,25,25,25],[25,25,13,29,29,29,8,25,29,22,7,7,7,20,14,20,1,1,1,1,20,14,14,14,14,20,14,14,14,20,25,25],[25,25,13,29,29,29,13,4,13,22,7,7,20,14,20,1,17,17,17,17,1,20,14,14,14,14,20,14,14,20,25,25],[25,25,25,13,29,13,25,4,13,22,22,7,20,20,1,17,17,17,17,17,17,1,20,14,14,14,20,20,20,20,25,25],[25,25,25,25,13,4,25,25,4,25,22,22,20,20,17,17,17,17,17,17,17,17,1,20,14,14,20,25,25,25,25,25],[25,25,25,25,25,4,25,25,4,25,5,25,20,20,17,20,20,17,17,20,20,17,1,20,14,14,20,25,25,25,25,25],[25,25,25,25,25,4,25,25,4,25,5,25,20,20,17,20,20,17,17,20,20,17,1,20,14,14,20,25,25,25,25,25],[25,25,25,25,25,25,4,25,4,25,5,25,20,20,1,17,17,20,17,17,17,17,1,20,14,14,20,25,25,25,25,25],[25,25,25,25,25,25,4,25,25,5,25,25,20,14,20,1,17,17,17,17,1,20,20,14,14,20,25,25,25,25,25,25],[25,25,25,25,25,25,4,25,25,5,25,25,25,20,14,20,17,20,17,1,20,20,14,14,20,20,25,25,25,25,25,25],[25,25,25,25,25,25,25,4,25,5,25,25,25,25,20,14,20,20,20,20,20,14,14,20,20,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,4,25,25,25,25,20,14,14,14,14,14,14,14,14,13,14,13,20,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,20,20,20,20,20,14,14,14,14,14,14,14,14,14,14,14,14,20,25,25,25,25,25,25],[25,25,25,25,25,25,25,20,20,20,20,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,20,25,25,25,25,25],[25,25,25,25,25,25,25,20,20,20,20,14,14,14,20,14,14,14,14,14,14,14,20,14,14,14,20,25,25,25,25,25],[25,25,25,25,25,25,25,25,20,20,20,14,14,14,20,14,14,14,14,14,14,14,20,14,14,14,14,20,25,25,25,25],[25,25,25,25,25,25,25,25,4,5,20,14,13,20,20,14,14,14,14,14,14,14,20,14,14,14,14,20,25,25,25,25],[25,25,25,25,25,25,25,4,25,5,20,14,20,25,20,14,14,14,14,14,14,14,20,20,20,20,14,20,25,25,25,25],[25,25,25,25,25,25,25,25,5,25,20,20,25,25,20,14,14,14,14,14,14,14,20,20,20,20,20,20,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,20,14,14,14,14,14,14,14,14,20,20,20,20,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,20,14,14,14,14,14,14,14,14,14,14,20,20,20,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,20,14,14,14,14,14,14,14,14,14,14,13,14,20,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,20,14,14,14,14,14,14,14,14,14,14,14,14,14,13,20,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,20,14,14,14,14,14,14,14,14,14,14,14,14,14,14,13,20,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,25,25,25,25]]},"page5":{"name":"✨ 魔法 05","size":32,"facing":"NORTH","data":[[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,4,4,4,4,4,4,4,4,4,4,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,4,4,3,3,3,3,3,3,3,3,3,3,4,4,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,4,4,3,3,3,3,3,4,4,4,4,4,4,3,3,3,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,10,20,3,3,3,20,4,4,4,2,2,2,2,4,4,4,20,3,4,25,25,25,25,25,4,25,25],[25,25,25,25,4,4,3,4,3,3,4,4,4,1,17,17,17,17,1,4,4,4,3,3,3,4,25,25,25,5,4,4],[25,25,25,4,4,3,4,3,4,4,4,1,17,17,17,17,17,17,17,17,1,4,4,4,3,4,25,25,25,5,4,1],[25,25,25,4,3,3,3,3,4,4,1,17,17,17,17,17,17,17,17,17,17,1,4,4,4,3,25,25,25,5,4,1],[25,25,25,4,3,4,3,4,4,4,17,17,17,4,1,17,17,1,4,17,17,17,4,4,4,3,25,25,25,5,4,1],[25,25,25,4,4,4,4,4,4,1,17,17,4,17,17,17,17,17,17,4,17,17,1,4,4,4,4,25,4,5,4,17],[25,25,25,4,4,4,4,4,4,1,4,4,4,4,17,17,17,17,4,4,4,4,1,4,4,4,4,25,4,5,4,25],[25,25,25,4,4,4,4,4,4,1,4,4,4,4,17,17,17,17,4,4,4,4,1,4,4,4,4,25,19,5,4,25],[25,25,25,4,4,4,4,4,1,17,1,1,1,18,17,4,4,17,18,28,1,1,17,1,4,4,4,25,5,4,25,25],[25,25,25,4,4,4,4,4,1,17,1,28,17,17,17,17,17,17,17,17,28,1,17,1,4,4,4,25,19,4,25,25],[25,25,25,25,4,4,4,4,4,1,28,1,1,17,4,4,4,4,17,1,1,28,1,4,4,4,4,25,5,4,25,25],[25,25,25,25,25,4,4,4,4,4,28,4,1,4,4,4,4,4,4,1,4,28,4,4,4,3,25,25,5,4,25,25],[25,25,25,25,25,25,4,4,4,4,1,4,1,4,4,1,1,4,4,1,4,1,4,4,4,3,25,25,5,4,25,25],[25,25,25,25,25,25,4,4,4,1,1,4,1,4,17,4,4,17,4,1,4,1,1,4,3,4,25,4,5,4,25,25],[25,25,25,25,25,25,4,4,4,1,1,4,4,17,17,17,17,17,17,4,4,1,1,3,4,4,25,4,5,25,25,25],[25,25,25,25,25,25,4,3,3,1,1,4,4,4,4,4,4,4,4,4,3,1,1,4,3,4,25,4,5,25,25,25],[25,25,26,10,26,20,3,3,20,4,1,4,4,4,4,4,4,4,4,20,4,28,4,3,3,3,4,4,20,10,25,25],[25,25,1,1,4,3,3,4,4,28,1,20,4,4,4,4,4,4,4,4,20,28,28,4,3,3,4,4,1,1,25,25],[25,4,1,1,1,4,4,4,20,28,1,20,20,4,4,4,4,4,4,20,20,1,28,20,4,3,4,1,1,1,4,25],[25,4,1,1,4,4,4,4,3,28,1,3,3,3,3,3,3,3,3,3,3,1,28,3,4,4,4,4,1,1,4,25],[25,25,4,4,4,4,4,20,3,28,1,3,3,3,3,3,3,3,3,3,3,1,28,3,3,4,20,4,4,4,25,25],[25,25,25,25,4,4,4,20,3,28,28,3,3,3,3,3,3,3,3,3,3,1,28,3,3,4,4,4,3,25,25,25],[25,25,25,25,4,4,4,20,28,28,28,3,3,3,3,3,3,3,3,3,3,28,28,28,3,4,4,4,5,25,25,25],[25,25,25,25,25,4,4,20,1,1,28,3,3,3,3,3,3,3,3,3,3,28,1,1,20,4,4,4,5,25,25,25],[25,25,25,25,25,25,4,20,1,1,28,3,3,3,3,3,3,3,3,3,3,28,1,1,20,4,25,4,5,25,25,25],[25,25,25,25,25,25,4,20,20,1,28,20,20,3,3,3,3,3,3,20,20,28,1,20,20,4,25,4,5,25,25,25],[25,25,25,25,25,25,25,4,20,1,28,4,20,20,20,20,20,20,20,20,4,28,1,20,4,25,25,4,5,25,25,25],[25,25,25,25,25,25,25,25,4,1,28,4,4,4,4,4,4,4,4,4,4,28,1,4,25,25,25,25,4,25,25,25]]},"page6":{"name":"✨ 魔法 06","size":32,"facing":"NORTH","data":[[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,4,4,4,4,4,4,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,4,4,20,20,20,20,20,20,4,4,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,4,20,20,20,20,20,20,20,20,20,20,4,4,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,4,20,4,4,4,4,4,20,20,20,20,20,20,20,4,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,4,20,4,17,17,17,17,17,4,20,20,20,20,20,20,20,4,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,20,4,17,17,17,17,17,17,17,4,20,20,20,4,20,20,20,4,25,25,25,25],[25,25,25,25,25,25,25,25,4,20,4,17,17,17,17,17,17,17,17,17,4,20,20,20,4,20,20,4,25,25,25,25],[25,25,25,25,25,25,25,25,4,20,4,17,17,17,17,17,17,17,17,17,4,20,20,20,4,20,20,20,4,25,25,25],[25,25,25,25,25,25,25,25,4,20,4,17,4,4,17,17,4,4,17,17,4,20,20,20,4,4,4,20,4,25,25,25],[25,25,25,25,25,25,25,25,4,20,4,17,4,4,17,17,4,4,17,17,4,20,20,20,4,25,25,4,25,25,25,25],[25,25,25,25,25,25,25,25,4,20,4,17,17,17,4,17,17,17,17,17,4,20,20,20,4,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,4,4,17,17,17,4,17,17,17,17,4,4,20,20,20,4,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,22,22,4,20,4,17,17,17,17,17,17,4,4,20,20,20,4,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,22,7,22,4,4,17,4,17,4,17,4,4,20,20,20,4,4,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,22,7,22,20,4,4,4,4,4,4,20,20,20,20,20,20,4,25,25,25,25,25,25,25],[25,25,25,25,25,22,22,22,22,22,22,22,22,20,20,20,20,20,20,20,4,20,20,20,20,4,25,25,25,25,25,25],[25,25,25,25,22,23,23,22,23,23,22,23,23,22,20,20,20,20,4,4,20,20,20,20,20,4,25,25,25,25,25,25],[25,25,25,22,23,23,22,23,23,23,23,22,23,23,22,20,4,4,20,20,20,20,20,20,20,20,4,25,25,25,25,25],[25,25,25,22,23,23,22,23,23,23,23,22,17,4,4,4,20,20,20,20,20,20,20,20,20,20,4,25,25,25,25,25],[25,25,25,22,23,23,22,23,23,23,23,20,4,17,17,4,20,20,20,20,20,20,4,20,20,20,4,25,25,25,25,25],[25,25,25,22,23,23,22,23,23,23,20,17,20,17,17,4,20,20,20,20,20,20,4,20,20,20,4,25,25,25,25,25],[25,25,25,22,23,23,22,23,23,23,23,20,17,4,4,4,20,20,20,20,20,4,20,20,20,20,20,4,25,25,25,25],[25,25,25,22,23,23,22,23,23,23,23,22,20,23,22,4,20,20,20,20,4,20,20,20,20,20,20,4,25,25,25,25],[25,25,25,25,22,23,23,22,23,23,22,23,23,22,20,20,4,4,4,4,20,20,20,20,20,20,20,20,4,25,25,25],[25,25,25,25,25,22,22,22,22,22,22,22,22,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,4,25,25,25],[25,25,25,25,25,25,25,25,25,4,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,4,25,25,25],[25,25,25,25,25,25,25,25,25,4,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,4,4,25,25,25],[25,25,25,25,25,25,25,25,25,25,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25]]}};
+let currentKey = Object.keys(DATA)[0];
+
+
+        let selectedColor = 4;
+        const CAN_EDIT = true;
+
+        function updateHoverInfo(id) {
+            const el = document.getElementById('hover-info');
+            if (!el) return;
+            if (id === 0) el.innerHTML = '🧹 清除魔法！';
+            else {
+                const m = COLOR_MAP[id];
+                if (m) el.innerHTML = '🔮 你選中了：<span style="color:var(--primary)">' + m.name + '</span> (' + m.type + ')';
+            }
+        }
+        function resetHoverInfo() {
+            const el = document.getElementById('hover-info');
+            if (el) el.innerHTML = '🔮 將滑鼠移到方塊上看看它是什麼！';
+        }
+        function selectColor(v) {
+            if (!CAN_EDIT) return;
+            selectedColor = v;
+            document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('active', +s.dataset.id === v));
+        }
+        async function copyToClipboard(text) {
+            try { await navigator.clipboard.writeText(text); return true; }
+            catch (e) {
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                    document.body.appendChild(ta); ta.select();
+                    const ok = document.execCommand('copy');
+                    document.body.removeChild(ta); return ok;
+                } catch (e2) { return false; }
+            }
+        }
+        function fitCanvas() {
+            try {
+                document.querySelectorAll('.canvas-wrap').forEach(wrap => {
+                    const canvas = wrap.querySelector('.canvas');
+                    if (!canvas) return;
+                    const n = parseInt(canvas.dataset.size) || 32;
+                    const rect = wrap.getBoundingClientRect();
+                    if (rect.width <= 0 || rect.height <= 0) return;
+                    const pad = 40;
+                    const avail = Math.max(150, Math.min(rect.width - pad, rect.height - pad));
+                    if (!isFinite(avail) || avail <= 0) return;
+                    canvas.style.setProperty('--canvas-px', avail + 'px');
+                    const inner = avail - 4 - (n - 1) * 2;
+                    const cellPx = inner / n;
+                    const fs = Math.max(5, Math.min(14, cellPx * 0.5));
+                    canvas.style.setProperty('--cell-fs', fs + 'px');
+                });
+            } catch (e) { console.warn(e); }
+        }
+        let _resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(_resizeTimer);
+            _resizeTimer = setTimeout(fitCanvas, 80);
+        });
+    
+
+        function renderPalette() {
+            const wrap = document.getElementById('paletteWrap');
+            if (!wrap) return;
+            let h = '<div class="swatch " data-id="0" style="background:repeating-linear-gradient(45deg,#1A0B2E 0 4px,#2D1B4E 4px 8px); color:#FFF; border:2px solid #555;" onclick="selectColor(0)" onmouseenter="updateHoverInfo(0)" onmouseleave="resetHoverInfo()">0</div>';
+            MATERIALS.forEach(c => {
+                h += '<div class="swatch ' + (selectedColor===c.id?'active':'') + '" data-id="' + c.id + '" style="background:' + c.hex + '; color:' + (c.dark?'#FFF':'#000') + ';" onclick="selectColor(' + c.id + ')" onmouseenter="updateHoverInfo(' + c.id + ')" onmouseleave="resetHoverInfo()" title="' + c.name + '">' + c.id + '</div>';
+            });
+            wrap.innerHTML = h;
+        }
+    
+
+        function renderBatch() {
+            const s = document.getElementById('batchSource'), t = document.getElementById('batchTarget');
+            if (!s || !t) return;
+            let o = '<option value="0">0 - 清除</option>';
+            MATERIALS.forEach(c => o += '<option value="' + c.id + '">' + c.id + ' - ' + c.name + '</option>');
+            s.innerHTML = o; t.innerHTML = o;
+            s.value = '0'; t.value = '4';
+        }
+        function batchReplace() {
+            const src = parseInt(document.getElementById('batchSource').value);
+            const tgt = parseInt(document.getElementById('batchTarget').value);
+            if (src === tgt) { alert('來源和目標一樣喔！😆'); return; }
+            const wd = DATA[currentKey].data;
+            let n = 0;
+            for (let r = 0; r < wd.length; r++) for (let c = 0; c < wd[0].length; c++) {
+                if (wd[r][c] === src) { wd[r][c] = tgt; n++; }
+            }
+            if (n > 0) { render(); alert('✨ 成功把 ' + n + ' 個方塊變成「' + COLOR_MAP[tgt].name + '」！'); }
+            else alert('🔍 找不到這個方塊喔！');
+        }
+    
+
+        function flipHorizontal() {
+            const wd = DATA[currentKey].data;
+            for (let r = 0; r < wd.length; r++) wd[r].reverse();
+            render();
+        }
+    
+
+        async function runMagic() {
+            const facing = document.getElementById('exportFacing').value;
+            const page = DATA[currentKey];
+            const wd = page.data;
+            const rows = wd.length, cols = wd[0].length;
+
+            let hasAny = false;
+            wd.forEach(row => row.forEach(v => { if (v > 0) hasAny = true; }));
+            if (!hasAny) {
+                alert('🤔 咦？這張畫還是空的耶！\n請先用調色盤畫一些方塊，再來執行魔法喔～');
+                return;
+            }
+
+            const used = new Set();
+            wd.forEach(row => row.forEach(v => { if (v > 0) used.add(v); }));
+            const sortedIds = [...used].sort((a,b)=>a-b);
+            const batches = [];
+            for (let i = 0; i < sortedIds.length; i += 27) batches.push(sortedIds.slice(i, i+27));
+
+            let code = '# ===...\n';
+            code += '# ' + page.name + '（' + cols + '×' + rows + '）· 面向 ' + facing + '\n';
+            code += '# 觸發方式：聊天打「build_art」\n';
+            code += '# ===...\n';
+            code += 'def on_build_art():\n';
+            code += '    player.say("🎬 開始建造：' + page.name + '")\n';
+            code += '    pPos = player.position()\n';
+            code += '    agent.teleport(positions.add(pPos, pos(2, 0, 3)), ' + facing + ')\n\n';
+            code += '    pattern = [\n';
+            wd.forEach(row => { code += '        [' + row.join(', ') + '],\n'; });
+            code += '    ]\n\n';
+            if (batches.length > 0) {
+                code += '    batches = [\n';
+                batches.forEach(b => { code += '        ([' + b.join(', ') + '], [' + b.map(id => COLOR_MAP[id].name).join(', ') + ']),\n'; });
+                code += '    ]\n\n';
+                code += '    for batch_idx in range(len(batches)):\n';
+                code += '        batch_ids = batches[batch_idx][0]\n';
+                code += '        batch_colors = batches[batch_idx][1]\n';
+                code += '        for i in range(len(batch_colors)):\n';
+                code += '            agent.setItem(batch_colors[i], 64, i + 1)\n\n';
+                code += '        is_left_to_right = True\n';
+                code += '        for layer in range(' + (rows-1) + ', -1, -1):\n';
+                code += '            if is_left_to_right:\n';
+                code += '                for col in range(' + cols + '):\n';
+                code += '                    v = pattern[layer][col]\n';
+                code += '                    if v > 0:\n';
+                code += '                        for i in range(len(batch_ids)):\n';
+                code += '                            if v == batch_ids[i]:\n';
+                code += '                                agent.setSlot(i + 1)\n';
+                code += '                                agent.place(FORWARD)\n';
+                code += '                                break\n';
+                code += '                    if col < ' + (cols-1) + ': agent.move(RIGHT, 1)\n';
+                code += '            else:\n';
+                code += '                for col in range(' + (cols-1) + ', -1, -1):\n';
+                code += '                    v = pattern[layer][col]\n';
+                code += '                    if v > 0:\n';
+                code += '                        for i in range(len(batch_ids)):\n';
+                code += '                            if v == batch_ids[i]:\n';
+                code += '                                agent.setSlot(i + 1)\n';
+                code += '                                agent.place(FORWARD)\n';
+                code += '                                break\n';
+                code += '                    if col > 0: agent.move(LEFT, 1)\n';
+                code += '            is_left_to_right = not is_left_to_right\n';
+                code += '            if layer > 0: agent.move(UP, 1)\n';
+                code += '        agent.move(DOWN, ' + (rows-1) + ')\n';
+                code += '        if ' + rows + ' % 2 != 0: agent.move(LEFT, ' + (cols-1) + ')\n\n';
+            }
+            code += '    player.say("✅ 建造完成！")\n\n';
+            code += 'player.on_chat("build_art", on_build_art)';
+
+            const ok = await copyToClipboard(code);
+            window._lastMagicCode = code;
+
+            const okMsg = ok
+                ? '✅ 魔法咒語已經偷偷複製好囉！'
+                : '⚠️ 自動複製失敗，請按下面的「再複製一次」按鈕～';
+            showMagicModal(okMsg, ok);
+        }
+
+        async function copyMagicAgain() {
+            const ok = await copyToClipboard(window._lastMagicCode || '');
+            if (ok) {
+                alert('✅ 又幫你複製一次啦！快點去 Minecraft 貼上吧～');
+            } else {
+                alert('❌ 還是複製不了耶…請手動選取文字複製喔！');
+            }
+        }
+
+        function showMagicModal(headerMsg, copiedOk) {
+            document.getElementById('magicHeader').innerHTML = headerMsg;
+            document.getElementById('magicModal').classList.add('show');
+        }
+    
+
+        function render() {
+            try {
+                document.getElementById('title').innerText = DATA[currentKey].name;
+                const wd = DATA[currentKey].data;
+                let html = '<div class="canvas" data-size="' + wd.length + '" style="grid-template-columns:repeat(' + wd.length + ', minmax(0, 1fr)); grid-template-rows:repeat(' + wd.length + ', minmax(0, 1fr));">';
+                wd.forEach((row, r) => {
+                    row.forEach((v, c) => {
+                        const col = COLOR_MAP[v] || COLOR_MAP[0];
+                        const cls = v === 0 ? 'cell empty' : 'cell';
+                        const style = v === 0 ? '' : 'background:' + col.hex + ';';
+                        const tc = v === 0 ? '#FFF' : (col.dark ? '#FFF' : '#000');
+                        html += '<div class="' + cls + '" data-r="' + r + '" data-c="' + c + '" style="' + style + 'color:' + tc + ';" onmouseenter="updateHoverInfo(' + v + ')" onmouseleave="resetHoverInfo()" title="' + col.name + '">' + (v===0?'':v) + '</div>';
+                    });
+                });
+                html += '</div>';
+                document.getElementById('canvasWrap').innerHTML = html;
+
+                if (CAN_EDIT) {
+                    document.querySelectorAll('.cell').forEach(cell => {
+                        const r = +cell.dataset.r, c = +cell.dataset.c;
+                        cell.onclick = () => { DATA[currentKey].data[r][c] = selectedColor; render(); };
+                        cell.oncontextmenu = (e) => { e.preventDefault(); DATA[currentKey].data[r][c] = 0; render(); };
+                    });
+                }
+
+                const nav = document.getElementById('nav');
+                nav.innerHTML = '';
+                Object.keys(DATA).forEach(k => {
+                    const btn = document.createElement('button');
+                    btn.innerHTML = DATA[k].name;
+                    if (k === currentKey) btn.className = 'active';
+                    btn.onclick = () => { currentKey = k; render(); };
+                    nav.appendChild(btn);
+                });
+
+                renderPalette();
+                renderBatch();
+                setTimeout(fitCanvas, 50);
+            } catch (e) {
+                console.error('Render error:', e);
+                document.querySelector('.main').innerHTML = '<div style="color:#E74C3C;padding:40px;font-family:monospace;font-size:14px;">⚠️ 渲染錯誤：' + e.message + '</div>';
+            }
+        }
+    
+
+render();
+</script>
+</body>
+</html>
