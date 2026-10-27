@@ -2,7 +2,7 @@
 <html lang="zh-Hant"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🎃 萬聖節方塊工坊 v4.1</title>
+<title>🎃 萬聖節方塊工坊 v4.2</title>
 <style>
 :root {
   --bg-main: #0d0714;
@@ -125,7 +125,7 @@ canvas.pixel-editor{display:block;cursor:crosshair;touch-action:none;image-rende
 <body>
 
 <header>
-  <h1>🎃 萬聖節方塊工坊 v4.1</h1>
+  <h1>🎃 萬聖節方塊工坊 v4.2</h1>
   <span class="info">🦇 全自動記憶版 · 側壁限定方塊 · 一鍵施展魔法</span>
   <div style="display:flex; gap:8px;">
     <button id="exportStandaloneBtn" class="share" style="width:auto; padding:4px 12px; font-size:11px;">📦 匯出獨立網頁 (分享用)</button>
@@ -133,450 +133,8 @@ canvas.pixel-editor{display:block;cursor:crosshair;touch-action:none;image-rende
   </div>
 </header>
 
-<div class="tabs" id="tabs"><button data-tab="0" class="">🎃 專案 1</button><button data-tab="1" class="">🎃 專案 2</button><button data-tab="2" class="active">🎃 專案 3</button><button data-tab="3" class="">🎃 專案 4</button><button data-tab="4" class="">🎃 專案 5</button><button data-tab="5">🎃 專案 6</button><button data-tab="6">🦇 7 · 16×16</button></div>
-<div class="panels" id="panels"><div class="panel" data-tab="0">
-      <div class="sidebar">
-        <button class="import-json primary">📥 匯入單一 JSON</button>
-        <input type="file" class="import-input hidden" accept=".json,application/json">
-        <div class="section-title">📝 專案名稱</div>
-        <input type="text" class="title-input" value="專案 1" maxlength="60">
-        <div class="section-title">📦 盒子參數</div>
-        <label class="check-row"><input type="checkbox" class="flip-y" checked=""> 上下翻轉 (正立)</label>
-        <label class="param-row"><span>深度 D</span><input type="range" class="depth" min="1" max="64" value="16"><span class="depth-v">1</span></label>
-        <label class="param-row"><span>厚度</span><input type="range" class="thickness" min="1" max="3" value="1"><span class="thickness-v">1</span></label>
-        <label class="param-row"><span>側壁</span><select class="side-color"><option value="edge">輪廓本色</option><option value="solid">單色</option><option value="avg">平均色 (自動吸附)</option></select></label>
-        <label class="param-row"><span>單色方塊</span>
-          <button class="pick-solid-btn">
-            <div class="solid-swatch" style="background: rgb(122, 122, 122);"></div>
-            <span class="solid-name">石头</span>
-          </button>
-        </label>
-        
-        <div style="border-top:1px solid var(--border); margin:8px 0; padding-top:8px;">
-          <label class="check-row"><input type="checkbox" class="relief-enabled"> 啟用浮雕</label>
-          <div class="relief-panel hidden" style="padding-left:4px">
-            <label class="param-row"><span>整體厚度</span><input type="range" class="relief-thick" min="1" max="8" value="1"><span class="relief-thick-v">1</span></label>
-            <button class="apply-all-relief small" style="margin-bottom:8px; font-size:10.5px">🎯 套用到全部顏色</button>
-            <div class="relief-list"><div class="relief-item">
-      <div class="sw" style="background:#495B24"></div>
-      <div class="nm"><b>GREEN_CONCRETE</b>绿色混凝土</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div><div class="relief-item">
-      <div class="sw" style="background:#1D1D21"></div>
-      <div class="nm"><b>BLACK_WOOL</b>黑色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div><div class="relief-item">
-      <div class="sw" style="background:#E9ECEC"></div>
-      <div class="nm"><b>WOOL</b>白色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div></div>
-          </div>
-        </div>
-
-        <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px">
-          <button class="copy-py mc">🪄 施展魔法 (一鍵複製)</button>
-          <button class="show-py">📜 顯示魔法卷軸 (查看)</button>
-        </div>
-      </div>
-      <div class="viewer">
-        <canvas class="preview-canvas" width="760" height="540"></canvas>
-        <div class="view-info">32×32 · 2,312 方塊 · D=1</div>
-      </div>
-      <div class="right">
-        <div class="section-title">🧱 方塊色表（點擊替換）</div>
-        <div class="block-list"><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#495B24"></div>
-      <div class="info">
-        <div class="code">GREEN_CONCRETE</div>
-        <div class="name">绿色混凝土</div>
-      </div>
-      <div class="count">×1284</div>
-    </div><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#1D1D21"></div>
-      <div class="info">
-        <div class="code">BLACK_WOOL</div>
-        <div class="name">黑色羊毛</div>
-      </div>
-      <div class="count">×638</div>
-    </div><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#E9ECEC"></div>
-      <div class="info">
-        <div class="code">WOOL</div>
-        <div class="name">白色羊毛</div>
-      </div>
-      <div class="count">×390</div>
-    </div></div>
-      </div>
-    </div><div class="panel" data-tab="1">
-      <div class="sidebar">
-        <button class="import-json primary">📥 匯入單一 JSON</button>
-        <input type="file" class="import-input hidden" accept=".json,application/json">
-        <div class="section-title">📝 專案名稱</div>
-        <input type="text" class="title-input" value="專案 2" maxlength="60">
-        <div class="section-title">📦 盒子參數</div>
-        <label class="check-row"><input type="checkbox" class="flip-y" checked=""> 上下翻轉 (正立)</label>
-        <label class="param-row"><span>深度 D</span><input type="range" class="depth" min="1" max="64" value="16"><span class="depth-v">1</span></label>
-        <label class="param-row"><span>厚度</span><input type="range" class="thickness" min="1" max="3" value="1"><span class="thickness-v">1</span></label>
-        <label class="param-row"><span>側壁</span><select class="side-color"><option value="edge">輪廓本色</option><option value="solid">單色</option><option value="avg">平均色 (自動吸附)</option></select></label>
-        <label class="param-row"><span>單色方塊</span>
-          <button class="pick-solid-btn">
-            <div class="solid-swatch" style="background: rgb(122, 122, 122);"></div>
-            <span class="solid-name">石头</span>
-          </button>
-        </label>
-        
-        <div style="border-top:1px solid var(--border); margin:8px 0; padding-top:8px;">
-          <label class="check-row"><input type="checkbox" class="relief-enabled"> 啟用浮雕</label>
-          <div class="relief-panel hidden" style="padding-left:4px">
-            <label class="param-row"><span>整體厚度</span><input type="range" class="relief-thick" min="1" max="8" value="1"><span class="relief-thick-v">1</span></label>
-            <button class="apply-all-relief small" style="margin-bottom:8px; font-size:10.5px">🎯 套用到全部顏色</button>
-            <div class="relief-list"><div class="relief-item">
-      <div class="sw" style="background:#1D1D21"></div>
-      <div class="nm"><b>BLACK_WOOL</b>黑色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div><div class="relief-item">
-      <div class="sw" style="background:#E9ECEC"></div>
-      <div class="nm"><b>WOOL</b>白色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div></div>
-          </div>
-        </div>
-
-        <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px">
-          <button class="copy-py mc">🪄 施展魔法 (一鍵複製)</button>
-          <button class="show-py">📜 顯示魔法卷軸 (查看)</button>
-        </div>
-      </div>
-      <div class="viewer">
-        <canvas class="preview-canvas" width="760" height="540"></canvas>
-        <div class="view-info">32×32 · 1,400 方塊 · D=1</div>
-      </div>
-      <div class="right">
-        <div class="section-title">🧱 方塊色表（點擊替換）</div>
-        <div class="block-list"><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#1D1D21"></div>
-      <div class="info">
-        <div class="code">BLACK_WOOL</div>
-        <div class="name">黑色羊毛</div>
-      </div>
-      <div class="count">×1002</div>
-    </div><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#E9ECEC"></div>
-      <div class="info">
-        <div class="code">WOOL</div>
-        <div class="name">白色羊毛</div>
-      </div>
-      <div class="count">×398</div>
-    </div></div>
-      </div>
-    </div><div class="panel active" data-tab="2">
-      <div class="sidebar">
-        <button class="import-json primary">📥 匯入單一 JSON</button>
-        <input type="file" class="import-input hidden" accept=".json,application/json">
-        <div class="section-title">📝 專案名稱</div>
-        <input type="text" class="title-input" value="專案 3" maxlength="60">
-        <div class="section-title">📦 盒子參數</div>
-        <label class="check-row"><input type="checkbox" class="flip-y" checked=""> 上下翻轉 (正立)</label>
-        <label class="param-row"><span>深度 D</span><input type="range" class="depth" min="1" max="64" value="16"><span class="depth-v">1</span></label>
-        <label class="param-row"><span>厚度</span><input type="range" class="thickness" min="1" max="3" value="1"><span class="thickness-v">1</span></label>
-        <label class="param-row"><span>側壁</span><select class="side-color"><option value="edge">輪廓本色</option><option value="solid">單色</option><option value="avg">平均色 (自動吸附)</option></select></label>
-        <label class="param-row"><span>單色方塊</span>
-          <button class="pick-solid-btn">
-            <div class="solid-swatch" style="background: rgb(122, 122, 122);"></div>
-            <span class="solid-name">石头</span>
-          </button>
-        </label>
-        
-        <div style="border-top:1px solid var(--border); margin:8px 0; padding-top:8px;">
-          <label class="check-row"><input type="checkbox" class="relief-enabled"> 啟用浮雕</label>
-          <div class="relief-panel hidden" style="padding-left:4px">
-            <label class="param-row"><span>整體厚度</span><input type="range" class="relief-thick" min="1" max="8" value="1"><span class="relief-thick-v">1</span></label>
-            <button class="apply-all-relief small" style="margin-bottom:8px; font-size:10.5px">🎯 套用到全部顏色</button>
-            <div class="relief-list"><div class="relief-item">
-      <div class="sw" style="background:#495B24"></div>
-      <div class="nm"><b>GREEN_CONCRETE</b>绿色混凝土</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div><div class="relief-item">
-      <div class="sw" style="background:#1D1D21"></div>
-      <div class="nm"><b>BLACK_WOOL</b>黑色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div><div class="relief-item">
-      <div class="sw" style="background:#35399D"></div>
-      <div class="nm"><b>BLUE_WOOL</b>蓝色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div><div class="relief-item">
-      <div class="sw" style="background:#E9ECEC"></div>
-      <div class="nm"><b>WOOL</b>白色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div><div class="relief-item">
-      <div class="sw" style="background:#F8C627"></div>
-      <div class="nm"><b>YELLOW_WOOL</b>黄色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div></div>
-          </div>
-        </div>
-
-        <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px">
-          <button class="copy-py mc">🪄 施展魔法 (一鍵複製)</button>
-          <button class="show-py">📜 顯示魔法卷軸 (查看)</button>
-        </div>
-      </div>
-      <div class="viewer">
-        <canvas class="preview-canvas" width="760" height="540"></canvas>
-        <div class="view-info">32×32 · 2,312 方塊 · D=1</div>
-      </div>
-      <div class="right">
-        <div class="section-title">🧱 方塊色表（點擊替換）</div>
-        <div class="block-list"><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#495B24"></div>
-      <div class="info">
-        <div class="code">GREEN_CONCRETE</div>
-        <div class="name">绿色混凝土</div>
-      </div>
-      <div class="count">×930</div>
-    </div><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#1D1D21"></div>
-      <div class="info">
-        <div class="code">BLACK_WOOL</div>
-        <div class="name">黑色羊毛</div>
-      </div>
-      <div class="count">×634</div>
-    </div><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#35399D"></div>
-      <div class="info">
-        <div class="code">BLUE_WOOL</div>
-        <div class="name">蓝色羊毛</div>
-      </div>
-      <div class="count">×384</div>
-    </div><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#E9ECEC"></div>
-      <div class="info">
-        <div class="code">WOOL</div>
-        <div class="name">白色羊毛</div>
-      </div>
-      <div class="count">×228</div>
-    </div><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#F8C627"></div>
-      <div class="info">
-        <div class="code">YELLOW_WOOL</div>
-        <div class="name">黄色羊毛</div>
-      </div>
-      <div class="count">×136</div>
-    </div></div>
-      </div>
-    </div><div class="panel" data-tab="3">
-      <div class="sidebar">
-        <button class="import-json primary">📥 匯入單一 JSON</button>
-        <input type="file" class="import-input hidden" accept=".json,application/json">
-        <div class="section-title">📝 專案名稱</div>
-        <input type="text" class="title-input" value="專案 4" maxlength="60">
-        <div class="section-title">📦 盒子參數</div>
-        <label class="check-row"><input type="checkbox" class="flip-y" checked=""> 上下翻轉 (正立)</label>
-        <label class="param-row"><span>深度 D</span><input type="range" class="depth" min="1" max="64" value="16"><span class="depth-v">1</span></label>
-        <label class="param-row"><span>厚度</span><input type="range" class="thickness" min="1" max="3" value="1"><span class="thickness-v">1</span></label>
-        <label class="param-row"><span>側壁</span><select class="side-color"><option value="edge">輪廓本色</option><option value="solid">單色</option><option value="avg">平均色 (自動吸附)</option></select></label>
-        <label class="param-row"><span>單色方塊</span>
-          <button class="pick-solid-btn">
-            <div class="solid-swatch" style="background: rgb(122, 122, 122);"></div>
-            <span class="solid-name">石头</span>
-          </button>
-        </label>
-        
-        <div style="border-top:1px solid var(--border); margin:8px 0; padding-top:8px;">
-          <label class="check-row"><input type="checkbox" class="relief-enabled"> 啟用浮雕</label>
-          <div class="relief-panel hidden" style="padding-left:4px">
-            <label class="param-row"><span>整體厚度</span><input type="range" class="relief-thick" min="1" max="8" value="1"><span class="relief-thick-v">1</span></label>
-            <button class="apply-all-relief small" style="margin-bottom:8px; font-size:10.5px">🎯 套用到全部顏色</button>
-            <div class="relief-list"><div class="relief-item">
-      <div class="sw" style="background:#1D1D21"></div>
-      <div class="nm"><b>BLACK_WOOL</b>黑色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div><div class="relief-item">
-      <div class="sw" style="background:#35399D"></div>
-      <div class="nm"><b>BLUE_WOOL</b>蓝色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div><div class="relief-item">
-      <div class="sw" style="background:#E9ECEC"></div>
-      <div class="nm"><b>WOOL</b>白色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div><div class="relief-item">
-      <div class="sw" style="background:#F8C627"></div>
-      <div class="nm"><b>YELLOW_WOOL</b>黄色羊毛</div>
-      <input type="number" min="1" max="8" step="1" value="1">
-    </div></div>
-          </div>
-        </div>
-
-        <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px">
-          <button class="copy-py mc">🪄 施展魔法 (一鍵複製)</button>
-          <button class="show-py">📜 顯示魔法卷軸 (查看)</button>
-        </div>
-      </div>
-      <div class="viewer">
-        <canvas class="preview-canvas" width="760" height="540"></canvas>
-        <div class="view-info">32×32 · 1,546 方塊 · D=1</div>
-      </div>
-      <div class="right">
-        <div class="section-title">🧱 方塊色表（點擊替換）</div>
-        <div class="block-list"><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#1D1D21"></div>
-      <div class="info">
-        <div class="code">BLACK_WOOL</div>
-        <div class="name">黑色羊毛</div>
-      </div>
-      <div class="count">×798</div>
-    </div><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#35399D"></div>
-      <div class="info">
-        <div class="code">BLUE_WOOL</div>
-        <div class="name">蓝色羊毛</div>
-      </div>
-      <div class="count">×384</div>
-    </div><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#E9ECEC"></div>
-      <div class="info">
-        <div class="code">WOOL</div>
-        <div class="name">白色羊毛</div>
-      </div>
-      <div class="count">×228</div>
-    </div><div class="block-item" title="點擊替換此方塊">
-      <div class="swatch" style="background:#F8C627"></div>
-      <div class="info">
-        <div class="code">YELLOW_WOOL</div>
-        <div class="name">黄色羊毛</div>
-      </div>
-      <div class="count">×136</div>
-    </div></div>
-      </div>
-    </div><div class="panel" data-tab="4">
-      <div class="sidebar">
-        <button class="import-json primary">📥 匯入單一 JSON</button>
-        <input type="file" class="import-input hidden" accept=".json,application/json">
-        <div class="section-title">📝 專案名稱</div>
-        <input type="text" class="title-input" value="專案 5" maxlength="60">
-        <div class="section-title">📦 盒子參數</div>
-        <label class="check-row"><input type="checkbox" class="flip-y" checked=""> 上下翻轉 (正立)</label>
-        <label class="param-row"><span>深度 D</span><input type="range" class="depth" min="1" max="64" value="16"><span class="depth-v">16</span></label>
-        <label class="param-row"><span>厚度</span><input type="range" class="thickness" min="1" max="3" value="1"><span class="thickness-v">1</span></label>
-        <label class="param-row"><span>側壁</span><select class="side-color"><option value="edge">輪廓本色</option><option value="solid">單色</option><option value="avg">平均色 (自動吸附)</option></select></label>
-        <label class="param-row"><span>單色方塊</span>
-          <button class="pick-solid-btn">
-            <div class="solid-swatch" style="background: rgb(62, 68, 71);"></div>
-            <span class="solid-name">灰色羊毛</span>
-          </button>
-        </label>
-        
-        <div style="border-top:1px solid var(--border); margin:8px 0; padding-top:8px;">
-          <label class="check-row"><input type="checkbox" class="relief-enabled"> 啟用浮雕</label>
-          <div class="relief-panel hidden" style="padding-left:4px">
-            <label class="param-row"><span>整體厚度</span><input type="range" class="relief-thick" min="1" max="8" value="1"><span class="relief-thick-v">1</span></label>
-            <button class="apply-all-relief small" style="margin-bottom:8px; font-size:10.5px">🎯 套用到全部顏色</button>
-            <div class="relief-list"><div class="empty-list">請先載入或繪製方塊</div></div>
-          </div>
-        </div>
-
-        <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px">
-          <button class="copy-py mc">🪄 施展魔法 (一鍵複製)</button>
-          <button class="show-py">📜 顯示魔法卷軸 (查看)</button>
-        </div>
-      </div>
-      <div class="viewer">
-        <canvas class="preview-canvas" width="760" height="540"></canvas>
-        <div class="view-info">尚未匯入 JSON</div>
-      </div>
-      <div class="right">
-        <div class="section-title">🧱 方塊色表（點擊替換）</div>
-        <div class="block-list"><div class="empty-list">尚未匯入 JSON<br><span style="font-size:10px">點擊左側「匯入 JSON」開始</span></div></div>
-      </div>
-    </div><div class="panel" data-tab="5">
-      <div class="sidebar">
-        <button class="import-json primary">📥 匯入單一 JSON</button>
-        <input type="file" class="import-input hidden" accept=".json,application/json">
-        <div class="section-title">📝 專案名稱</div>
-        <input type="text" class="title-input" value="專案 6" maxlength="60">
-        <div class="section-title">📦 盒子參數</div>
-        <label class="check-row"><input type="checkbox" class="flip-y" checked=""> 上下翻轉 (正立)</label>
-        <label class="param-row"><span>深度 D</span><input type="range" class="depth" min="1" max="64" value="16"><span class="depth-v">16</span></label>
-        <label class="param-row"><span>厚度</span><input type="range" class="thickness" min="1" max="3" value="1"><span class="thickness-v">1</span></label>
-        <label class="param-row"><span>側壁</span><select class="side-color"><option value="edge">輪廓本色</option><option value="solid">單色</option><option value="avg">平均色 (自動吸附)</option></select></label>
-        <label class="param-row"><span>單色方塊</span>
-          <button class="pick-solid-btn">
-            <div class="solid-swatch" style="background: rgb(62, 68, 71);"></div>
-            <span class="solid-name">灰色羊毛</span>
-          </button>
-        </label>
-        
-        <div style="border-top:1px solid var(--border); margin:8px 0; padding-top:8px;">
-          <label class="check-row"><input type="checkbox" class="relief-enabled"> 啟用浮雕</label>
-          <div class="relief-panel hidden" style="padding-left:4px">
-            <label class="param-row"><span>整體厚度</span><input type="range" class="relief-thick" min="1" max="8" value="1"><span class="relief-thick-v">1</span></label>
-            <button class="apply-all-relief small" style="margin-bottom:8px; font-size:10.5px">🎯 套用到全部顏色</button>
-            <div class="relief-list"><div class="empty-list">請先載入或繪製方塊</div></div>
-          </div>
-        </div>
-
-        <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px">
-          <button class="copy-py mc">🪄 施展魔法 (一鍵複製)</button>
-          <button class="show-py">📜 顯示魔法卷軸 (查看)</button>
-        </div>
-      </div>
-      <div class="viewer">
-        <canvas class="preview-canvas" width="760" height="540"></canvas>
-        <div class="view-info">尚未匯入 JSON</div>
-      </div>
-      <div class="right">
-        <div class="section-title">🧱 方塊色表（點擊替換）</div>
-        <div class="block-list"><div class="empty-list">尚未匯入 JSON<br><span style="font-size:10px">點擊左側「匯入 JSON」開始</span></div></div>
-      </div>
-    </div><div class="panel" data-tab="6">
-      <div class="sidebar">
-        <div class="section-title">🎨 調色盤</div>
-        <div class="palette"></div>
-        <button class="add-color">+ 新增顏色</button>
-        <div class="section-title">🖌️ 工具</div>
-        <button class="fill-all">填充全部</button>
-        <button class="clear-canvas danger">🗑️ 清空畫布</button>
-      </div>
-      <div class="viewer">
-        <div class="section-title" style="width:100%;text-align:center">🎃 16×16 設計畫布</div>
-        <div class="pixel-editor-wrap">
-          <canvas class="pixel-editor" width="448" height="448"></canvas>
-        </div>
-        <div class="draw-info">左鍵/拖曳繪製 · 右鍵擦除</div>
-      </div>
-      <div class="right">
-        <div class="section-title">🔍 3D 預覽</div>
-        <canvas class="preview-canvas" width="300" height="220"></canvas>
-        <div class="view-info">16×16 · 0 方塊 · D=16</div>
-        <div class="section-title">📝 專案名稱</div>
-        <input type="text" class="title-input" value="萬聖節 16×16" maxlength="60">
-        <div class="section-title">📦 盒子參數</div>
-        <label class="check-row"><input type="checkbox" class="flip-y" checked=""> 上下翻轉 (正立)</label>
-        <label class="param-row"><span>深度 D</span><input type="range" class="depth" min="1" max="64" value="16"><span class="depth-v">16</span></label>
-        <label class="param-row"><span>厚度</span><input type="range" class="thickness" min="1" max="3" value="1"><span class="thickness-v">1</span></label>
-        <label class="param-row"><span>側壁</span><select class="side-color"><option value="edge">輪廓本色</option><option value="solid">單色</option><option value="avg">平均色 (自動吸附)</option></select></label>
-        <label class="param-row"><span>單色方塊</span>
-          <button class="pick-solid-btn">
-            <div class="solid-swatch" style="background: rgb(62, 68, 71);"></div>
-            <span class="solid-name">灰色羊毛</span>
-          </button>
-        </label>
-        
-        <div style="border-top:1px solid var(--border); margin:8px 0; padding-top:8px;">
-          <label class="check-row"><input type="checkbox" class="relief-enabled"> 啟用浮雕</label>
-          <div class="relief-panel hidden" style="padding-left:4px">
-            <label class="param-row"><span>整體厚度</span><input type="range" class="relief-thick" min="1" max="8" value="1"><span class="relief-thick-v">1</span></label>
-            <button class="apply-all-relief small" style="margin-bottom:8px; font-size:10.5px">🎯 套用到全部顏色</button>
-            <div class="relief-list"><div class="empty-list">無使用顏色</div></div>
-          </div>
-        </div>
-
-        <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px">
-          <button class="copy-py mc">🪄 施展魔法 (一鍵複製)</button>
-          <button class="show-py">📜 顯示魔法卷軸 (查看)</button>
-        </div>
-      </div>
-    </div></div>
+<div class="tabs" id="tabs"></div>
+<div class="panels" id="panels"></div>
 
 <!-- 初次進入的拖曳匯入區 -->
 <div class="drop-overlay hidden" id="dropOverlay">
@@ -600,7 +158,7 @@ canvas.pixel-editor{display:block;cursor:crosshair;touch-action:none;image-rende
   </div>
 </div>
 
-<div class="modal py-preview-modal hidden" id="pyModal">
+<div class="modal hidden py-preview-modal" id="pyModal">
   <div class="modal-content">
     <h3>📜 魔法卷軸 (.py)</h3>
     <textarea id="pyOutput" readonly="" spellcheck="false" wrap="off"></textarea>
@@ -2048,7 +1606,6 @@ async function processBatchFiles(files) {
 
 // ======= 匯出獨立網頁 =======
 function exportStandaloneHTML() {
-  // 收集當前資料
   const data = tabState.map(ts => ({
     pixels: ts.pixels,
     W: ts.W,
@@ -2059,10 +1616,15 @@ function exportStandaloneHTML() {
     relief: ts.relief
   }));
 
-  // 複製當前網頁的 DOM
   const clone = document.documentElement.cloneNode(true);
   
-  // 移除舊的嵌入資料 (避免重複)
+  // 清空現有的 Tab 和面板，避免導出後重複
+  const cTabs = clone.querySelector('#tabs');
+  const cPanels = clone.querySelector('#panels');
+  if(cTabs) cTabs.innerHTML = '';
+  if(cPanels) cPanels.innerHTML = '';
+  
+  // 移除舊的嵌入資料
   const oldScript = clone.querySelector('#embedded-data');
   if(oldScript) oldScript.remove();
   
@@ -2072,7 +1634,6 @@ function exportStandaloneHTML() {
   script.textContent = `window.__EMBEDDED_DATA__ = ${JSON.stringify(data)};`;
   clone.querySelector('head').appendChild(script);
   
-  // 下載
   const htmlContent = '<!DOCTYPE html>\n' + clone.outerHTML;
   const blob = new Blob([htmlContent], {type: 'text/html'});
   const a = document.createElement('a');
@@ -2086,6 +1647,10 @@ function exportStandaloneHTML() {
 function init(){
   const tabsBar = $('tabs');
   const panels = $('panels');
+
+  // 🔑 清空現有的內容，避免重複生成 (修復匯出 Tab 變兩倍的問題)
+  tabsBar.innerHTML = '';
+  panels.innerHTML = '';
 
   for(let i=0;i<7;i++){
     const btn = document.createElement('button');
@@ -2132,7 +1697,6 @@ function init(){
     }
   });
 
-  // 嘗試載入資料 (優先載入寫死在裡面的分享資料，其次載入本地記憶)
   let hasData = false;
   if (window.__EMBEDDED_DATA__) {
     const data = window.__EMBEDDED_DATA__;
@@ -2162,7 +1726,6 @@ function init(){
   
   setupDropZone();
 
-  // 綁定匯出與清除按鈕
   $('exportStandaloneBtn').addEventListener('click', exportStandaloneHTML);
 
   $('resetAllBtn').addEventListener('click', () => {
