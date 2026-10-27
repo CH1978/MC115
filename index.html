@@ -2,526 +2,1531 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🎃 Halloween Workshop｜萬聖節角色館</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#4a8f3c">
+<title>僑仁麥塊學院 ｜ 用方塊蓋出你的程式邏輯</title>
 <style>
 :root{
-  --orange:#ff8a1e;
-  --orange-soft:#ffb454;
-  --purple:#a02bff;
-  --ink:#f4e9ff;
+  --green:#4a8f3c; --green-d:#356a2b; --green-l:#eef4ea;
+  --blue:#5ba3d9; --cyan:#2ec4b6;
+  --halloween:#e67e22; --christmas:#c0392b;
+  --warm:#f0c840;
+  --bg:#f2f6ef; --card:#fff; --text:#1f2a1c; --muted:#6b7a66;
+  --border:#d8e3d2; --r:14px; --shadow:0 2px 8px rgba(0,0,0,.05);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+*{box-sizing:border-box;}
 body{
-  font-family:"Microsoft JhengHei","PingFang TC",system-ui,-apple-system,"Segoe UI",sans-serif;
-  background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(255,122,24,.20), transparent 60%),
-    radial-gradient(900px 500px at 100% 100%, rgba(140,60,255,.18), transparent 60%),
-    linear-gradient(180deg,#0b0414 0%,#150827 45%,#0a0412 100%);
-  background-attachment:fixed;
-  color:var(--ink);
-  min-height:100vh;
-  overflow-x:hidden;
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  line-height:1.6;
+}
+.wrap{max-width:1140px; margin:0 auto; padding:0 18px;}
+img{max-width:100%; display:block;}
+
+/* ============ 頂部列 ============ */
+.topbar{
+  background:var(--green); color:#fff; position:sticky; top:0; z-index:100;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+.topbar .wrap{display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:10px 18px;}
+.brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.02rem; white-space:nowrap;}
+.brand .logo{
+  width:34px; height:34px; background:#3a7530; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+}
+.topbar nav{display:flex; gap:4px; flex-wrap:wrap; margin-left:auto;}
+.topbar nav a{
+  color:#fff; text-decoration:none; padding:7px 11px; border-radius:8px;
+  font-size:.9rem; transition:.15s; white-space:nowrap; cursor:pointer;
+}
+.topbar nav a:hover{background:rgba(255,255,255,.2);}
+.topbar nav a.ext{background:rgba(0,0,0,.18); font-weight:600;}
+.topbar nav a.highlight{background:var(--warm); color:#1a1a1a; font-weight:700;}
+.topbar nav a.highlight:hover{background:#ffe066;}
+
+/* MakeCode 導覽按鈕 */
+.topbar nav a.makecode{
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  color: #fff; font-weight: 700;
+}
+.topbar nav a.makecode:hover{
+  background: linear-gradient(135deg, #4a92c9, #25b3a6);
 }
 
-/* canvas 星光 */
-#sparkles{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.menu-toggle{display:none; background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; margin-left:auto;}
 
-/* 滑鼠光暈 */
-.spotlight{
-  position:fixed;top:0;left:0;width:620px;height:620px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,150,50,.10),transparent 62%);
-  pointer-events:none;z-index:0;will-change:transform;
+/* ============ Hero ============ */
+.hero{
+  background:linear-gradient(135deg,var(--green-d),var(--green) 60%, var(--cyan));
+  color:#fff; padding:56px 0 60px; text-align:center; position:relative; overflow:hidden;
 }
+.hero::before{
+  content:""; position:absolute; inset:0; opacity:.12;
+  background-image:
+    linear-gradient(#fff 1px, transparent 1px),
+    linear-gradient(90deg, #fff 1px, transparent 1px);
+  background-size:40px 40px;
+}
+.hero .wrap{position:relative; z-index:1;}
+.hero h1{
+  margin:0 0 10px; font-size:2.2rem; letter-spacing:1px;
+  text-shadow:0 3px 14px rgba(0,0,0,.2);
+}
+.hero .slogan{font-size:1.05rem; opacity:.95; margin:0 0 22px; font-weight:300;}
+.hero .meta{font-size:.9rem; opacity:.85; margin:0 0 26px;}
+.hero .cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+.hero .cta a{
+  padding:12px 26px; border-radius:11px; text-decoration:none; font-weight:700;
+  font-size:.95rem; transition:.15s; cursor:pointer;
+}
+.hero .cta a.primary{background:#fff; color:var(--green-d);}
+.hero .cta a.primary:hover{background:#f0f8ec; transform:translateY(-2px);}
+.hero .cta a.ghost{background:rgba(255,255,255,.15); color:#fff; border:2px solid rgba(255,255,255,.6);}
+.hero .cta a.ghost:hover{background:rgba(255,255,255,.25);}
+.hero .cta a.warm{background:var(--warm); color:#1a1a1a;}
+.hero .cta a.warm:hover{background:#ffe066; transform:translateY(-2px);}
+.hero .cta a.makecode{background:linear-gradient(135deg,var(--blue),var(--cyan)); color:#fff; border:2px solid rgba(255,255,255,.4);}
+.hero .cta a.makecode:hover{filter:brightness(1.08); transform:translateY(-2px);}
 
-/* 月亮 */
-.moon{
-  position:fixed;top:42px;right:6vw;width:120px;height:120px;border-radius:50%;
-  background:radial-gradient(circle at 35% 32%,#fff8e0,#ffd98a 55%,#f0a63c);
-  pointer-events:none;z-index:1;
-  animation:moonBreath 6s ease-in-out infinite;
+/* ============ 節慶 banner ============ */
+.festival-banner{
+  padding:20px 0; text-align:center; color:#fff; cursor:pointer;
+  transition:.2s; position:relative; overflow:hidden;
 }
-@keyframes moonBreath{
-  0%,100%{box-shadow:0 0 60px 10px rgba(255,190,90,.32),0 0 140px 40px rgba(255,150,40,.13)}
-  50%{box-shadow:0 0 80px 18px rgba(255,200,110,.5),0 0 190px 70px rgba(255,150,40,.22)}
+.festival-banner:hover{filter:brightness(1.08);}
+.festival-banner.halloween{background:linear-gradient(90deg,#1a1a1a,#e67e22,#1a1a1a);}
+.festival-banner.christmas{background:linear-gradient(90deg,#8b1a1a,#c0392b,#2a5c2a,#8b1a1a);}
+.festival-banner .inner{
+  display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
 }
-.moon::before,.moon::after{content:'';position:absolute;border-radius:50%;background:rgba(190,130,60,.22)}
-.moon::before{width:26px;height:26px;top:26px;left:24px}
-.moon::after{width:16px;height:16px;bottom:28px;right:26px}
+.festival-banner .emoji{font-size:2rem;}
+.festival-banner b{font-size:1.1rem;}
+.festival-banner span{opacity:.92; font-size:.92rem;}
 
-/* 蜘蛛 */
-.spider-thread{
-  position:fixed;top:0;left:14%;width:1px;height:130px;z-index:2;pointer-events:none;
-  background:linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,0));
-  transform-origin:top center;
-  animation:swing 7s ease-in-out infinite;
+/* ============ Section ============ */
+section{padding:38px 0;}
+section h2{
+  font-size:1.45rem; margin:0 0 6px; display:flex; align-items:center; gap:10px;
+  color:var(--text);
 }
-.spider{position:absolute;bottom:-16px;left:50%;font-size:22px;transform:translateX(-50%);
-        filter:drop-shadow(0 0 8px rgba(0,0,0,.9))}
-@keyframes swing{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+section h2::before{
+  content:""; width:6px; height:26px; background:var(--green); border-radius:3px;
+}
+.sub{color:var(--muted); margin:0 0 20px; font-size:.92rem;}
 
-/* 飄浮裝飾 */
-.floaty{position:fixed;pointer-events:none;z-index:1;opacity:.75;user-select:none}
-.f-ghost1{top:22%;left:5%;font-size:42px;animation:floatUp 9s ease-in-out infinite}
-.f-ghost2{top:66%;right:6%;font-size:34px;animation:floatUp 11s ease-in-out infinite reverse}
-.f-pump1{top:48%;left:2%;font-size:38px;animation:bob 5s ease-in-out infinite}
-.f-pump2{top:82%;left:80%;font-size:30px;animation:bob 6.5s ease-in-out infinite .8s}
-@keyframes floatUp{
-  0%,100%{transform:translateY(0) rotate(-4deg);opacity:.55}
-  50%{transform:translateY(-28px) rotate(4deg);opacity:.9}
-}
-@keyframes bob{
-  0%,100%{transform:translateY(0) scale(1)}
-  50%{transform:translateY(-16px) scale(1.06)}
-}
-
-/* 蝙蝠 */
-.bat{position:fixed;font-size:24px;opacity:.7;pointer-events:none;z-index:1;
-     animation:fly 8s ease-in-out infinite}
-@keyframes fly{
-  0%{transform:translate(0,0) rotate(-6deg)}
-  50%{transform:translate(34px,-26px) rotate(8deg)}
-  100%{transform:translate(0,0) rotate(-6deg)}
-}
-
-/* ===== Header ===== */
-header{position:relative;z-index:3;text-align:center;padding:88px 6vw 30px}
-.eyebrow{
-  font-size:12px;letter-spacing:6px;color:#9b83bd;text-transform:uppercase;margin-bottom:18px;
-  animation:fadeDown .9s .1s both;
-}
-@keyframes fadeDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
-
-h1{
-  font-size:clamp(44px,8.5vw,104px);
-  letter-spacing:3px;line-height:1;font-weight:900;
-  filter:drop-shadow(0 0 22px rgba(255,120,20,.45));
-}
-h1 .letter{
-  display:inline-block;opacity:0;
-  transform:translateY(40px) rotate(-10deg) scale(.8);
-  animation:letterIn .8s cubic-bezier(.2,.85,.3,1.25) forwards;
-}
-h1 .letter.accent{
-  color:var(--orange);
-  animation:letterIn .8s cubic-bezier(.2,.85,.3,1.25) forwards, glowPulse 2.6s ease-in-out infinite 1s;
-}
-@keyframes letterIn{to{opacity:1;transform:none}}
-@keyframes glowPulse{
-  0%,100%{text-shadow:0 0 14px rgba(255,140,30,.9),0 0 40px rgba(255,90,0,.55)}
-  50%{text-shadow:0 0 22px rgba(255,180,70,1),0 0 70px rgba(255,110,0,.85)}
+/* ============ 面板 ============ */
+.panel{
+  background:#fff; border:1px solid var(--border); border-radius:var(--r);
+  padding:24px; box-shadow:var(--shadow);
 }
 
-.sub{
-  margin-top:20px;color:#c7b3e0;font-size:clamp(13px,1.6vw,16px);letter-spacing:5px;
-  animation:fadeDown 1s .8s both;
+/* ============ 表單 ============ */
+.field{margin-bottom:14px;}
+.field label{display:block; font-size:.9rem; font-weight:700; margin-bottom:6px;}
+.field input,.field select,.field textarea{
+  width:100%; padding:11px 13px; border:2px solid var(--border); border-radius:10px;
+  font-size:1rem; font-family:inherit; background:#fbfdfa;
 }
-.scroll-hint{
-  margin-top:34px;font-size:12px;letter-spacing:3px;color:#8a78a8;
-  animation:fadeDown 1s 1.1s both, bobHint 2.4s ease-in-out infinite 1.6s;
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none; border-color:var(--green);
 }
-@keyframes bobHint{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+select{cursor:pointer;}
 
-/* ===== 卡片 ===== */
-.grid{
-  position:relative;z-index:3;
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));
-  gap:24px;max-width:1280px;margin:0 auto;padding:26px 6vw 40px;
+/* ============ 按鈕 ============ */
+.btn{
+  display:inline-block; padding:12px 22px; background:var(--green); color:#fff;
+  text-decoration:none; border-radius:10px; font-weight:700; border:none;
+  cursor:pointer; font-family:inherit; font-size:.95rem; transition:.15s;
+  text-align:center;
+}
+.btn:hover{background:var(--green-d);}
+.btn.ghost{background:#fff; color:var(--green-d); border:2px solid var(--green);}
+.btn.ghost:hover{background:var(--green-l);}
+.btn.full{width:100%;}
+
+.err{color:#c0392b; font-size:.88rem; margin:12px 0 0; min-height:22px; text-align:center;}
+
+/* ============ 公告 ============ */
+.announce-list{list-style:none; padding:0; margin:0;}
+.announce-list li{
+  padding:12px 14px; background:#fff; border-radius:10px; margin-bottom:10px;
+  border-left:4px solid var(--green); box-shadow:var(--shadow);
+  display:flex; gap:12px; align-items:flex-start;
+}
+.announce-list li .date{
+  font-size:.8rem; color:var(--muted); flex-shrink:0; font-weight:700;
 }
 
+/* ============ 課程表 ============ */
+.lesson-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:14px;
+}
+.lesson-card{
+  background:#fff; border:1px solid var(--border); border-radius:14px;
+  padding:18px 14px; text-align:center; box-shadow:var(--shadow);
+  transition:.2s; position:relative; overflow:hidden;
+  text-decoration:none; color:inherit; display:block;
+}
+.lesson-card:hover{transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,.1);}
+.lesson-card.locked{background:#f7f7f7; border-style:dashed; color:#aaa;}
+.lesson-card.locked:hover{transform:none; box-shadow:var(--shadow);}
+.lesson-card.theme-halloween{border:2px solid var(--halloween);}
+.lesson-card.theme-halloween::before{
+  content:"🎃"; position:absolute; top:6px; right:8px; font-size:1.1rem;
+}
+.lesson-card.theme-christmas{border:2px solid var(--christmas);}
+.lesson-card.theme-christmas::before{
+  content:"🎄"; position:absolute; top:6px; right:8px; font-size:1.1rem;
+}
+.lesson-card.guide-card{
+  background:linear-gradient(135deg,#356a2b,#4a8f3c);
+  color:#fff; border:none;
+}
+.lesson-card.guide-card:hover{
+  box-shadow:0 8px 24px rgba(74,143,60,.4);
+}
+.lesson-card.guide-card .num{color:rgba(255,255,255,.95);}
+.lesson-card.guide-card .date{color:#fff;}
+.lesson-card.guide-card .guide-sub{
+  font-size:.85rem; color:rgba(255,255,255,.9); margin-bottom:12px;
+}
+.lesson-card.guide-card .lesson-link{
+  background:#fff; color:var(--green-d);
+}
+.lesson-card.guide-card .lesson-link:hover{
+  background:#f0f8ec;
+}
+
+/* 課程表裡的 MakeCode 卡片 */
+.lesson-card.makecode-card{
+  background: linear-gradient(135deg, #5ba3d9, #2ec4b6);
+  color: #fff; border: none;
+}
+.lesson-card.makecode-card:hover{
+  box-shadow: 0 8px 24px rgba(91,163,217,.4);
+}
+.lesson-card.makecode-card .num{ color: rgba(255,255,255,.95); }
+.lesson-card.makecode-card .date{ color: #fff; }
+.lesson-card.makecode-card .guide-sub{
+  font-size: .85rem; color: rgba(255,255,255,.9); margin-bottom: 12px;
+}
+.lesson-card.makecode-card .lesson-link{
+  background: #fff; color: #2a6fa8;
+}
+.lesson-card.makecode-card .lesson-link:hover{
+  background: #eaf4fc;
+}
+
+.lesson-card .num{font-size:.75rem; font-weight:800; color:var(--green-d); letter-spacing:1px; margin-bottom:4px;}
+.lesson-card.locked .num{color:#aaa;}
+.lesson-card .date{font-size:1.28rem; font-weight:800; margin-bottom:12px;}
+.lesson-card .lesson-link{
+  display:block; padding:9px 12px; background:var(--green); color:#fff;
+  border-radius:9px; text-decoration:none; font-size:.85rem; font-weight:700;
+  border:none; cursor:pointer; font-family:inherit; width:100%; transition:.15s;
+}
+.lesson-card .lesson-link:hover{background:var(--green-d);}
+.lesson-card .lesson-nolink{font-size:.8rem; color:#c0392b; padding:9px 0;}
+.lesson-card .lesson-locked{font-size:.82rem; color:#999; padding:9px 0;}
+
+/* ============ 帳號卡 ============ */
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px;}
 .card{
-  position:relative;display:block;border-radius:20px;text-decoration:none;color:inherit;
-  perspective:900px;opacity:0;
-  transition:border-color .3s, box-shadow .3s;
-  border:1px solid rgba(255,160,60,.22);
-  box-shadow:0 10px 28px rgba(0,0,0,.5);
-  background:rgba(255,255,255,.03);
+  background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+  padding:18px; box-shadow:var(--shadow); position:relative;
 }
-.card.in{animation:cardIn .85s cubic-bezier(.2,.85,.3,1.05) forwards}
-@keyframes cardIn{
-  from{opacity:0;transform:translateY(48px) scale(.94)}
-  to{opacity:1;transform:none}
-}
-.card:hover{
-  border-color:rgba(255,175,70,.9);
-  box-shadow:0 0 34px rgba(255,140,40,.45),0 20px 50px rgba(255,100,10,.32),0 0 0 1px rgba(255,175,70,.55) inset;
-  z-index:5;
-}
-
-.card .inner{
-  position:relative;border-radius:20px;overflow:hidden;
-  transform-style:preserve-3d;
-  transition:transform .3s cubic-bezier(.2,.8,.3,1);
-  will-change:transform;
-  background:linear-gradient(180deg,rgba(30,12,52,.9),rgba(14,6,26,.95));
-}
-.card:hover .inner{transform:translateY(-9px)}
-
-.thumb{position:relative;aspect-ratio:4/3;overflow:hidden}
-.thumb img{
-  width:100%;height:100%;object-fit:cover;display:block;
-  transition:transform .6s cubic-bezier(.2,.8,.3,1), filter .4s;
-  filter:saturate(.9) contrast(1.02);
-}
-.card:hover .thumb img{transform:scale(1.1);filter:saturate(1.15) contrast(1.06)}
-
+.card.spare{opacity:.75; border-style:dashed;}
+.card .who{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+.card .who .who-text{flex:1; min-width:0;}
+.card .who b{display:block; font-size:1.12rem;}
+.card .who span{font-size:.83rem; color:var(--muted);}
 .tag{
-  position:absolute;top:11px;left:11px;z-index:3;
-  font-size:11px;font-weight:700;letter-spacing:1px;
-  padding:4px 10px;border-radius:999px;
-  background:rgba(10,3,20,.62);border:1px solid rgba(255,170,80,.5);
-  color:#ffcf8f;backdrop-filter:blur(6px);
+  position:absolute; top:14px; right:14px; font-size:.72rem; padding:2px 9px;
+  border-radius:20px; background:var(--green-l); color:var(--green-d); font-weight:700;
+}
+.tag.spare{background:#f0f0f0; color:#888;}
+
+.row{
+  display:flex; align-items:center; gap:8px; background:#f7faf5;
+  border:1px solid var(--border); border-radius:9px; padding:9px 11px; margin-bottom:9px;
+}
+.row .lbl{font-size:.75rem; color:var(--muted); width:36px; flex-shrink:0;}
+.row .val{
+  flex:1; font-family:ui-monospace,Consolas,monospace; font-size:.86rem;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;
+}
+.row .val.hide{letter-spacing:2px;}
+.iconbtn{
+  border:1px solid var(--border); background:#fff; cursor:pointer;
+  border-radius:7px; padding:4px 9px; font-size:.85rem; transition:.15s; flex-shrink:0;
+}
+.iconbtn:hover{background:var(--green); color:#fff; border-color:var(--green);}
+.iconbtn.ok{background:var(--green); color:#fff; border-color:var(--green);}
+
+/* ============ 學生頭像 ============ */
+.avatar-preview{
+  width:88px; height:88px; border-radius:50%; object-fit:cover;
+  border:3px solid var(--green); margin:0 auto 16px; display:block;
+  box-shadow:0 6px 16px rgba(74,143,60,.28); animation:pop .3s ease-out;
+}
+.result-avatar{
+  width:110px; height:110px; border-radius:50%; object-fit:cover;
+  border:4px solid var(--green); margin:0 auto 14px; display:block;
+  box-shadow:0 8px 22px rgba(74,143,60,.35); animation:pop .35s ease-out;
+}
+.teacher-avatar{
+  width:48px; height:48px; border-radius:50%; object-fit:cover;
+  border:2px solid var(--green); flex-shrink:0;
+}
+@keyframes pop{
+  0%{transform:scale(.6);opacity:0;}
+  60%{transform:scale(1.08);}
+  100%{transform:scale(1);opacity:1;}
 }
 
-.meta{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:13px 16px;
-  background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,120,20,.05));
+/* ============ 結果卡 ============ */
+.result-card{
+  background:#fff; border:2px solid var(--green); border-radius:16px;
+  padding:26px; box-shadow:0 8px 24px rgba(74,143,60,.18);
 }
-.name{font-size:15px;font-weight:700;letter-spacing:1px}
-.no{
-  font-size:11.5px;font-weight:800;color:var(--orange-soft);
-  border:1px solid rgba(255,160,60,.5);border-radius:8px;padding:2px 9px;
-  animation:noPulse 3s ease-in-out infinite;
+.result-card .hello{font-size:1.25rem; font-weight:800; color:var(--green-d); margin:0 0 4px; text-align:center;}
+.result-card .hello-sub{text-align:center; color:var(--muted); font-size:.88rem; margin:0 0 20px;}
+
+/* ============ 3D 相簿 ============ */
+.carousel3d-wrap{
+  perspective: 1600px;
+  height: 440px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+  cursor: grab;
+  user-select: none;
 }
-@keyframes noPulse{
-  0%,100%{box-shadow:0 0 0 rgba(255,160,60,0)}
-  50%{box-shadow:0 0 14px rgba(255,160,60,.45)}
+.carousel3d-wrap:active{ cursor: grabbing; }
+.carousel3d{
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 220px; height: 320px;
+  margin: -160px 0 0 -110px;
+  transform-style: preserve-3d;
+}
+.carousel3d .slide{
+  position: absolute; inset: 0;
+  border-radius: 14px; overflow: hidden;
+  background: #eef4ea;
+  box-shadow: 0 14px 40px rgba(0,0,0,.35);
+  backface-visibility: hidden;
+  cursor: pointer;
+  transition: opacity .4s, box-shadow .4s, outline .3s;
+  outline: 0 solid transparent;
+}
+.carousel3d .slide img{
+  width: 100%; height: 100%; object-fit: cover;
+  display: block; pointer-events: none;
+  -webkit-user-drag: none;
+}
+.carousel3d .slide .cap{
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,.75));
+  color: #fff; padding: 30px 12px 12px;
+  font-size: .85rem; font-weight: 700;
+  text-align: center; letter-spacing: .5px;
+}
+.carousel3d .slide.active{
+  outline: 4px solid var(--green);
+  box-shadow: 0 20px 60px rgba(74,143,60,.55);
+}
+.carousel3d-controls{
+  display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+}
+.cbtn{
+  padding: 10px 22px;
+  border: 2px solid var(--green);
+  background: #fff; color: var(--green-d);
+  border-radius: 10px;
+  font-size: .9rem; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  transition: .15s;
+}
+.cbtn:hover{ background: var(--green); color: #fff; }
+
+/* ============ 作品藝廊 iframe ============ */
+.works-iframe-wrap{
+  width: 100%;
+  height: 720px;
+  position: relative;
+  background: #0a0f1a;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.15);
+}
+.works-iframe{
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
 }
 
-.shine{
-  position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:linear-gradient(115deg,transparent 38%,rgba(255,210,140,.28) 50%,transparent 62%);
-  transform:translateX(-130%);
+/* ============ MakeCode 專屬區塊 ============ */
+.makecode-panel{
+  background: #fff;
+  border: 2px solid var(--blue);
+  border-radius: 16px;
+  padding: 36px 32px;
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+  box-shadow: 0 8px 24px rgba(91,163,217,.15);
 }
-.card:hover .shine{animation:sweep .95s cubic-bezier(.3,.7,.4,1)}
-@keyframes sweep{to{transform:translateX(130%)}}
+.makecode-icon-big{ font-size: 3.5rem; margin-bottom: 12px; }
+.makecode-panel h3{ margin: 0 0 12px; font-size: 1.3rem; color: var(--text); }
+.makecode-panel p{ color: var(--muted); margin: 0 0 20px; line-height: 1.7; }
+.makecode-panel .makecode-actions{ margin: 20px 0 10px; }
+.makecode-panel .btn{
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 32px; font-size: 1rem; background: var(--blue);
+}
+.makecode-panel .btn:hover{ background: #4a92c9; }
+.makecode-panel .small{ font-size: .82rem; color: var(--muted); margin: 16px 0 0; }
 
-/* ===== Footer 魔法 ===== */
-footer{position:relative;z-index:3;text-align:center;padding:20px 6vw 70px}
-footer::before{
-  content:'';display:block;height:1px;max-width:900px;margin:0 auto 56px;
-  background:linear-gradient(90deg,transparent,rgba(255,160,60,.55),rgba(160,43,255,.55),transparent);
+/* ============ 節慶活動 ============ */
+.festival-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px;}
+.festival-card{
+  border-radius:16px; padding:26px 24px; color:#fff; position:relative; overflow:hidden;
+  cursor:pointer; transition:.2s; box-shadow:var(--shadow); min-height:170px;
+}
+.festival-card:hover{transform:translateY(-3px); box-shadow:0 10px 24px rgba(0,0,0,.18);}
+.festival-card.halloween{background:linear-gradient(135deg,#1a1a1a,#4a2810,#e67e22);}
+.festival-card.christmas{background:linear-gradient(135deg,#2a5c2a,#8b1a1a,#c0392b);}
+.festival-card .emoji{font-size:2.6rem; display:block; margin-bottom:10px;}
+.festival-card h3{margin:0 0 8px; font-size:1.3rem;}
+.festival-card p{margin:0 0 14px; opacity:.9; font-size:.92rem; line-height:1.5;}
+.festival-card .cta{
+  display:inline-block; padding:9px 18px; background:rgba(255,255,255,.2);
+  border-radius:9px; font-size:.86rem; font-weight:700; backdrop-filter:blur(8px);
 }
 
-.magic-zone{position:relative;display:flex;flex-direction:column;align-items:center;gap:22px}
+/* ============ 老師區 ============ */
+.pin-table{
+  width:100%; border-collapse:collapse; font-size:.9rem; background:#fff;
+  border-radius:10px; overflow:hidden;
+}
+.pin-table th{background:var(--green); color:#fff; padding:10px; text-align:left; font-size:.85rem;}
+.pin-table td{padding:9px 10px; border-bottom:1px solid var(--border);}
+.pin-table tr:last-child td{border-bottom:none;}
+.pin-table tr:nth-child(even) td{background:#fafdf8;}
+.pin-table .pin-cell{
+  font-family:ui-monospace,Consolas,monospace; font-weight:700;
+  color:var(--green-d); font-size:1rem; letter-spacing:1px;
+}
 
-.magic-hint{
-  font-size:13px;letter-spacing:5px;color:#b79bd8;
-  animation:twinkle 3s ease-in-out infinite;
-}
-@keyframes twinkle{
-  0%,100%{opacity:.55;text-shadow:0 0 10px rgba(255,160,60,.2)}
-  50%{opacity:1;text-shadow:0 0 20px rgba(255,170,70,.7)}
-}
-
-.btn.magic{
-  position:relative;display:inline-block;
-  padding:18px 40px;border-radius:999px;
-  font-size:clamp(14px,1.8vw,17px);font-weight:800;letter-spacing:2px;
-  text-decoration:none;color:#fff;overflow:visible;
-  background:linear-gradient(135deg,#ff8a1e,#ff2d55 45%,#a02bff 100%);
-  background-size:220% 220%;
-  animation:magicGradient 6s ease infinite, magicPulse 2.6s ease-in-out infinite;
-  transition:transform .3s;
-}
-.btn.magic:hover{transform:translateY(-4px) scale(1.04)}
-.btn.magic:active{transform:translateY(-1px) scale(.99)}
-
-.btn.magic::before{
-  content:'';position:absolute;inset:-15px;border-radius:999px;pointer-events:none;
-  border:1px dashed rgba(255,185,95,.5);
-  animation:spin 16s linear infinite;
-}
-.btn.magic::after{
-  content:'';position:absolute;inset:0;border-radius:999px;pointer-events:none;
-  background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.5) 50%,transparent 60%);
-  background-size:250% 100%;
-  animation:magicShine 3.4s ease-in-out infinite;
-}
-@keyframes magicGradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-@keyframes magicPulse{
-  0%{box-shadow:0 0 0 0 rgba(255,140,40,.55),0 16px 44px rgba(255,60,120,.4)}
-  70%{box-shadow:0 0 0 28px rgba(255,140,40,0),0 16px 44px rgba(255,60,120,.4)}
-  100%{box-shadow:0 0 0 0 rgba(255,140,40,0),0 16px 44px rgba(255,60,120,.4)}
-}
-@keyframes magicShine{0%{background-position:150% 0}60%,100%{background-position:-150% 0}}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.btn.magic span{position:relative;z-index:2}
-.copyright{margin-top:38px;font-size:12px;letter-spacing:2px;color:#6c5c84}
-
-/* ===== Modal ===== */
+/* ============ Modal / Lightbox ============ */
 .modal{
-  position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
-  padding:3vh 3vw;background:rgba(6,2,12,.85);backdrop-filter:blur(7px);
-  opacity:0;visibility:hidden;transition:opacity .32s, visibility .32s;
+  position:fixed; inset:0; background:rgba(0,0,0,.6); display:none;
+  align-items:center; justify-content:center; z-index:300; padding:20px;
 }
-.modal.show{opacity:1;visibility:visible}
-.modal-box{
-  width:min(1100px,100%);height:92vh;display:flex;flex-direction:column;
-  background:#0f0620;border:1px solid rgba(255,160,60,.35);border-radius:18px;
-  overflow:hidden;
-  box-shadow:0 30px 90px rgba(0,0,0,.8),0 0 70px rgba(255,110,20,.2);
-  transform:scale(.93) translateY(24px);opacity:0;
-  transition:transform .4s cubic-bezier(.2,.9,.3,1.15), opacity .4s;
+.modal.show{display:flex;}
+.modalbox{
+  background:#fff; border-radius:16px; padding:28px; max-width:360px; width:100%;
+  text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.3);
 }
-.modal.show .modal-box{transform:none;opacity:1}
+.modalbox h3{margin:0 0 16px; font-size:1.15rem;}
+.modalbox input{
+  width:100%; padding:12px; border:2px solid var(--border); border-radius:10px;
+  font-size:1rem; text-align:center; margin-bottom:12px; font-family:inherit;
+}
+.modalbox input:focus{outline:none; border-color:var(--green);}
+.modalbox button{
+  width:100%; padding:11px; border:none; border-radius:10px; background:var(--green);
+  color:#fff; font-size:.95rem; font-weight:700; cursor:pointer; font-family:inherit;
+  margin-bottom:8px;
+}
+.modalbox button:hover{background:var(--green-d);}
+.modalbox button.ghost{background:#fff; color:var(--green-d); border:2px solid var(--green);}
 
-.modal-head{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-  padding:12px 16px;border-bottom:1px solid rgba(255,160,60,.2);
+.lightbox{
+  position:fixed; inset:0; background:rgba(0,0,0,.93); z-index:500;
+  display:none; align-items:center; justify-content:center; padding:60px 20px 20px;
+  flex-direction:column; gap:14px;
 }
-#modalTitle{font-weight:800;color:var(--orange-soft);letter-spacing:1.5px}
-.modal-head > div{display:flex;gap:8px}
-#modalFrame{flex:1;width:100%;border:0;background:#fff}
-
-.btn.small{
-  padding:8px 16px;border-radius:999px;font-size:12.5px;font-weight:700;
-  letter-spacing:1px;text-decoration:none;cursor:pointer;border:none;
-  background:linear-gradient(135deg,#ff7a18,#ff3d00);color:#fff;
-  transition:.25s;display:inline-block;
+.lightbox.show{display:flex;}
+.lightbox img{max-width:95vw; max-height:78vh; border-radius:10px; background:#fff;}
+.lightbox .lb-info{color:#fff; text-align:center; font-size:.92rem; opacity:.9; min-height:20px;}
+.lightbox-close{
+  position:absolute; top:16px; right:20px; background:rgba(255,255,255,.15);
+  color:#fff; border:none; border-radius:50%; width:42px; height:42px;
+  font-size:1.3rem; cursor:pointer; transition:.15s;
 }
-.btn.small:hover{filter:brightness(1.12);transform:translateY(-1px)}
-.btn.small.ghost{background:transparent;color:var(--orange-soft);border:1px solid rgba(255,160,60,.5)}
-.btn.small.ghost:hover{background:rgba(255,160,60,.14)}
+.lightbox-close:hover{background:rgba(255,255,255,.3);}
 
-@media (prefers-reduced-motion: reduce){
-  *{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
+#toast{
+  position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:#1f2a1c; color:#fff; padding:12px 24px; border-radius:30px;
+  font-size:.9rem; opacity:0; transition:.3s; z-index:1000; pointer-events:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+footer{
+  background:#2f3a2b; color:#a9b8a4; text-align:center; padding:28px 18px;
+  font-size:.85rem; margin-top:30px;
+}
+footer a{color:#cfe0c8; cursor:pointer; text-decoration:underline;}
+
+@media(max-width:768px){
+  .menu-toggle{display:block;}
+  .topbar nav{
+    display:none; width:100%; flex-direction:column; margin-left:0;
+    padding-top:10px; border-top:1px solid rgba(255,255,255,.2); margin-top:10px;
+  }
+  .topbar nav.open{display:flex;}
+  .topbar nav a{padding:10px; text-align:center;}
+  .hero h1{font-size:1.6rem;}
+  .hero{padding:40px 0 44px;}
+  .lesson-grid{grid-template-columns:repeat(2,1fr);}
+  .grid{grid-template-columns:1fr;}
+  .carousel3d-wrap{ height: 340px; }
+  .carousel3d{ width: 170px; height: 240px; margin: -120px 0 0 -85px; }
+  .works-iframe-wrap{ height: 560px; }
+  .makecode-panel{ padding: 28px 20px; }
+}
+@media(max-width:480px){
+  .hero .cta a{width:100%;}
+  .works-iframe-wrap{ height: 460px; }
 }
 </style>
 </head>
 <body>
 
-<canvas id="sparkles"></canvas>
-<div class="spotlight" id="spotlight"></div>
-<div class="moon"></div>
-
-<div class="spider-thread"><span class="spider">🕷️</span></div>
-
-<span class="floaty f-ghost1">👻</span>
-<span class="floaty f-ghost2">👻</span>
-<span class="floaty f-pump1">🎃</span>
-<span class="floaty f-pump2">🎃</span>
-
-<span class="bat" style="top:14%;left:8%;animation-duration:7s">🦇</span>
-<span class="bat" style="top:28%;left:76%;animation-duration:9.5s">🦇</span>
-<span class="bat" style="top:60%;left:4%;animation-duration:11s">🦇</span>
-<span class="bat" style="top:76%;left:88%;animation-duration:8.5s">🦇</span>
-
-<header>
-  <p class="eyebrow">Lesson 04 · Halloween Workshop</p>
-  <h1 id="title">HelloWeen</h1>
-  <p class="sub">萬 聖 節 角 色 館 · 九 位 角 色 甦 醒 中</p>
-  <p class="scroll-hint">向下滾動 ↓</p>
+<!-- ============ 頂部列 ============ -->
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <span class="logo">⛏️</span>
+      <span>僑仁麥塊學院</span>
+    </div>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <nav id="mainNav">
+      <a data-go="home">首頁</a>
+      <a href="lesson01/index.html" class="highlight">📖 遊戲說明</a>
+      <a data-go="lessons">課程</a>
+      <a href="https://minecraft.makecode.com/" target="_blank" rel="noopener" class="makecode">🧩 MakeCode</a>
+      <a data-go="gallery3d">相簿</a>
+      <a data-go="works">藝廊</a>
+      <a data-go="festival">節慶</a>
+      <a data-go="about">關於</a>
+      <a class="ext" id="fbLink" target="_blank" rel="noopener">📘 FB</a>
+      <a class="ext" id="ytLink" target="_blank" rel="noopener">▶️ YT</a>
+    </nav>
+  </div>
 </header>
 
-<main>
-  <div id="grid" class="grid"></div>
-</main>
-
-<footer>
-  <div class="magic-zone">
-    <p class="magic-hint">✦ 全員到齊 · 施展最後的魔法 ✦</p>
-    <a class="btn magic" href="Halloween_Workshop_Share.html" target="_blank" rel="noopener">
-      <span>📄 開啟 Halloween_Workshop_Share</span>
-    </a>
-  </div>
-  <p class="copyright">© Halloween Workshop · Lesson04</p>
-</footer>
-
-<div id="modal" class="modal">
-  <div class="modal-box">
-    <div class="modal-head">
-      <span id="modalTitle">預覽</span>
-      <div>
-        <a id="modalOpen" class="btn small" target="_blank" rel="noopener">在新視窗開啟 ↗</a>
-        <button id="modalClose" class="btn small ghost" type="button">關閉 ✕</button>
-      </div>
+<!-- ============ Hero ============ -->
+<div class="hero" id="home">
+  <div class="wrap">
+    <h1>⛏️ 用方塊蓋出你的程式邏輯</h1>
+    <p class="slogan">僑仁國小麥塊社團 ｜ 從玩遊戲到寫程式</p>
+    <p class="meta">115 學年度上學期 ｜ 每週三 12:50–14:50 ｜ 指導老師：王景弘老師</p>
+    <div class="cta">
+      <a href="lesson01/index.html" class="warm">📖 遊戲說明</a>
+      <a class="primary" data-go="student-login">🎒 我是學生，領帳號 →</a>
+      <a href="https://minecraft.makecode.com/" target="_blank" rel="noopener" class="makecode">🧩 MakeCode 編輯器</a>
+      <a class="ghost" data-go="gallery3d">📸 看相簿</a>
     </div>
-    <iframe id="modalFrame" title="預覽"></iframe>
   </div>
 </div>
 
+<!-- ============ 節慶 Banner ============ -->
+<div id="festivalBanner"></div>
+
+<!-- ============ ★ 領取帳號（最上方） ============ -->
+<section id="student-login">
+  <div class="wrap">
+    <h2>🔑 領取我的麥塊帳號</h2>
+    <p class="sub">選自己的名字，輸入老師給你的 6 位數字，就能看到你的帳號密碼。</p>
+
+    <div id="loginPanel" class="panel" style="max-width:520px;margin:0 auto;">
+      <div class="field">
+        <label>① 我是誰</label>
+        <select id="studentSelect">
+          <option value="">— 請選擇你的名字 —</option>
+        </select>
+      </div>
+      <div id="avatarPreview" style="text-align:center; min-height:0;"></div>
+      <div class="field">
+        <label>② 6 位數字密碼</label>
+        <input id="pinInput" type="password" inputmode="numeric"
+               maxlength="6" placeholder="●●●●●●" autocomplete="off">
+      </div>
+      <button class="btn full" id="viewBtn">查看我的帳號 →</button>
+      <p class="err" id="viewErr"></p>
+    </div>
+
+    <div id="resultArea" style="display:none;max-width:520px;margin:0 auto;"></div>
+  </div>
+</section>
+
+<!-- ============ 公告 ============ -->
+<section id="announce">
+  <div class="wrap">
+    <h2>📢 最新公告</h2>
+    <ul class="announce-list" id="announceList">
+      <li><span class="date">9/23</span><span>9/30 第一堂課開始，請記得帶自己的 Microsoft 帳號密碼卡。</span></li>
+      <li><span class="date">9/30</span><span>本學期共 12 堂課，最後一堂（12/16）。</span></li>
+      <li><span class="date">10/01</span><span>🧩 新增 MakeCode 積木程式編輯器入口，點導覽列就能用瀏覽器寫程式！</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 課程 ============ -->
+<section id="lessons">
+  <div class="wrap">
+    <h2>📅 課程行事曆</h2>
+    <p class="sub">🔒 請先在上方<strong>領取帳號</strong>，登入後才能看課程內容。</p>
+    <div class="lesson-grid" id="lessonGrid"></div>
+  </div>
+</section>
+
+<!-- ============ MakeCode 編程平台 ============ -->
+<section id="makecode">
+  <div class="wrap">
+    <h2>🧩 MakeCode 積木程式</h2>
+    <p class="sub">
+      用積木寫程式，直接命令 Minecraft 裡的 Agent 蓋房子、挖礦、種田。
+    </p>
+
+    <div class="makecode-panel">
+      <div class="makecode-icon-big">🧩</div>
+      <h3>Minecraft 積木程式編輯器</h3>
+      <p>
+        打開瀏覽器就能寫程式，不用安裝任何東西。<br>
+        從拖拉積木開始，慢慢進階到 JavaScript，<br>
+        搭配教育版帳號，程式碼可以直接在遊戲裡執行。
+      </p>
+      <div class="makecode-actions">
+        <a href="https://minecraft.makecode.com/" target="_blank" rel="noopener" class="btn">
+          🚀 開啟 MakeCode 編輯器 ↗
+        </a>
+      </div>
+      <p class="small">💡 登入 Microsoft 帳號後可以存檔、分享作品</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ★ 3D 相簿 ============ -->
+<section id="gallery3d">
+  <div class="wrap">
+    <h2>📸 3D 相簿</h2>
+    <p class="sub">
+      把照片丟進 <code>gallery/</code> 資料夾（<code>s01.jpg</code>、<code>s02.jpg</code>…）就會自動出現 ✨
+    </p>
+
+    <div class="carousel3d-wrap" id="carousel3dWrap">
+      <div class="carousel3d" id="carousel3d"></div>
+    </div>
+
+    <div class="carousel3d-controls">
+      <button class="cbtn" id="prev3d">←</button>
+      <button class="cbtn" id="auto3d">⏸ 暫停</button>
+      <button class="cbtn" id="next3d">→</button>
+    </div>
+
+    <p class="sub" id="galleryEmpty" style="display:none;text-align:center;padding:40px 0;">
+      目前 <code>gallery/</code> 裡還沒有照片 🚧
+    </p>
+  </div>
+</section>
+
+<!-- ============ ★ 作品藝廊（3D 流體牆 iframe） ============ -->
+<section id="works" style="padding:0;">
+  <div class="wrap" style="padding-top:38px; padding-bottom:16px;">
+    <h2>🌟 作品藝廊</h2>
+    <p class="sub">
+      照片從 Google Drive 自動同步 ✨
+      <a href="photo-3d.html" target="_blank" style="color:var(--green-d); text-decoration:underline; margin-left:8px;">
+        全螢幕開啟 ↗
+      </a>
+    </p>
+  </div>
+  <div class="wrap" style="padding-bottom:38px;">
+    <div class="works-iframe-wrap">
+      <iframe
+        src="photo-3d.html"
+        class="works-iframe"
+        loading="lazy"
+        allow="fullscreen"
+      ></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 節慶活動 ============ -->
+<section id="festival">
+  <div class="wrap">
+    <h2>🎉 節慶特別企劃</h2>
+    <p class="sub">學期中間我們會做兩個節慶主題，做出來會有徽章 🏅</p>
+    <div class="festival-grid">
+      <div class="festival-card halloween" data-go="lesson-jump" data-lesson="4">
+        <span class="emoji">🎃</span>
+        <h3>萬聖節：不給糖就搗蛋</h3>
+        <p>南瓜田、鬼屋、糖果發放機</p>
+        <span class="cta">看第 5 堂課 →</span>
+      </div>
+      <div class="festival-card christmas" data-go="lesson-jump" data-lesson="11">
+        <span class="emoji">🎄</span>
+        <h3>聖誕節：聖誕村成果發表</h3>
+        <p>綜合運用本學期所學，蓋一座聖誕村</p>
+        <span class="cta">看第 12 堂課 →</span>
+      </div>
+    </div>
+    <p class="sub" style="text-align:center;margin-top:20px;">
+      🧩 做節慶機關時可以打開
+      <a href="https://minecraft.makecode.com/" target="_blank" rel="noopener"
+         style="color:var(--green-d);text-decoration:underline;font-weight:700;">MakeCode 編輯器</a>
+      邊做邊試
+    </p>
+  </div>
+</section>
+
+<!-- ============ 關於 ============ -->
+<section id="about">
+  <div class="wrap">
+    <h2>👨‍🏫 關於我們</h2>
+    <div class="panel">
+      <h3 style="margin-top:0;">僑仁國小麥塊學院</h3>
+      <p>我們相信：<strong>玩遊戲也能學程式。</strong></p>
+      <p>透過 Minecraft 教育版，孩子從蓋房子、種田、做紅石機關開始，一步步學會變數、迴圈、事件、座標，最後能自己寫程式控制遊戲裡的機器人。</p>
+
+      <h3 style="margin-top:24px;">指導老師</h3>
+      <p><strong>王景弘 老師</strong><br>
+      聯絡信箱：<a id="aboutEmail" href="#">載入中…</a></p>
+
+      <h3 style="margin-top:24px;">上課資訊</h3>
+      <ul style="margin:0; padding-left:20px;">
+        <li>時間：每週三 12:50–14:50</li>
+        <li>地點：僑仁國小電腦教室</li>
+        <li>對象：三～六年級</li>
+        <li>本學期共 12 堂課</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 老師區 ============ -->
+<section id="teacherArea" style="display:none;">
+  <div class="wrap">
+    <h2>👨‍🏫 老師模式</h2>
+    <p class="sub">
+      共 <span id="totalCount">0</span> 組 ｜
+      <a id="logoutBtn" style="cursor:pointer;color:var(--green-d);text-decoration:underline;">登出老師模式</a>
+    </p>
+
+    <div class="panel" style="padding:18px;margin-bottom:24px;">
+      <h3 style="margin:0 0 12px;font-size:1.05rem;">🔢 學生 PIN 速查表</h3>
+      <p style="margin:0 0 12px;color:var(--muted);font-size:.86rem;">
+        發給學生時可以複製這份。忘記 PIN 也能從這裡查。
+      </p>
+      <table class="pin-table" id="pinTable">
+        <thead>
+          <tr>
+            <th>姓名</th><th>班級</th><th>6 位密碼</th><th style="width:60px;">複製</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h3 style="margin:22px 0 10px;font-size:1.05rem;">👦 學生專屬帳號</h3>
+    <div class="grid" id="teacherGridStudents"></div>
+
+    <h3 style="margin:32px 0 10px;font-size:1.05rem;">📦 備用帳號</h3>
+    <div class="grid" id="teacherGridSpare"></div>
+  </div>
+</section>
+
+<!-- ============ Footer ============ -->
+<footer>
+  <p style="margin:0 0 6px;">僑仁國小 麥塊學院 ｜ 指導老師：王景弘老師</p>
+  <p style="margin:0 0 10px; font-size:.8rem; opacity:.75;">本頁帳號僅供社團上課使用，請勿對外分享</p>
+  <p style="margin:0;"><a id="teacherEntry">👨‍🏫 老師登入</a></p>
+</footer>
+
+<!-- ============ Modal / Lightbox ============ -->
+<div id="tModal" class="modal">
+  <div class="modalbox">
+    <h3>👨‍🏫 老師登入</h3>
+    <input id="tPw" type="password" placeholder="請輸入老師密碼" autocomplete="off">
+    <button id="tBtn">登入</button>
+    <button id="tCancel" class="ghost">取消</button>
+    <p class="err" id="tErr"></p>
+  </div>
+</div>
+
+<div id="lightbox" class="lightbox">
+  <button id="lightboxClose" class="lightbox-close">✕</button>
+  <img id="lightboxImg" src="" alt="">
+  <div class="lb-info" id="lightboxInfo"></div>
+</div>
+
+<div id="toast">已複製！</div>
+
 <script>
-/* ================= 資料 ================= */
-const works = [
-  { no:1, title:'角色 1', tag:'施工包', img:'Fig (1).png', url:'Fig (1)_施工包/index.html' },
-  { no:2, title:'角色 2', tag:'施工包', img:'Fig (2).png', url:'Fig (2)_施工包/index.html' },
-  { no:3, title:'角色 3', tag:'工作包', img:'Fig (3).png', url:'Fig (3)工作包/index.html' },
-  { no:4, title:'角色 4', tag:'工作包', img:'Fig (4).png', url:'Fig (4)工作包/index.html' },
-  { no:5, title:'角色 5', tag:'背景',   img:'Fig (5).png', url:'Fig (5)_施工包/index.html' },
-  { no:6, title:'角色 6', tag:'背景',   img:'Fig (6).png', url:'Fig (6)_施工包/index.html' },
-  { no:7, title:'角色 7', tag:'背景',   img:'Fig (7).png', url:'Fig (7)_施工包/index.html' },
-  { no:8, title:'角色 8', tag:'施工包', img:'Fig (8).png', url:'Fig (8)_施工包/index.html' },
-  { no:9, title:'角色 9', tag:'施工包', img:'Fig (9).png', url:'Fig (9)_施工包/index.html' },
+/* ==================================================================
+   ★★★★★ 設定區 ★★★★★
+   ================================================================== */
+const CONFIG = {
+  teacherPassword : "0904",
+  fb              : "https://www.facebook.com/NovaCraftMinecrafClub?locale=zh_TW",
+  yt              : "https://www.youtube.com/@novacraftlab-MCEducation",
+  Line            : "Chinghungw",
+  email           : "chinghungw@example.com",
+  guideUrl        : "lesson01/index.html",
+  teacherFolder   : "https://drive.google.com/drive/folders/1tBPscAJWA_-qo6QXlHSnLBhcXGaX-j_b",
+  makecode        : "https://minecraft.makecode.com/",
+};
+
+/* ★ 12 堂課 */
+const LESSONS = [
+  { date:"9/30",  unlock:"2026-09-29", img:"lessons/lesson01.png", theme:"normal", url:"lesson01/index.html" },
+  { date:"10/7",  unlock:"2026-10-06", img:"lessons/lesson02.png", theme:"normal", url:"lesson02/index.html" },
+  { date:"10/14", unlock:"2026-10-13", img:"lessons/lesson03.png", theme:"normal", url:"lesson03/index.html" },
+  { date:"10/21", unlock:"2026-10-20", img:"lessons/lesson04.png", theme:"normal", url:"lesson04/index.html" },
+  { date:"10/28", unlock:"2026-10-27", img:"lessons/lesson05.png", theme:"halloween", url:"lesson05/index.html" },
+  { date:"11/4",  unlock:"2026-11-03", img:"lessons/lesson06.png", theme:"normal", url:"lesson06/index.html" },
+  { date:"11/11", unlock:"2026-11-10", img:"lessons/lesson07.png", theme:"normal", url:"lesson07/index.html" },
+  { date:"11/18", unlock:"2026-11-17", img:"lessons/lesson08.png", theme:"normal", url:"lesson08/index.html" },
+  { date:"11/25", unlock:"2026-11-24", img:"lessons/lesson09.png", theme:"normal", url:"lesson09/index.html" },
+  { date:"12/2",  unlock:"2026-12-01", img:"lessons/lesson10.png", theme:"normal", url:"lesson10/index.html" },
+  { date:"12/9",  unlock:"2026-12-08", img:"lessons/lesson11.png", theme:"normal", url:"lesson11/index.html" },
+  { date:"12/16", unlock:"2026-12-15", img:"lessons/lesson12.png", theme:"christmas", url:"lesson12/index.html" },
 ];
 
-/* ================= 標題逐字 ================= */
-(function splitTitle(){
-  const el = document.getElementById('title');
-  const word = el.textContent.trim();
-  el.textContent = '';
-  [...word].forEach((ch, i) => {
-    const s = document.createElement('span');
-    s.className = 'letter' + (i >= 5 ? ' accent' : '');
-    s.textContent = ch;
-    s.style.animationDelay = (0.15 + i * 0.075) + 's';
-    el.appendChild(s);
-  });
-})();
+/* ★ 帳號（含 Drive 上傳資料夾） */
+const ACCOUNTS = [
+  { name:"北極熊老師", cls:"示範帳號", user:"teacher@happymc.onmicrosoft.com", pw:"Demo1234!", pin:"000000", photo:"photos/t01.jpg", drive:"https://drive.google.com/drive/folders/1tBPscAJWA_-qo6QXlHSnLBhcXGaX-j_b" },
+  { name:"周韵媞", cls:"三年甲班", user:"user01@happymc.onmicrosoft.com", pw:"G.514259182373ac", pin:"482913", photo:"photos/s01.jpg", drive:"https://drive.google.com/drive/folders/1upjcofyQ61I50OZNEsYJCcj1r6IDzgEc" },
+  { name:"翁莆博", cls:"四年甲班", user:"user02@happymc.onmicrosoft.com", pw:"X#633180188959ok", pin:"715264", photo:"photos/s02.jpg", drive:"https://drive.google.com/drive/folders/1YyTMghPEHIIWsMTt3xfu0rX3o_MCNuzE" },
+  { name:"林昕翰", cls:"四年甲班", user:"user03@happymc.onmicrosoft.com", pw:"M(195823353823uf", pin:"308571", photo:"photos/s03.jpg", drive:"https://drive.google.com/drive/folders/1vigbmJ1bjSMuqDl_VtpCpM1EkYsmFo5C" },
+  { name:"謝朋洧", cls:"四年丙班", user:"user04@happymc.onmicrosoft.com", pw:"R*131281814086oy", pin:"926480", photo:"photos/s04.jpg", drive:"https://drive.google.com/drive/folders/1re3dXUreuZq7D46WkFarYzfXMZyYZkaq" },
+  { name:"黄宥傑", cls:"四年丙班", user:"user05@happymc.onmicrosoft.com", pw:"T!203603413482op", pin:"150739", photo:"photos/s05.jpg", drive:"https://drive.google.com/drive/folders/1A4_2wP2zct-5IZMsHdfZntNudzzwuIOd" },
+  { name:"何晁寬", cls:"四年戊班", user:"user06@happymc.onmicrosoft.com", pw:"H@835762875765ah", pin:"673825", photo:"photos/s06.jpg", drive:"https://drive.google.com/drive/folders/1rkxJVOXEfG1gv4AYGk45OPokS4ZycDHH" },
+  { name:"陳繹安", cls:"五年乙班", user:"user07@happymc.onmicrosoft.com", pw:"K#242147185847uq", pin:"284196", photo:"photos/s07.jpg", drive:"https://drive.google.com/drive/folders/13EbsK4OgJFxGSJgcOFj6b6-0z8qmwjew" },
+  { name:"翁秉學", cls:"五年丙班", user:"user08@happymc.onmicrosoft.com", pw:"Y^230519532115ap", pin:"539702", photo:"photos/s08.jpg", drive:"https://drive.google.com/drive/folders/1FFYUEM6UJleAgSrx9iFMl3tLp66BltfS" },
+  { name:"林慕心", cls:"五年丙班", user:"user09@happymc.onmicrosoft.com", pw:"W^871135038610us", pin:"841365", photo:"photos/s09.jpg", drive:"https://drive.google.com/drive/folders/1RV-oTvtC4wUX88DCq5rd_HtmtsPKFT7t" },
+  { name:"吳奕霆", cls:"五年丁班", user:"user10@happymc.onmicrosoft.com", pw:"D#515100067433ug", pin:"607248", photo:"photos/s10.jpg", drive:"https://drive.google.com/drive/folders/1F6JEyK6mF1vjx8PvNJTVp0NLJie5ArSI" },
+  { name:"林毓橙", cls:"五年丁班", user:"user11@happymc.onmicrosoft.com", pw:"D*050483725621oz", pin:"392517", photo:"photos/s11.jpg", drive:"https://drive.google.com/drive/folders/1RhV-Nhvfk-p9cKiFeM5DoFnQU4UzxouC" },
+  { name:"陳哲元", cls:"五年戊班", user:"user12@happymc.onmicrosoft.com", pw:"B$220017697635uv", pin:"758430", photo:"photos/s12.jpg", drive:"https://drive.google.com/drive/folders/1aXMSkE0J6xhovWXhIAjvaEaBYMZ9TfOB" },
+  { name:"賴炵伃", cls:"六年乙班", user:"user13@happymc.onmicrosoft.com", pw:"W/080499984712oq", pin:"214986", photo:"photos/s13.jpg", drive:"https://drive.google.com/drive/folders/1XAWcRAJ0C5LXOtM40OkZvT-Z1rpLt_Os" },
+  { name:"王奕勛", cls:"六年丁班", user:"user14@happymc.onmicrosoft.com", pw:"M(086619973330oh", pin:"630472", photo:"photos/s14.jpg", drive:"https://drive.google.com/drive/folders/1BwPSEwH4FT4LbY5S_6jzGVevOFWbFMC9" },
 
-/* ================= 建立卡片 ================= */
-const grid = document.getElementById('grid');
-const frag = document.createDocumentFragment();
+  { name:"", cls:"備用", user:"user15@happymc.onmicrosoft.com", pw:"L/523997587137ug", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user16@happymc.onmicrosoft.com", pw:"H$081941769045uv", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user17@happymc.onmicrosoft.com", pw:"V^061582945985ax", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user18@happymc.onmicrosoft.com", pw:"X*852482359735uk", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user19@happymc.onmicrosoft.com", pw:"S%508096813671op", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user20@happymc.onmicrosoft.com", pw:"B&649857740654ul", pin:"", photo:"" },
+  { name:"", cls:"備用", user:"user21@happymc.onmicrosoft.com", pw:"N!569984853113um", pin:"", photo:"" },
+];
 
-works.forEach((w, i) => {
-  const a = document.createElement('a');
-  a.className = 'card';
-  a.dataset.i = i;
-  a.href = encodeURI(w.url);
-  a.innerHTML = `
-    <div class="inner">
-      <span class="tag">${w.tag}</span>
-      <div class="thumb">
-        <img src="${encodeURI(w.img)}" alt="${w.title}" loading="lazy">
-      </div>
-      <div class="meta">
-        <span class="name">${w.title}</span>
-        <span class="no">FIG ${String(w.no).padStart(2,'0')}</span>
-      </div>
-      <span class="shine"></span>
-    </div>`;
+/* ==================================================================
+   以下不用改
+   ================================================================== */
+const STUDENTS = ACCOUNTS.filter(a => a.pin);
+const SPARES   = ACCOUNTS.filter(a => !a.pin);
 
-  /* 3D 傾斜 */
-  const inner = a.querySelector('.inner');
-  a.addEventListener('mousemove', e => {
-    const r = a.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width  - 0.5;
-    const py = (e.clientY - r.top ) / r.height - 0.5;
-    inner.style.transform =
-      `translateY(-9px) rotateX(${(-py * 9).toFixed(2)}deg) rotateY(${(px * 9).toFixed(2)}deg)`;
-  });
-  a.addEventListener('mouseleave', () => { inner.style.transform = ''; });
+let isTeacher = sessionStorage.getItem('mc_teacher') === '1';
+let currentStudent = null;
+const savedName = sessionStorage.getItem('mc_student');
+if (savedName) {
+  currentStudent = STUDENTS.find(s => s.name === savedName) || null;
+}
 
-  /* 點擊 → 彈窗 */
-  a.addEventListener('click', e => {
-    e.preventDefault();
-    openModal(w);
-  });
+document.getElementById('fbLink').href = CONFIG.fb;
+document.getElementById('ytLink').href = CONFIG.yt;
+document.getElementById('aboutEmail').href = 'mailto:' + CONFIG.email;
+document.getElementById('aboutEmail').textContent = CONFIG.email;
 
-  frag.appendChild(a);
+document.querySelectorAll('a[href="lesson01/index.html"]').forEach(a => {
+  a.href = CONFIG.guideUrl;
 });
-grid.appendChild(frag);
 
-/* ================= 滾動入場 ================= */
-const io = new IntersectionObserver((entries) => {
-  entries.forEach(en => {
-    if (en.isIntersecting) {
-      const card = en.target;
-      card.style.animationDelay = ((+card.dataset.i % 9) * 0.07) + 's';
-      card.classList.add('in');
-      io.unobserve(card);
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+async function copyText(text, btn, label){
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  toast('已複製 ' + label + '！');
+  if(btn){
+    const old = btn.textContent;
+    btn.textContent = '✓'; btn.classList.add('ok');
+    setTimeout(()=>{ btn.textContent = old; btn.classList.remove('ok'); }, 1200);
+  }
+}
+
+function todayStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function goTo(id){
+  const el = document.getElementById(id);
+  if(el){ el.scrollIntoView({behavior:'smooth', block:'start'}); }
+}
+document.querySelectorAll('[data-go]').forEach(el => {
+  el.addEventListener('click', () => {
+    const target = el.dataset.go;
+    if(target === 'lesson-jump'){
+      const idx = Number(el.dataset.lesson);
+      scrollToLesson(idx);
+      return;
+    }
+    goTo(target);
+    document.getElementById('mainNav').classList.remove('open');
+  });
+});
+function scrollToLesson(idx){
+  const cards = document.querySelectorAll('.lesson-card');
+  if(cards[idx + 1]) cards[idx + 1].scrollIntoView({behavior:'smooth', block:'center'});
+}
+document.getElementById('menuToggle').addEventListener('click', () => {
+  document.getElementById('mainNav').classList.toggle('open');
+});
+
+function renderFestivalBanner(){
+  const box = document.getElementById('festivalBanner');
+  const today = new Date();
+  const m = today.getMonth()+1, d = today.getDate();
+  const dayKey = m*100 + d;
+
+  if(dayKey >= 1001 && dayKey <= 1031){
+    box.innerHTML = `
+      <div class="festival-banner halloween">
+        <div class="inner">
+          <span class="emoji">🎃</span>
+          <b>萬聖節特別企劃開跑！</b>
+          <span>10/28 用紅石做搗蛋機關</span>
+          <span class="emoji">🍬</span>
+        </div>
+      </div>`;
+    box.querySelector('.festival-banner').addEventListener('click', () => goTo('festival'));
+    return;
+  }
+  if(dayKey >= 1201 && dayKey <= 1225){
+    box.innerHTML = `
+      <div class="festival-banner christmas">
+        <div class="inner">
+          <span class="emoji">🎄</span>
+          <b>聖誕成果發表倒數！</b>
+          <span>12/16 歡迎家長來看孩子的聖誕村</span>
+          <span class="emoji">🎁</span>
+        </div>
+      </div>`;
+    box.querySelector('.festival-banner').addEventListener('click', () => goTo('festival'));
+  }
+}
+
+/* ==================================================================
+   課程表
+   ================================================================== */
+function renderLessons(){
+  const box = document.getElementById('lessonGrid');
+  box.innerHTML = '';
+  const today = todayStr();
+
+  const guideCard = document.createElement('a');
+  guideCard.className = 'lesson-card guide-card';
+  guideCard.href = CONFIG.guideUrl;
+  guideCard.innerHTML = `
+    <div class="num">📖 先看這個</div>
+    <div class="date">遊戲說明</div>
+    <div class="guide-sub">8 個單元教學</div>
+    <div class="lesson-link">▶ 開始學習</div>
+  `;
+  box.appendChild(guideCard);
+
+  // ↓ MakeCode 卡片
+  const mcCard = document.createElement('a');
+  mcCard.className = 'lesson-card makecode-card';
+  mcCard.href = CONFIG.makecode;
+  mcCard.target = '_blank';
+  mcCard.rel = 'noopener';
+  mcCard.innerHTML = `
+    <div class="num">🧩 積木程式</div>
+    <div class="date">MakeCode</div>
+    <div class="guide-sub">Minecraft 程式編輯器</div>
+    <div class="lesson-link">▶ 開啟 ↗</div>
+  `;
+  box.appendChild(mcCard);
+  // ↑ MakeCode 卡片
+
+  LESSONS.forEach((L, i) => {
+    let unlocked, lockMsg = '';
+    if (isTeacher) {
+      unlocked = true;
+    } else if (!currentStudent) {
+      unlocked = false;
+      lockMsg = '🔒 請先登入領取帳號';
+    } else {
+      unlocked = today >= L.unlock;
+      lockMsg = '';   // 已登入但未解鎖：不顯示任何提示
+    }
+
+    const card = document.createElement('div');
+    let cls = 'lesson-card';
+    if(!unlocked) cls += ' locked';
+    if(L.theme === 'halloween') cls += ' theme-halloween';
+    if(L.theme === 'christmas') cls += ' theme-christmas';
+    card.className = cls;
+
+    let inner = `
+      <div class="num">第 ${i+1} 堂</div>
+      <div class="date">${L.date}</div>
+    `;
+
+    if(unlocked){
+      if(L.url){
+        inner += `<a class="lesson-link" href="${L.url}">📖 進入本堂課</a>`;
+      } else {
+        inner += `<div class="lesson-nolink">尚未上傳</div>`;
+      }
+    } else if(lockMsg){
+      inner += `<div class="lesson-locked">${lockMsg}</div>`;
+    }
+
+    card.innerHTML = inner;
+    box.appendChild(card);
+  });
+}
+
+/* ==================================================================
+   學生領帳號
+   ================================================================== */
+const sel = document.getElementById('studentSelect');
+STUDENTS.forEach((s, i) => {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = `${s.name}（${s.cls}）`;
+  sel.appendChild(opt);
+});
+
+const avatarPreview = document.getElementById('avatarPreview');
+sel.addEventListener('change', () => {
+  avatarPreview.innerHTML = '';
+  if(sel.value === '') return;
+  const s = STUDENTS[Number(sel.value)];
+  if(!s.photo) return;
+
+  const img = document.createElement('img');
+  img.src = s.photo;
+  img.alt = s.name;
+  img.className = 'avatar-preview';
+  img.onerror = () => { img.replaceWith(makeDefaultAvatar(s.name)); };
+  avatarPreview.appendChild(img);
+});
+
+function makeDefaultAvatar(name){
+  const div = document.createElement('div');
+  div.className = 'avatar-preview';
+  div.style.background = 'var(--green-l)';
+  div.style.display = 'flex';
+  div.style.alignItems = 'center';
+  div.style.justifyContent = 'center';
+  div.style.fontSize = '2.6rem';
+  div.style.color = 'var(--green-d)';
+  div.title = name || '';
+  div.textContent = '🧑‍🎓';
+  return div;
+}
+
+const pinInput = document.getElementById('pinInput');
+pinInput.addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/\D/g,'').slice(0,6);
+});
+
+const viewBtn = document.getElementById('viewBtn');
+const viewErr = document.getElementById('viewErr');
+const loginPanel = document.getElementById('loginPanel');
+const resultArea = document.getElementById('resultArea');
+
+function resetView(){
+  loginPanel.style.display = '';
+  resultArea.style.display = 'none';
+  resultArea.innerHTML = '';
+  sel.value = '';
+  pinInput.value = '';
+  viewErr.textContent = '';
+  avatarPreview.innerHTML = '';
+}
+
+viewBtn.addEventListener('click', () => {
+  viewErr.textContent = '';
+  const idx = sel.value;
+  const pin = pinInput.value.trim();
+
+  if(idx === ''){ viewErr.textContent = '請先選擇你的名字'; return; }
+  if(pin.length !== 6){ viewErr.textContent = '請輸入 6 位數字密碼'; return; }
+
+  const s = STUDENTS[Number(idx)];
+  if(s.pin !== pin){
+    viewErr.textContent = '密碼不對喔，請再試一次';
+    pinInput.value = ''; pinInput.focus();
+    return;
+  }
+  currentStudent = s;
+  sessionStorage.setItem('mc_student', s.name);
+  showResult(s);
+  renderLessons();
+});
+
+function showResult(s, scroll = true){
+  loginPanel.style.display = 'none';
+  resultArea.style.display = '';
+  resultArea.innerHTML = `
+    <div class="result-card">
+      ${s.photo
+        ? `<img src="${s.photo}" alt="${s.name}" class="result-avatar" onerror="this.replaceWith(makeDefaultAvatar('${s.name}'))">`
+        : `<div class="result-avatar" style="background:var(--green-l);display:flex;align-items:center;justify-content:center;font-size:3.2rem;color:var(--green-d);">🧑‍🎓</div>`
+      }
+      <p class="hello">✅ ${s.name}</p>
+      <p class="hello-sub">${s.cls} ｜ 這是你的麥塊帳號</p>
+
+      <div class="row">
+        <span class="lbl">帳號</span>
+        <span class="val" title="${s.user}">${s.user}</span>
+        <button class="iconbtn" data-copy="user">📋</button>
+      </div>
+
+      <div class="row">
+        <span class="lbl">密碼</span>
+        <span class="val hide" data-pw title="${s.pw}">••••••••</span>
+        <button class="iconbtn" data-eye>👁️</button>
+        <button class="iconbtn" data-copy="pw">📋</button>
+      </div>
+
+      ${s.drive ? `
+        <a href="${s.drive}" target="_blank" rel="noopener"
+           class="btn full"
+           style="margin-top:14px;background:#5ba3d9;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;color:#fff;">
+          📤 上傳作品到我的資料夾
+        </a>
+        <p style="text-align:center;margin:8px 0 0;color:var(--muted);font-size:.78rem;">
+          點按鈕進 Google Drive，把作品拖進去就好
+        </p>
+      ` : ''}
+
+      <a href="${CONFIG.teacherFolder}" target="_blank" rel="noopener"
+         class="btn full"
+         style="margin-top:10px;background:#f0c840;color:#1a1a1a;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;">
+        👀 看北極熊老師示範作品
+      </a>
+
+      <a href="${CONFIG.makecode}" target="_blank" rel="noopener"
+         class="btn full"
+         style="margin-top:10px;background:linear-gradient(135deg,#5ba3d9,#2ec4b6);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;">
+        🧩 打開 MakeCode 寫程式 ↗
+      </a>
+
+      <p style="text-align:center;margin:16px 0 0;color:var(--muted);font-size:.83rem;">
+        貼到 Minecraft 登入畫面即可。請勿把帳號給別人。
+      </p>
+      <p style="text-align:center;margin:12px 0 0;">
+        <a style="cursor:pointer;color:var(--green-d);text-decoration:underline;font-size:.88rem;"
+           id="backBtn">← 換別人查</a>
+      </p>
+    </div>
+  `;
+
+  resultArea.querySelector('[data-eye]').addEventListener('click', e => {
+    const span = resultArea.querySelector('[data-pw]');
+    const btn = e.currentTarget;
+    if(span.classList.contains('hide')){
+      span.textContent = s.pw; span.classList.remove('hide'); btn.textContent = '🙈';
+    }else{
+      span.textContent = '••••••••'; span.classList.add('hide'); btn.textContent = '👁️';
     }
   });
-}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.card').forEach(c => io.observe(c));
+  resultArea.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.dataset.copy;
+      if(type === 'user') copyText(s.user, btn, '帳號');
+      if(type === 'pw')   copyText(s.pw, btn, '密碼');
+    });
+  });
 
-/* ================= Modal ================= */
-const modal  = document.getElementById('modal');
-const frame  = document.getElementById('modalFrame');
-const mTitle = document.getElementById('modalTitle');
-const mOpen  = document.getElementById('modalOpen');
+  resultArea.querySelector('#backBtn').addEventListener('click', () => {
+    currentStudent = null;
+    sessionStorage.removeItem('mc_student');
+    resetView();
+    renderLessons();
+  });
 
-function openModal(w){
-  mTitle.textContent = `Fig (${w.no}) · ${w.title}`;
-  mOpen.href = encodeURI(w.url);
-  frame.src  = encodeURI(w.url);
-  modal.classList.add('show');
+  if (scroll) resultArea.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+/* ==================================================================
+   📸 3D 相簿（連續慢速旋轉）
+   ================================================================== */
+const GALLERY_FOLDER = 'gallery/';
+const GALLERY_PREFIX = 's';
+const GALLERY_EXTS   = ['jpg','jpeg','png','webp'];
+const GALLERY_MAX    = 60;
+const GALLERY_GAP    = 8;
+const GALLERY_SPEED   = 0.15;
+const GALLERY_TICK_MS = 50;
+
+let galleryPhotos = [];
+let g3dIndex = 0, g3dAngle = 0, g3dTimer = null, g3dAuto = true;
+let g3dRadius = 400, g3dStep = 30;
+
+function imageExists(path){
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = path;
+  });
+}
+
+async function discoverGallery(){
+  const photos = [];
+  let missStreak = 0;
+  for(let i = 1; i <= GALLERY_MAX; i++){
+    const num = GALLERY_PREFIX + String(i).padStart(2, '0');
+    let found = false;
+    for(const ext of GALLERY_EXTS){
+      const path = `${GALLERY_FOLDER}${num}.${ext}`;
+      if(await imageExists(path)){
+        photos.push(path);
+        found = true;
+        break;
+      }
+    }
+    if(found) missStreak = 0;
+    else {
+      missStreak++;
+      if(missStreak >= GALLERY_GAP) break;
+    }
+  }
+  return photos;
+}
+
+function buildCarousel3d(){
+  const box   = document.getElementById('carousel3d');
+  const empty = document.getElementById('galleryEmpty');
+  const stage = document.getElementById('carousel3dWrap');
+  const ctrls = document.querySelector('.carousel3d-controls');
+  box.innerHTML = '';
+
+  const N = galleryPhotos.length;
+  if(N === 0){
+    empty.style.display = '';
+    stage.style.display = 'none';
+    if(ctrls) ctrls.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  stage.style.display = '';
+  if(ctrls) ctrls.style.display = '';
+
+  const CARD_W = window.innerWidth < 768 ? 170 : 220;
+  g3dRadius = N <= 2 ? 320 : Math.max(320, Math.round((CARD_W/2) / Math.tan(Math.PI / N)));
+  g3dStep = 360 / N;
+
+  galleryPhotos.forEach((src, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide';
+    div.style.transform = `rotateY(${i * g3dStep}deg) translateZ(${g3dRadius}px)`;
+    div.innerHTML = `
+      <img src="${src}" alt="">
+      <div class="cap">${i + 1} ／ ${N}</div>
+    `;
+    div.addEventListener('click', () => {
+      openLightbox({ img: src, info: `第 ${i + 1} 張 ／ 共 ${N} 張` });
+    });
+    box.appendChild(div);
+  });
+
+  g3dIndex = 0; g3dAngle = 0;
+  updateActiveSlide();
+  startAuto3d();
+}
+
+function updateActiveSlide(){
+  const box = document.getElementById('carousel3d');
+  box.querySelectorAll('.slide').forEach((s, i) => {
+    s.classList.toggle('active', i === g3dIndex);
+    s.style.opacity = (i === g3dIndex) ? 1 : 0.72;
+  });
+}
+
+function startAuto3d(){
+  stopAuto3d();
+  if(!g3dAuto || galleryPhotos.length < 2) return;
+  g3dTimer = setInterval(() => {
+    if(!g3dAuto) return;
+    g3dAngle -= GALLERY_SPEED;
+    const box = document.getElementById('carousel3d');
+    box.style.transform = `rotateY(${g3dAngle}deg)`;
+    const rawIdx = Math.round(-g3dAngle / g3dStep) % galleryPhotos.length;
+    const idx = (rawIdx + galleryPhotos.length) % galleryPhotos.length;
+    if(idx !== g3dIndex){
+      g3dIndex = idx;
+      updateActiveSlide();
+    }
+  }, GALLERY_TICK_MS);
+}
+function stopAuto3d(){
+  if(g3dTimer) clearInterval(g3dTimer);
+  g3dTimer = null;
+}
+
+function goToSlide(index){
+  const box = document.getElementById('carousel3d');
+  if(!galleryPhotos.length) return;
+  const targetAngle = -index * g3dStep;
+  const currentNorm = g3dAngle % 360;
+  const targetNorm  = targetAngle % 360;
+  let diff = targetNorm - currentNorm;
+  if(diff > 180)  diff -= 360;
+  if(diff < -180) diff += 360;
+  g3dAngle += diff;
+  g3dIndex = index;
+  box.style.transition = 'transform .9s cubic-bezier(.25,.8,.35,1)';
+  box.style.transform  = `rotateY(${g3dAngle}deg)`;
+  updateActiveSlide();
+  setTimeout(() => {
+    box.style.transition = 'none';
+    if(g3dAuto) startAuto3d();
+  }, 950);
+}
+
+document.getElementById('prev3d').addEventListener('click', () => {
+  goToSlide((g3dIndex - 1 + galleryPhotos.length) % galleryPhotos.length);
+});
+document.getElementById('next3d').addEventListener('click', () => {
+  goToSlide((g3dIndex + 1) % galleryPhotos.length);
+});
+document.getElementById('auto3d').addEventListener('click', e => {
+  g3dAuto = !g3dAuto;
+  e.target.textContent = g3dAuto ? '⏸ 暫停' : '▶ 播放';
+  if(g3dAuto) startAuto3d();
+  else stopAuto3d();
+});
+
+const g3dWrap = document.getElementById('carousel3dWrap');
+let g3dTouchX = 0;
+g3dWrap.addEventListener('touchstart', e => {
+  g3dTouchX = e.touches[0].clientX;
+}, { passive: true });
+g3dWrap.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - g3dTouchX;
+  if(Math.abs(dx) > 40){
+    if(dx > 0) goToSlide((g3dIndex - 1 + galleryPhotos.length) % galleryPhotos.length);
+    else       goToSlide((g3dIndex + 1) % galleryPhotos.length);
+  }
+}, { passive: true });
+
+/* ==================================================================
+   老師模式
+   ================================================================== */
+const tModal = document.getElementById('tModal');
+const tPw    = document.getElementById('tPw');
+const tErr   = document.getElementById('tErr');
+const teacherArea = document.getElementById('teacherArea');
+
+document.getElementById('teacherEntry').addEventListener('click', () => {
+  tModal.classList.add('show');
+  tPw.value = ''; tErr.textContent = '';
+  setTimeout(() => tPw.focus(), 100);
+});
+document.getElementById('tCancel').addEventListener('click', () => {
+  tModal.classList.remove('show');
+});
+tPw.addEventListener('keydown', e => { if(e.key === 'Enter') doTeacherLogin(); });
+document.getElementById('tBtn').addEventListener('click', doTeacherLogin);
+
+function doTeacherLogin(){
+  if(tPw.value === CONFIG.teacherPassword){
+    isTeacher = true;
+    sessionStorage.setItem('mc_teacher', '1');
+    tModal.classList.remove('show');
+    renderTeacherView();
+    document.querySelector('.hero').style.display = 'none';
+    document.getElementById('announce').style.display = 'none';
+    document.getElementById('student-login').style.display = 'none';
+    teacherArea.style.display = '';
+    renderLessons();
+    window.scrollTo({top: 0, behavior:'smooth'});
+  } else {
+    tErr.textContent = '老師密碼錯誤';
+    tPw.value = ''; tPw.focus();
+  }
+}
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  isTeacher = false;
+  sessionStorage.removeItem('mc_teacher');
+  teacherArea.style.display = 'none';
+  document.querySelector('.hero').style.display = '';
+  document.getElementById('announce').style.display = '';
+  document.getElementById('student-login').style.display = '';
+  resetView();
+  renderLessons();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+function renderTeacherView(){
+  const boxS = document.getElementById('teacherGridStudents');
+  const boxP = document.getElementById('teacherGridSpare');
+  const tbody = document.querySelector('#pinTable tbody');
+  boxS.innerHTML = ''; boxP.innerHTML = ''; tbody.innerHTML = '';
+  document.getElementById('totalCount').textContent = ACCOUNTS.length;
+
+  STUDENTS.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><b>${s.name}</b></td>
+      <td>${s.cls}</td>
+      <td class="pin-cell">${s.pin}</td>
+      <td><button class="iconbtn" data-pin-copy="${s.pin}">📋</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  ACCOUNTS.forEach((a, i) => {
+    const isSpare = !a.pin;
+    const card = document.createElement('div');
+    card.className = 'card' + (isSpare ? ' spare' : '');
+    card.innerHTML = `
+      <div class="who">
+        ${(!isSpare && a.photo)
+          ? `<img src="${a.photo}" class="teacher-avatar" alt="${a.name}" onerror="this.style.display='none'">`
+          : (isSpare ? '' : `<div class="teacher-avatar" style="background:var(--green-l);display:flex;align-items:center;justify-content:center;font-size:1.4rem;">🧑‍🎓</div>`)
+        }
+        <div class="who-text">
+          <b>${isSpare ? '備用帳號 ' + (i - STUDENTS.length + 1) : a.name}</b>
+          <span>${isSpare ? '尚未分配' : a.cls}</span>
+        </div>
+      </div>
+      <span class="tag ${isSpare ? 'spare' : ''}">${isSpare ? '備用' : '學生專屬'}</span>
+
+      ${!isSpare ? `
+      <div class="row">
+        <span class="lbl">PIN</span>
+        <span class="val">${a.pin}</span>
+        <button class="iconbtn" data-copy="pin" data-i="${i}">📋</button>
+      </div>` : ''}
+
+      <div class="row">
+        <span class="lbl">帳號</span>
+        <span class="val" title="${a.user}">${a.user}</span>
+        <button class="iconbtn" data-copy="user" data-i="${i}">📋</button>
+      </div>
+
+      <div class="row">
+        <span class="lbl">密碼</span>
+        <span class="val hide" data-pw="${i}" title="${a.pw}">••••••••</span>
+        <button class="iconbtn" data-eye="${i}">👁️</button>
+        <button class="iconbtn" data-copy="pw" data-i="${i}">📋</button>
+      </div>
+
+      ${a.drive ? `
+      <a href="${a.drive}" target="_blank" rel="noopener"
+         style="display:block;margin-top:8px;padding:8px;text-align:center;
+                background:#eaf4fc;color:#2a6fa8;border-radius:8px;
+                text-decoration:none;font-size:.85rem;font-weight:700;">
+        📁 開啟作品資料夾
+      </a>` : ''}
+    `;
+    (isSpare ? boxP : boxS).appendChild(card);
+  });
+}
+
+document.getElementById('teacherArea').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if(!btn) return;
+
+  if(btn.dataset.pinCopy !== undefined){
+    copyText(btn.dataset.pinCopy, btn, 'PIN');
+    return;
+  }
+  const i = btn.dataset.i;
+  if(i === undefined) return;
+  const a = ACCOUNTS[i];
+
+  if(btn.dataset.eye !== undefined){
+    const span = document.querySelector(`[data-pw="${i}"]`);
+    if(span.classList.contains('hide')){
+      span.textContent = a.pw; span.classList.remove('hide'); btn.textContent = '🙈';
+    }else{
+      span.textContent = '••••••••'; span.classList.add('hide'); btn.textContent = '👁️';
+    }
+    return;
+  }
+  if(btn.dataset.copy === 'pin')  copyText(a.pin, btn, 'PIN');
+  if(btn.dataset.copy === 'user') copyText(a.user, btn, '帳號');
+  if(btn.dataset.copy === 'pw')   copyText(a.pw, btn, '密碼');
+});
+
+/* ==================================================================
+   Lightbox
+   ================================================================== */
+function openLightbox({img, info}){
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = img;
+  document.getElementById('lightboxInfo').textContent = info || '';
+  lb.classList.add('show');
   document.body.style.overflow = 'hidden';
 }
-function closeModal(){
-  modal.classList.remove('show');
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('show');
   document.body.style.overflow = '';
-  setTimeout(() => { frame.src = 'about:blank'; }, 350);
 }
-document.getElementById('modalClose').addEventListener('click', closeModal);
-modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', e => {
+  if(e.target.id === 'lightbox') closeLightbox();
+});
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+  if(e.key === 'Escape') closeLightbox();
 });
 
-/* ================= 星光粒子 ================= */
-(function sparkles(){
-  const cv  = document.getElementById('sparkles');
-  const ctx = cv.getContext('2d');
-  let W = 0, H = 0, P = [];
-  const COUNT = window.innerWidth < 700 ? 38 : 72;
+/* ==================================================================
+   初始化
+   ================================================================== */
+(async function init(){
+  renderFestivalBanner();
+  renderLessons();
 
-  function resize(){
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = innerWidth; H = innerHeight;
-    cv.width  = W * dpr;
-    cv.height = H * dpr;
-    cv.style.width  = W + 'px';
-    cv.style.height = H + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  galleryPhotos = await discoverGallery();
+  buildCarousel3d();
+
+  if(currentStudent) showResult(currentStudent, false);
+
+  if(isTeacher){
+    renderTeacherView();
+    document.querySelector('.hero').style.display = 'none';
+    document.getElementById('announce').style.display = 'none';
+    document.getElementById('student-login').style.display = 'none';
+    teacherArea.style.display = '';
+    renderLessons();
   }
-
-  function init(){
-    P = Array.from({ length: COUNT }, () => ({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 1.8 + 0.5,
-      vx: (Math.random() - 0.5) * 0.28,
-      vy: -Math.random() * 0.42 - 0.08,
-      hue: Math.random() < 0.62 ? 32 : 275,
-      a: Math.random() * 0.5 + 0.2,
-      ph: Math.random() * Math.PI * 2
-    }));
-  }
-
-  function tick(){
-    ctx.clearRect(0, 0, W, H);
-    for (const p of P){
-      p.x += p.vx;
-      p.y += p.vy;
-      p.ph += 0.022;
-
-      if (p.y < -20){ p.y = H + 20; p.x = Math.random() * W; }
-      if (p.x < -20) p.x = W + 20;
-      if (p.x > W + 20) p.x = -20;
-
-      const alpha = p.a * (0.55 + 0.45 * Math.sin(p.ph));
-      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 5);
-      g.addColorStop(0, `hsla(${p.hue},100%,72%,${alpha})`);
-      g.addColorStop(1, `hsla(${p.hue},100%,55%,0)`);
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r * 5, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    requestAnimationFrame(tick);
-  }
-
-  resize(); init(); tick();
-  addEventListener('resize', () => { resize(); init(); });
-})();
-
-/* ================= 滑鼠光暈跟隨 ================= */
-(function spotlight(){
-  const spot = document.getElementById('spotlight');
-  let tx = innerWidth / 2, ty = innerHeight / 2, sx = tx, sy = ty;
-  addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
-  (function loop(){
-    sx += (tx - sx) * 0.08;
-    sy += (ty - sy) * 0.08;
-    spot.style.transform = `translate(${sx}px, ${sy}px) translate(-50%, -50%)`;
-    requestAnimationFrame(loop);
-  })();
 })();
 </script>
+
 </body>
 </html>
