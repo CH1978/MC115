@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>零式戰鬥機 · 三版本整合工坊</title>
+<!-- 引入外部 CSS -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>零式戰鬥機 · 三版本整合工坊</h1>
+  <div class="tabs">
+    <button class="tab active" data-model="slim">對稱瘦身版</button>
+    <button class="tab" data-model="small">縮小版</button>
+    <button class="tab" data-model="full">完整版</button>
+  </div>
+  <button id="langBtn">🌐 EN</button>
+</header>
+
+<div class="layout">
+  <aside class="panel">
+    <details open data-key="ylist">
+      <summary><span class="sum-left"><span class="arrow"></span><span data-i18n="yLayers">Y 樓層</span></span></summary>
+      <div class="ylist" id="ylist"></div>
+    </details>
+    <details open data-key="parts">
+      <summary>
+        <span class="sum-left"><span class="arrow"></span><span data-i18n="parts">部件</span></span>
+        <span class="actions">
+          <button class="mini-btn" data-act="all" data-i18n="all">全選</button>
+          <button class="mini-btn" data-act="none" data-i18n="none">清除</button>
+          <button class="mini-btn" data-act="invert" data-i18n="invert">反選</button>
+        </span>
+      </summary>
+      <div class="partlist" id="partlist"></div>
+    </details>
+    <details data-key="legend">
+      <summary><span class="sum-left"><span class="arrow"></span><span data-i18n="legend">圖例</span></span></summary>
+      <div class="legend" id="legend"></div>
+    </details>
+  </aside>
+
+  <main class="panel">
+    <div class="view-head">
+      <h3 id="layerTitle">逐層 Y = 5</h3>
+      <span class="coord" id="layerCoord"></span>
+      <span class="meta" id="layerMeta">—</span>
+    </div>
+    <div class="grid-wrap"><div class="grid" id="layerGrid"></div></div>
+  </main>
+
+  <aside class="panel">
+    <details open data-key="iso3d">
+      <summary><span class="sum-left"><span class="arrow"></span><span data-i18n="iso3d">3D 等角</span></span></summary>
+      <canvas id="iso3d"></canvas>
+      <div class="mode-row" id="modeRow">
+        <button class="mode-btn active" data-mode="all" data-i18n="modeAll">全部</button>
+        <button class="mode-btn" data-mode="single" data-i18n="modeSingle">單層</button>
+        <button class="mode-btn" data-mode="slice" data-i18n="modeSlice">±1 層</button>
+      </div>
+    </details>
+
+    <details open data-key="partmat">
+      <summary><span class="sum-left"><span class="arrow"></span><span data-i18n="partMat">部件材質</span></span></summary>
+      <div class="part-mat" id="partMatList"></div>
+    </details>
+
+    <details open data-key="materials">
+      <summary><span class="sum-left"><span class="arrow"></span><span data-i18n="materials">材料統計</span></span></summary>
+      <div class="matlist" id="matList"></div>
+      <div class="stat-total"><span data-i18n="total">總計</span><span id="totalCount">0</span></div>
+    </details>
+
+    <details open data-key="fleet" id="fleetPanel">
+      <summary><span class="sum-left"><span class="arrow"></span><span data-i18n="fleet">群飛編隊</span></span></summary>
+      <div class="fleet-row">
+        <label data-i18n="fleetCount">架數</label>
+        <input type="number" id="fleetCount" min="1" max="16" value="1">
+      </div>
+      <div class="fleet-row">
+        <label data-i18n="fleetLayout">排列</label>
+        <select id="fleetLayout">
+          <option value="v">V 字形</option>
+          <option value="grid">4×4 網格</option>
+          <option value="line">單排橫列</option>
+        </select>
+      </div>
+      <div class="fleet-row">
+        <label data-i18n="fleetGap">間距</label>
+        <select id="fleetGap">
+          <option value="14">14</option>
+          <option value="18">18</option>
+          <option value="22" selected>22</option>
+          <option value="28">28</option>
+        </select>
+      </div>
+    </details>
+
+    <details open data-key="pin">
+      <summary><span class="sum-left"><span class="arrow"></span><span data-i18n="pinned">釘選資訊</span></span></summary>
+      <div id="pinCard"><span class="empty-msg" data-i18n="clickToPin">點格子釘選…</span></div>
+    </details>
+
+    <details open data-key="io">
+      <summary><span class="sum-left"><span class="arrow"></span><span data-i18n="data">資料</span></span></summary>
+      <div class="io-row">
+        <button class="io-btn copy" id="copyPyBtn" data-i18n="copyPy">📋 複製 PY 腳本</button>
+      </div>
+      <div class="io-row">
+        <button class="io-btn warn" id="resetBtn" data-i18n="reset">↺ 重置此模型</button>
+      </div>
+    </details>
+  </aside>
+</div>
+
+<div id="toast"></div>
+<div id="blockPicker">
+  <div class="pk-title" id="pkTitle">選擇方塊</div>
+  <div class="pk-grid" id="pkGrid"></div>
+</div>
+
+<!-- 引入外部 JS -->
+<script src="app.js"></script>
+</body>
+</html>
