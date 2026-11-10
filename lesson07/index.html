@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>一小時程式設計 AI for Good</title>
+  <style>
+    body {
+      background-color: #f4f4f4;
+      text-align: center;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      user-select: none;
+    }
+    h1 {
+      margin-bottom: 30px;
+      font-size: 2.4rem;
+      color: #333;
+    }
+    img {
+      width: 90vw;
+      height: auto;
+      max-height: 80vh;
+      object-fit: contain;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      cursor: zoom-in;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: default;
+    }
+    .page-number {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    /* Lightbox 放大用樣式 */
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      cursor: zoom-out;
+    }
+
+    /* 響應式手機版調整 */
+    @media (max-width: 480px) {
+      body {
+        padding: 20px 10px;
+      }
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+      }
+      img {
+        width: 95vw;
+        max-height: 60vh;
+      }
+      button {
+        padding: 8px 14px;
+        margin: 0 6px;
+        font-size: 14px;
+      }
+      .controls {
+        margin-top: 15px;
+      }
+      .page-number {
+        font-size: 0.9rem;
+        margin-top: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📘 一小時程式設計 AI for Good</h1>
+  <img id="mainImage" src="" alt="拼圖頁面">
+  <div class="controls">
+    <button id="prevBtn">⬅ 上一頁</button>
+    <button id="nextBtn">➡ 下一頁</button>
+  </div>
+  <div class="page-number" id="pageNumber">第 1 頁 / 共 30 頁</div>
+
+  <!-- Lightbox 容器 -->
+  <div class="lightbox" id="lightbox">
+    <img id="lightboxImg" src="" alt="放大圖片">
+  </div>
+
+  <script>
+    const totalPages = 30;
+    let currentPage = 1;
+
+    const image = document.getElementById("mainImage");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const pageNumber = document.getElementById("pageNumber");
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+
+    function updateImage() {
+      let num = String(currentPage).padStart(2, '0');
+      image.style.opacity = 0;
+      setTimeout(() => {
+        const src = `01_一小時程式設計_頁面_${num}.jpg`;
+        image.src = src;
+        image.alt = `第 ${currentPage} 頁`;
+        lightboxImg.src = src; // 同步放大圖
+        image.style.opacity = 1;
+      }, 200);
+      pageNumber.textContent = `第 ${currentPage} 頁 / 共 ${totalPages} 頁`;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
+    }
+
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateImage();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateImage();
+      }
+    });
+
+    image.addEventListener("click", () => {
+      lightbox.style.display = "flex";
+    });
+
+    lightbox.addEventListener("click", () => {
+      lightbox.style.display = "none";
+    });
+
+    // 初始載入
+    updateImage();
+  </script>
+</body>
+</html>
