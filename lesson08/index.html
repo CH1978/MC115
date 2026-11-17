@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《Minecraft 教育版》火車主題 - 軌道建造指南</title>
+<style>
+    /* 載入像素字體與基礎設定 */
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    :root {
+        --bg-color: #1a1a1a;
+        --panel-bg: #2b2b2b;
+        --text-main: #e0e0e0;
+        --text-muted: #aaaaaa;
+        --accent-green: #55ff55; /* 麥塊綠 */
+        --accent-gold: #ffaa00;  /* 黃金 */
+        --border-color: #444;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        font-family: '微軟正黑體', 'Helvetica Neue', sans-serif;
+        line-height: 1.8;
+        /* 模擬麥塊方塊材質背景 */
+        background-image: 
+            linear-gradient(rgba(26,26,26,0.95), rgba(26,26,26,0.95)),
+            url('https://www.transparenttextures.com/patterns/cubes.png');
+        background-attachment: fixed;
+    }
+
+    /* 頂部導覽列 */
+    .navbar {
+        position: fixed;
+        top: 0; width: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 4px solid var(--accent-green);
+        z-index: 1000;
+        text-align: center;
+        padding: 15px 0;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    }
+
+    .navbar h1 {
+        margin: 0;
+        font-family: 'Press Start 2P', '微軟正黑體', sans-serif;
+        font-size: 1.2rem;
+        color: #fff;
+        text-shadow: 2px 2px 0 #000;
+    }
+
+    /* 教學主容器 */
+    .tutorial-container {
+        max-width: 1200px;
+        margin: 120px auto 100px auto;
+        padding: 0 20px;
+    }
+
+    /* 單一教學區塊 */
+    .step-block {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 150px;
+        opacity: 0; /* 預設隱藏，等滾動觸發 */
+        transform: translateY(60px);
+        transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .step-block.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* 圖片區塊 */
+    .image-container {
+        flex: 0 0 55%;
+        position: relative;
+        cursor: pointer;
+        border: 4px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        transition: transform 0.3s, border-color 0.3s;
+        background-color: #000;
+    }
+
+    .image-container:hover {
+        transform: scale(1.02);
+        border-color: var(--accent-green);
+    }
+
+    .image-container img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: filter 0.3s;
+    }
+
+    .image-container:hover img {
+        filter: brightness(1.15);
+    }
+
+    /* 文字區塊 */
+    .text-container {
+        flex: 0 0 40%;
+        padding: 30px;
+        background-color: var(--panel-bg);
+        border-left: 6px solid var(--accent-green);
+        border-radius: 0 8px 8px 0;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 5px 5px 15px rgba(0,0,0,0.3);
+    }
+
+    /* 左右交錯佈局 (偶數區塊反轉) */
+    .step-block:nth-child(even) {
+        flex-direction: row-reverse;
+    }
+    .step-block:nth-child(even) .text-container {
+        border-left: none;
+        border-right: 6px solid var(--accent-green);
+        border-radius: 8px 0 0 8px;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.5), -5px 5px 15px rgba(0,0,0,0.3);
+    }
+
+    /* 步驟編號 */
+    .step-number {
+        font-family: 'Press Start 2P', '微軟正黑體', sans-serif;
+        color: var(--accent-gold);
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        display: inline-block;
+        background: #111;
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: 1px solid #444;
+    }
+
+    .text-container h2 {
+        margin-top: 0;
+        color: #fff;
+        font-size: 1.6rem;
+        border-bottom: 2px dashed #555;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        text-shadow: 1px 1px 0 #000;
+    }
+
+    .text-container p {
+        color: var(--text-muted);
+        margin-bottom: 15px;
+        font-size: 1.05rem;
+        text-align: justify;
+    }
+
+    .text-container ul {
+        padding-left: 20px;
+        color: var(--text-muted);
+    }
+    
+    .text-container li {
+        margin-bottom: 10px;
+    }
+
+    .highlight {
+        color: var(--accent-green);
+        font-weight: bold;
+    }
+
+    /* =========================================
+       放大檢視器 (Lightbox Modal)
+       ========================================= */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0; top: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.95);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        backdrop-filter: blur(8px);
+    }
+
+    .modal.show {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        opacity: 1;
+    }
+
+    .modal-content {
+        max-width: 95%;
+        max-height: 85vh;
+        border: 4px solid var(--accent-green);
+        border-radius: 8px;
+        box-shadow: 0 0 50px rgba(85, 255, 85, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal.show .modal-content {
+        transform: scale(1);
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 20px; right: 40px;
+        color: #fff;
+        font-size: 50px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s;
+        text-shadow: 2px 2px 0 #000;
+    }
+
+    .close-btn:hover {
+        color: var(--accent-green);
+    }
+
+    /* 回到頂部按鈕 */
+    #backToTop {
+        position: fixed;
+        bottom: 30px; right: 30px;
+        background: var(--accent-green);
+        color: #000;
+        border: none;
+        padding: 15px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: bold;
+        display: none;
+        z-index: 999;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        transition: 0.3s;
+    }
+    #backToTop:hover { transform: scale(1.1); }
+
+    /* 響應式設計 (手機版) */
+    @media (max-width: 900px) {
+        .step-block, .step-block:nth-child(even) {
+            flex-direction: column;
+            margin-bottom: 80px;
+        }
+        .image-container, .text-container {
+            flex: 0 0 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .text-container, .step-block:nth-child(even) .text-container {
+            border-left: none;
+            border-right: none;
+            border-top: 6px solid var(--accent-green);
+            border-radius: 0 0 8px 8px;
+            margin-top: -5px;
+        }
+        .navbar h1 { font-size: 0.9rem; }
+    }
+</style>
+</head>
+<body>
+
+    <div class="navbar">
+        <h1>《Minecraft 教育版》火車主題 - 軌道</h1>
+    </div>
+
+    <div class="tutorial-container" id="tutorial">
+        <!-- JS 會自動將圖文填入這裡 -->
+    </div>
+
+    <!-- 放大圖片 Modal -->
+    <div class="modal" id="imageModal">
+        <span class="close-btn" id="closeBtn">&times;</span>
+        <img class="modal-content" id="expandedImg">
+    </div>
+
+    <button id="backToTop" title="回到頂部">▲</button>
+
+<script>
+    // =========================================
+    // 教材資料定義 (對應你的 Word 內容與 15 張圖)
+    // =========================================
+    const stepsData = [
+        {
+            title: "教材目標與大綱",
+            content: "了解火車與軌道運輸的基本原理。學會使用《Minecraft 教育版》中的紅石電路、礦車、動力鐵軌等工具。建構一個功能性火車系統，模擬現實世界的火車運輸。培養團隊合作、問題解決及創意思維。"
+        },
+        {
+            title: "認識鐵軌的種類",
+            content: "在物品欄中可以找到四種鐵軌：<span class='highlight'>鐵軌</span>（普通）、<span class='highlight'>動力鐵軌</span>（加速/煞停）、<span class='highlight'>感測鐵軌</span>（紅石訊號）、<span class='highlight'>觸發鐵軌</span>（特殊功能）。"
+        },
+        {
+            title: "鐵軌功能與製作方法",
+            content: "普通鐵軌：6鐵錠+1木棒。<br>動力鐵軌：6金條+1鐵軌+1紅石。<br>感測/觸發鐵軌：1鐵軌+1紅石。它們能用於建立路線、加速爬坡、觸發紅石裝置（如開門、發車）。"
+        },
+        {
+            title: "建造運輸系統：路線設計",
+            content: "規劃起點與終點，選擇直線或彎道。使用動力鐵軌來推動礦車，確保間隔合理避免停駛。在轉彎處使用彎曲鐵軌改變方向。"
+        },
+        {
+            title: "進階技巧與練習",
+            content: "使用感測鐵軌和觸發鐵軌建立自動化系統（如自動開箱）。練習：1. 建造基本運輸系統。2. 建造有彎道的系統。3. 建造自動運輸系統。"
+        },
+        {
+            title: "軌道應用程式 - 程式 01",
+            content: "進入 MakeCode 程式編輯器。這節課我們將學習「指北針」程式。當玩家在聊天室輸入指令時，Agent（代理）會朝向特定方位並建造指北針結構。"
+        },
+        {
+            title: "MakeCode 基礎方塊",
+            content: "了解「在聊天指令為 (on Chat Command)」、「代理傳送到 (teleport)」與「代理移動 (move)」。你可以設定 Agent 移動的相對位置（前後左右上下）與距離。"
+        },
+        {
+            title: "Agent 設置物品與取物品",
+            content: "使用「Agent 道具設為」方塊。設定物品的數量與槽位（1-27）。<br>槽位索引：從左上角開始由左至右、由上至下。最上排是 1-9，第二列是 10-18，最下列是 19-27。"
+        },
+        {
+            title: "程式 01：直線鐵軌_A",
+            content: "當玩家輸入「直線鐵軌_A 長度」時，Agent 會傳送到玩家位置，面向東方，並開始重複放置鐵軌。每次放置後向前移動 1 格。"
+        },
+        {
+            title: "任務 01：改變鐵軌長度",
+            content: "觀察程式碼中的「鐵軌長度」變數。玩家打字輸入指令時，例如輸入「直線鐵軌_A 5」，Agent 就會自動建造 5 格長的鐵軌。"
+        },
+        {
+            title: "任務 02：改變鐵軌方向",
+            content: "修改「Agent 傳送到... 面向...」方塊。你可以將面向改為北、南、西，看看 Agent 建造的軌道方向會有什麼變化。"
+        },
+        {
+            title: "任務 03：改變設置物品",
+            content: "修改「Agent 道具設為」的方塊。試著把鐵軌換成其他方塊（例如石頭），並搭配「將物品槽設為使用中」，讓 Agent 蓋出不同材質的軌道。"
+        },
+        {
+            title: "任務 04：不同 Y 軸 (直線鐵軌_B)",
+            content: "比較「直線鐵軌_A」與「直線鐵軌_B」的程式碼。注意 B 的程式碼中，多了「Agent 移動 上 (up) 距離 1」，這會影響軌道的高度。"
+        },
+        {
+            title: "往上鐵軌與往下爬軌",
+            content: "利用「Agent 移動 上/下」與「放置方塊」的組合，可以讓 Agent 建造出斜坡軌道。搭配紅石動力鐵軌，礦車就能順利爬坡。"
+        },
+        {
+            title: "教師指導建議",
+            content: "1. 協助學生理解每種鐵軌的功能。<br>2. 引導學生進行創意設計，挑戰複雜網路。<br>3. 提供紅石控制指導，創建精細的控制系統。"
+        }
+    ];
+
+    const totalImages = 15;
+    const tutorialContainer = document.getElementById('tutorial');
+
+    // =========================================
+    // 1. 動態生成教學區塊
+    // =========================================
+    for (let i = 1; i <= totalImages; i++) {
+        const data = stepsData[i-1] || { title: `單元 ${i}`, content: "教材內容準備中..." };
+        
+        const stepBlock = document.createElement('div');
+        stepBlock.className = 'step-block';
+
+        // 圖片區
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'image-container';
+        const img = document.createElement('img');
+        img.src = `Fig (${i}).jpg`;
+        img.alt = data.title;
+        img.loading = "lazy";
+        
+        // 點擊放大事件
+        imgContainer.addEventListener('click', () => openModal(img.src, data.title));
+        imgContainer.appendChild(img);
+
+        // 文字區
+        const textContainer = document.createElement('div');
+        textContainer.className = 'text-container';
+        
+        const stepNum = document.createElement('div');
+        stepNum.className = 'step-number';
+        stepNum.innerText = `STEP ${i.toString().padStart(2, '0')}`;
+        
+        const title = document.createElement('h2');
+        title.innerText = data.title;
+        
+        const desc = document.createElement('div'); // 改用 div 支援 HTML 標籤
+        desc.innerHTML = `<p>${data.content}</p>`;
+
+        textContainer.appendChild(stepNum);
+        textContainer.appendChild(title);
+        textContainer.appendChild(desc);
+
+        // 組裝
+        stepBlock.appendChild(imgContainer);
+        stepBlock.appendChild(textContainer);
+        tutorialContainer.appendChild(stepBlock);
+    }
+
+    // =========================================
+    // 2. 滾動淡入特效 (Intersection Observer)
+    // =========================================
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('show');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.15 // 當區塊 15% 進入畫面時觸發
+    });
+
+    document.querySelectorAll('.step-block').forEach(block => {
+        observer.observe(block);
+    });
+
+    // =========================================
+    // 3. 放大圖片 Modal 邏輯
+    // =========================================
+    const modal = document.getElementById('imageModal');
+    const expandedImg = document.getElementById('expandedImg');
+    const closeBtn = document.getElementById('closeBtn');
+
+    function openModal(src, title) {
+        modal.classList.add('show');
+        expandedImg.src = src;
+        expandedImg.alt = title;
+    }
+
+    function closeModal() {
+        modal.classList.remove('show');
+        setTimeout(() => { expandedImg.src = ''; }, 300);
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+    });
+
+    // =========================================
+    // 4. 回到頂部按鈕
+    // =========================================
+    const backToTopBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 500) {
+            backToTopBtn.style.display = 'block';
+        } else {
+            backToTopBtn.style.display = 'none';
+        }
+    });
+    
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+</script>
+</body>
+</html>
